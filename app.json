@@ -16,7 +16,8 @@
         {
           "launchMode": "most-recent"
         }
-      ]
+      ],
+      "expo-apple-authentication"
     ],
     "experiments": {
       "typedRoutes": true,
@@ -33,7 +34,8 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.pontistudios.mindsherpa"
+      "bundleIdentifier": "com.pontistudios.mindsherpa",
+      "usesAppleSignIn": true
     },
     "android": {
       "adaptiveIcon": {

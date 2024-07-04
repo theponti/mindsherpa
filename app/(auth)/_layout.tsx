@@ -1,84 +1,84 @@
-import { Button, Input } from '@rneui/themed';
-import React, { useState } from 'react';
+import * as AppleAuthentication from 'expo-apple-authentication';
+import { Redirect, useRouter } from 'expo-router';
+import React from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 
+import { useAuth } from '~/utils/auth/auth-context';
 import { supabase } from '~/utils/supabase';
 
 export default function Auth() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+  const { session } = useAuth();
+  const router = useRouter();
 
-  async function signInWithEmail() {
-    setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) Alert.alert(error.message);
-    setLoading(false);
-  }
-
-  async function signUpWithEmail() {
-    setLoading(true);
-    const {
-      data: { session },
-      error,
-    } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-    });
-
-    if (error) Alert.alert(error.message);
-    if (!session) Alert.alert('Please check your inbox for email verification!');
-    setLoading(false);
+  if (session) {
+    return <Redirect href="(drawer)" />;
   }
 
   return (
     <View style={styles.container}>
-      <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Input
-          label="Email"
-          leftIcon={{ type: 'font-awesome', name: 'envelope' }}
-          onChangeText={(text) => setEmail(text)}
-          value={email}
-          placeholder="email@address.com"
-          autoCapitalize="none"
-        />
-      </View>
-      <View style={styles.verticallySpaced}>
-        <Input
-          secureTextEntry
-          label="Password"
-          leftIcon={{ type: 'font-awesome', name: 'lock' }}
-          onChangeText={(text: string) => setPassword(text)}
-          value={password}
-          placeholder="Password"
-          autoCapitalize="none"
-        />
-      </View>
-      <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Button title="Sign in" disabled={loading} onPress={() => signInWithEmail()} />
-      </View>
-      <View style={styles.verticallySpaced}>
-        <Button title="Sign up" disabled={loading} onPress={() => signUpWithEmail()} />
-      </View>
+      <AppleAuthentication.AppleAuthenticationButton
+        buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+        buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+        cornerRadius={5}
+        style={styles.button}
+        onPress={async () => {
+          try {
+            const credential = await AppleAuthentication.signInAsync({
+              requestedScopes: [
+                AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+                AppleAuthentication.AppleAuthenticationScope.EMAIL,
+              ],
+            });
+
+            if (!credential.identityToken) {
+              Alert.alert('Apple Sign-In failed', 'No identify token provided');
+              return null;
+            }
+
+            const {
+              data: { user },
+              error,
+            } = await supabase.auth.signInWithIdToken({
+              provider: 'apple',
+              token: credential.identityToken,
+            });
+
+            if (error) {
+              Alert.alert(error.message);
+              return null;
+            }
+
+            if (user) {
+              const { error } = await supabase.from('profiles').insert({});
+
+              if (error) {
+                // ! TODO Replace with a proper error handling (toast notification, etc.)
+                console.error('Error creating profile:', error);
+              }
+
+              router.push('(drawer)');
+            }
+          } catch (error: any) {
+            if (error.code === 'ERR_REQUEST_CANCELED') {
+              // handle that the user canceled the sign-in flow
+            } else {
+              // handle other errors
+            }
+          }
+        }}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 40,
-    padding: 12,
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  verticallySpaced: {
-    paddingTop: 4,
-    paddingBottom: 4,
-    alignSelf: 'stretch',
-  },
-  mt20: {
-    marginTop: 20,
+  button: {
+    width: 200,
+    height: 44,
   },
 });
