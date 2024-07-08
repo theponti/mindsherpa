@@ -1,7 +1,8 @@
 import { Session } from '@supabase/supabase-js';
 import { createContext, useContext, useEffect, useState } from 'react';
 
-import { supabase } from '../supabase';
+import { log } from '../logger';
+import { profiles, supabase } from '../supabase';
 
 export type Profile = {
   id: string;
@@ -37,35 +38,41 @@ export function AuthContextProvider({ children }: { children: React.ReactNode })
 
   useEffect(() => {
     async function getInitialSession() {
-      const {
-        data: { session },
-        error,
-      } = await supabase.auth.getSession();
+      const getSessionResponse = await supabase.auth.getSession();
 
-      if (session) {
-        const { user } = session;
-        const profile = await supabase.from('profiles').select().eq('user_id', user.id).single();
+      if (getSessionResponse.error) {
+        // ! TODO - Handle error
+        setAuthError('Could not retrieve session');
+        log('Could not retrieve session', getSessionResponse.error.message);
+        setIsLoadingAuth(false);
+        return;
+      }
+
+      const { data: sessionData } = getSessionResponse;
+      if (sessionData.session && sessionData.session.user) {
+        const { user } = sessionData.session;
+        const getProfileResponse = await profiles.getProfile(user.id);
 
         if (!user.email) {
           return;
         }
 
-        if (!profile.data && user) {
-          const { data, error } = await supabase.from('Profile').insert({});
+        // If the user does not have a profile, attempt to create one
+        if (!getProfileResponse.error && !getProfileResponse.data) {
+          const getCreateResponse = await profiles.create(user.id);
 
-          if (error) {
-            // ! TODO Replace with a proper error handling (toast notification, etc.)
-            console.error('Error creating profile:', error);
+          if (getCreateResponse.error) {
+            setAuthError(getCreateResponse.error.message);
+            log('Could not create profile', getCreateResponse.error.message);
+            return;
           }
 
-          setProfile(data);
+          if (getCreateResponse.data) {
+            setProfile(getCreateResponse.data);
+          }
         }
 
         setSession(session);
-      }
-
-      if (error) {
-        setAuthError(error.message);
       }
 
       setIsLoadingAuth(false);

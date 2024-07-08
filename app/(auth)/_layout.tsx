@@ -4,7 +4,7 @@ import React from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 
 import { useAuth } from '~/utils/auth/auth-context';
-import { supabase } from '~/utils/supabase';
+import { profiles, supabase } from '~/utils/supabase';
 
 export default function Auth() {
   const { session } = useAuth();
@@ -49,14 +49,11 @@ export default function Auth() {
             }
 
             if (user) {
-              const { error } = await supabase.from('profiles').insert({});
+              const data = await profiles.create(user.id);
 
-              if (error) {
-                // ! TODO Replace with a proper error handling (toast notification, etc.)
-                console.error('Error creating profile:', error);
+              if (data) {
+                router.push('(drawer)');
               }
-
-              router.push('(drawer)');
             }
           } catch (error: any) {
             if (error.code === 'ERR_REQUEST_CANCELED') {

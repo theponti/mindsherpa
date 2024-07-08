@@ -6,13 +6,13 @@ import { View } from 'react-native';
 import Avatar from './avatar';
 
 import { useAuth } from '~/utils/auth/auth-context';
-import { supabase } from '~/utils/supabase';
+import { profiles } from '~/utils/supabase';
 
 export default function Account() {
   const { profile, session } = useAuth();
 
   const onAvatarUpload = useCallback(async (url: string) => {
-    const { error } = await supabase.from('Profile').update({ name, avatar_url: url });
+    const { error } = await profiles.update(session!.user.id, { name, avatar_url: url });
 
     if (error) {
       // ! TODO Replace with a proper error handling (toast notification, etc.)
