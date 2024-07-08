@@ -1,5 +1,5 @@
 import { Session } from '@supabase/supabase-js';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
 
 import { log } from '../logger';
 import { profiles, supabase } from '../supabase';
@@ -30,7 +30,7 @@ export const useAuth = () => {
   return context;
 };
 
-export function AuthContextProvider({ children }: { children: React.ReactNode }) {
+export function AuthContextProvider({ children }: PropsWithChildren) {
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
   const [profile, setProfile] = useState<any>(null);
   const [session, setSession] = useState<AuthContextSession>(null);
