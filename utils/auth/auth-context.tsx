@@ -44,7 +44,7 @@ export function AuthContextProvider({ children }: { children: React.ReactNode })
 
       if (session) {
         const { user } = session;
-        const profile = await supabase.from('profiles').select().eq('id', user.id).single();
+        const profile = await supabase.from('profiles').select().eq('user_id', user.id).single();
 
         if (!user.email) {
           return;
