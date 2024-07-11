@@ -35,20 +35,13 @@ export default function Dashboard() {
     <>
       <Stack.Screen options={{ title: 'Meow' }} />
       <Container>
-        <Box style={styles.chatContainer}>
-          <Chat chatId={activeChat.id} userId={session!.user.id} />
-        </Box>
+        <Chat chatId={activeChat.id} userId={session!.user.id} />
       </Container>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  chatContainer: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-  },
   loading: {
     flex: 1,
     justifyContent: 'center',

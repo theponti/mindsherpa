@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../supabase';
 
 export class Messages {
-  async create(userId: string, message: string) {
-    return supabase.from('messages').insert({ user_id: userId, message });
+  async create({ chatId, content, userId }: { chatId: string; content: string; userId: string }) {
+    return supabase.from('messages').insert({ user_id: userId, chat_id: chatId, content });
   }
 
   async getMessages({ chatId, userId }: { chatId: string; userId: string }) {

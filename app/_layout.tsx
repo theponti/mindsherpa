@@ -1,10 +1,9 @@
-import { LinearProgress } from '@rneui/themed';
 import { ThemeProvider } from '@shopify/restyle';
 import { Stack } from 'expo-router';
-import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-import { Box, Text, theme } from '~/theme';
+import { LoadingFull } from '~/components/LoadingFull';
+import { theme } from '~/theme';
 import { AuthContextProvider, useAuth } from '~/utils/auth/auth-context';
 
 export const unstable_settings = {
@@ -16,12 +15,7 @@ function InnerRootLayout() {
   const { isLoadingAuth, session } = useAuth();
 
   if (isLoadingAuth) {
-    return (
-      <Box style={styles.loading}>
-        <Text variant="title">Loading your account...</Text>
-        <LinearProgress color="blue" />
-      </Box>
-    );
+    return <LoadingFull title="Loading your account..." />;
   }
 
   if (session) {
@@ -51,14 +45,3 @@ export default function RootLayout() {
     </ThemeProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  loading: {
-    flex: 1,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    gap: 12,
-  },
-});
