@@ -1,12 +1,12 @@
+import { PropsWithChildren } from 'react';
 import { Box, Text } from 'theme';
 
 import { EditScreenInfo } from './EditScreenInfo';
 
-type ScreenContentProps = {
+type ScreenContentProps = PropsWithChildren<{
   title: string;
   path: string;
-  children?: React.ReactNode;
-};
+}>;
 
 export const ScreenContent = ({ title, path, children }: ScreenContentProps) => {
   return (

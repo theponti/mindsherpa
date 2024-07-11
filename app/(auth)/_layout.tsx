@@ -4,7 +4,8 @@ import React from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 
 import { useAuth } from '~/utils/auth/auth-context';
-import { profiles, supabase } from '~/utils/supabase';
+import { profilesService } from '~/utils/services/profiles-service';
+import { supabase } from '~/utils/supabase';
 
 export default function Auth() {
   const { session } = useAuth();
@@ -49,7 +50,7 @@ export default function Auth() {
             }
 
             if (user) {
-              const data = await profiles.create(user.id);
+              const data = await profilesService.create(user.id);
 
               if (data) {
                 router.push('(drawer)');

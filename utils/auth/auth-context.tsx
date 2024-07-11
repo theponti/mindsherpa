@@ -2,7 +2,8 @@ import { Session } from '@supabase/supabase-js';
 import { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
 
 import { log } from '../logger';
-import { profiles, supabase } from '../supabase';
+import { profilesService } from '../services/profiles-service';
+import { supabase } from '../supabase';
 
 export type Profile = {
   id: string;
@@ -51,15 +52,16 @@ export function AuthContextProvider({ children }: PropsWithChildren) {
       const { data: sessionData } = getSessionResponse;
       if (sessionData.session && sessionData.session.user) {
         const { user } = sessionData.session;
-        const getProfileResponse = await profiles.getProfile(user.id);
+        const getProfileResponse = await profilesService.getProfile(user.id);
 
+        log('Session data', user);
         if (!user.email) {
           return;
         }
 
         // If the user does not have a profile, attempt to create one
         if (!getProfileResponse.error && !getProfileResponse.data) {
-          const getCreateResponse = await profiles.create(user.id);
+          const getCreateResponse = await profilesService.create(user.id);
 
           if (getCreateResponse.error) {
             setAuthError(getCreateResponse.error.message);
@@ -72,7 +74,7 @@ export function AuthContextProvider({ children }: PropsWithChildren) {
           }
         }
 
-        setSession(session);
+        setSession(sessionData.session);
       }
 
       setIsLoadingAuth(false);
