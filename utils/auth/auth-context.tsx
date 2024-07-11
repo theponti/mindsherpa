@@ -54,7 +54,6 @@ export function AuthContextProvider({ children }: PropsWithChildren) {
         const { user } = sessionData.session;
         const getProfileResponse = await profilesService.getProfile(user.id);
 
-        log('Session data', user);
         if (!user.email) {
           return;
         }
@@ -93,3 +92,19 @@ export function AuthContextProvider({ children }: PropsWithChildren) {
     </AuthContext.Provider>
   );
 }
+
+export const getToken = async () => {
+  // Refresh token to ensure the latest token is used
+  const { data, error } = await supabase.auth.refreshSession();
+
+  if (error) {
+    log('Could not refresh token', error.message);
+    return null;
+  }
+
+  if (data.session) {
+    return data.session.access_token;
+  }
+
+  return null;
+};
