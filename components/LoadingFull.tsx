@@ -3,11 +3,11 @@ import { StyleSheet } from 'react-native';
 
 import { Box, Text } from '~/theme';
 
-export const LoadingFull = ({ title }: { title: string }) => {
+export const LoadingFull = ({ title }: { title?: string }) => {
   return (
     <Box style={styles.loading}>
-      <Text variant="title">Loading your account...</Text>
-      <LinearProgress color="blue" />
+      {title ? <Text variant="title">{title}</Text> : null}
+      <LinearProgress color="black" />
     </Box>
   );
 };

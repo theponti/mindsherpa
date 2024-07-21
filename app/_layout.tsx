@@ -1,6 +1,8 @@
-import { ThemeProvider } from '@shopify/restyle';
+import { backgroundColor, ThemeProvider } from '@shopify/restyle';
 import { Stack } from 'expo-router';
+import { View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import LoginSheet from '~/components/authentication/login-sheet';
 
 import { LoadingFull } from '~/components/LoadingFull';
 import { theme } from '~/theme';
@@ -15,7 +17,7 @@ function InnerRootLayout() {
   const { isLoadingAuth, session } = useAuth();
 
   if (isLoadingAuth) {
-    return <LoadingFull title="Loading your account..." />;
+    return <LoginSheet isLoadingAuth />;
   }
 
   if (session) {

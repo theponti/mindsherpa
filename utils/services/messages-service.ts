@@ -21,23 +21,43 @@ export class Messages {
 export const messagesService = new Messages();
 
 export const useChatMessages = ({ chatId, userId }: { chatId: string; userId: string }) => {
-  const [messages, setMessages] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [loading, setLoading] = useState<boolean>();
+
+  const fetchMessages = async () => {
+    if (loading) {
+      return;
+    }
+
+    setLoading(true);
+    const { data, error } = await messagesService.getMessages({
+      chatId,
+      userId,
+    });
+
+    if (error) {
+      console.error('Error fetching messages:', error);
+      setLoading(false);
+      return;
+    }
+
+    setMessages(data || []);
+    setLoading(false);
+  };
 
   useEffect(() => {
-    const fetchMessages = async () => {
-      const { data, error } = await messagesService.getMessages({ chatId, userId });
-      if (error) {
-        console.error('Error fetching messages:', error);
-        return;
-      }
-
-      setMessages(data || []);
-      setLoading(false);
-    };
-
-    fetchMessages();
+    if (chatId) {
+      fetchMessages();
+    }
   }, [chatId]);
 
-  return { messages, loading };
+  return { fetchMessages, messages, loading };
+};
+
+export type Message = {
+  id: string;
+  role: 'user' | 'system';
+  content: string;
+  chat_id: number;
+  user_id: string;
 };

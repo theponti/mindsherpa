@@ -1,22 +1,14 @@
 import { createTheme, useTheme as useRestyleTheme } from '@shopify/restyle';
 import { ImageStyle, TextStyle, ViewStyle } from 'react-native';
+import { Colors } from '~/utils/styles';
 
 type NamedStyles<T> = {
   [P in keyof T]: ViewStyle | TextStyle | ImageStyle;
 };
 
-const palette = {
-  gray: '#808080',
-  blue: '#007AFF',
-  darkGray: '#38434D',
-  white: '#FFFFFF',
-  black: '#000000',
-  purple: '#6366F1',
-};
-
 const theme = createTheme({
   colors: {
-    ...palette,
+    ...Colors,
   },
   spacing: {
     xs_4: 4,
