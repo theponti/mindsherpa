@@ -1,15 +1,22 @@
-import { Stack } from 'expo-router';
+import { Redirect } from 'expo-router';
+import React from 'react';
 
-import { Container } from '~/components/Container';
-import { ScreenContent } from '~/components/ScreenContent';
+import AnimatedIntro from '~/components/intro-animated';
+import { Box } from '~/theme';
+import { useAuth } from '~/utils/auth/auth-context';
 
-export default function Home() {
+function Auth() {
+  const { session } = useAuth();
+
+  if (session) {
+    return <Redirect href="(drawer)" />;
+  }
+
   return (
-    <>
-      <Stack.Screen options={{ title: 'Mindsherpa' }} />
-      <Container>
-        <ScreenContent path="app/(auth)/index.tsx" title="Sign in" />
-      </Container>
-    </>
+    <Box flex={1}>
+      <AnimatedIntro />
+    </Box>
   );
 }
+
+export default Auth;

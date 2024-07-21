@@ -1,9 +1,8 @@
-import { LinearProgress } from '@rneui/themed';
 import { Stack } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 
-import AnimatedIntro from '~/components/intro-animated';
+import { LoadingFull } from '~/components/LoadingFull';
 import { Chat } from '~/components/chat';
 import { Box } from '~/theme';
 import { useAuth } from '~/utils/auth/auth-context';
@@ -24,17 +23,16 @@ export default function Dashboard() {
   if (!activeChat) {
     return (
       <Box style={styles.loading}>
-        <LinearProgress color="blue" />
+        <LoadingFull title="Loading chat" />
       </Box>
     );
   }
 
   return (
     <>
-      <Stack.Screen options={{ title: 'Mindsherpa' }} />
+      <Stack.Screen options={{ title: 'Chats' }} />
       <Box flex={1}>
-        <AnimatedIntro />
-        {/* <Chat chatId={activeChat.id} userId={session!.user.id} /> */}
+        <Chat chatId={activeChat.id} userId={session!.user.id} />
       </Box>
     </>
   );

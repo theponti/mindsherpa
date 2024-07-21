@@ -1,10 +1,8 @@
-import { backgroundColor, ThemeProvider } from '@shopify/restyle';
+import { ThemeProvider } from '@shopify/restyle';
 import { Stack } from 'expo-router';
-import { View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import LoginSheet from '~/components/authentication/login-sheet';
 
-import { LoadingFull } from '~/components/LoadingFull';
+import LoginSheet from '~/components/authentication/login-sheet';
 import { theme } from '~/theme';
 import { AuthContextProvider, useAuth } from '~/utils/auth/auth-context';
 
@@ -16,7 +14,7 @@ export const unstable_settings = {
 function InnerRootLayout() {
   const { isLoadingAuth, session } = useAuth();
 
-  if (isLoadingAuth) {
+  if (!isLoadingAuth) {
     return <LoginSheet isLoadingAuth />;
   }
 

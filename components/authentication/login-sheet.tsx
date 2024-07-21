@@ -1,6 +1,6 @@
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { useRouter } from 'expo-router';
-import { Alert, View, StyleSheet } from 'react-native';
+import { Alert, View, StyleSheet, ActivityIndicator } from 'react-native';
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
 import { LoadingFull } from '../LoadingFull';
@@ -23,7 +23,9 @@ const LoginSheet = ({ isLoadingAuth }: { isLoadingAuth?: boolean }) => {
           <Animated.Text style={[styles.text, textStyle]}>
             <Text>Loading your account</Text>
           </Animated.Text>
-          <LoadingFull />
+          <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1, marginTop: -50 }}>
+            <ActivityIndicator size="large" color="black" />
+          </View>
         </View>
       </View>
     );

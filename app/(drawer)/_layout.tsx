@@ -26,8 +26,9 @@ const DrawerLayout = () => {
       <Drawer.Screen
         name="index"
         options={{
-          headerTitle: 'Mindsherpa',
-          drawerPosition: 'left',
+          // Enable this if you want the same title to be show across all views.
+          // headerTitle: 'Mindsherpa',
+          drawerPosition: 'right',
           drawerLabel: 'Home',
           drawerIcon: ({ size, color }) => (
             <Ionicons name="home-outline" size={size} color={color} />
