@@ -29,7 +29,7 @@ function InnerRootLayout() {
 
   return (
     <Stack>
-      <Stack.Screen name="(auth)" options={{ title: 'Auth' }} />
+      <Stack.Screen name="(auth)/index" options={{ title: 'Auth' }} />
     </Stack>
   );
 }

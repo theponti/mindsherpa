@@ -1,5 +1,5 @@
 import { LinearProgress } from '@rneui/themed';
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   FlatList,
   Keyboard,
@@ -7,18 +7,11 @@ import {
   Platform,
   StyleSheet,
   Text,
-  TextInput,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withClamp,
-  withSpring,
-} from 'react-native-reanimated';
 
-import { Button } from './Button';
+import MessageForm from './message-form';
 
 import { Box } from '~/theme';
 import { log } from '~/utils/logger';
@@ -26,7 +19,6 @@ import { Message, messagesService, useChatMessages } from '~/utils/services/mess
 
 export const Chat = ({ chatId, userId }: { chatId: string; userId: string }) => {
   const [chatError, setChatError] = useState(null);
-  const [text, setText] = useState('');
 
   // ========= Data ====================================================================
   const {
@@ -36,7 +28,7 @@ export const Chat = ({ chatId, userId }: { chatId: string; userId: string }) => 
   } = useChatMessages({ chatId, userId });
 
   // ========= Handlers ================================================================
-  const handleSend = async () => {
+  const handleSend = async (text: string) => {
     try {
       const content = text.trim();
       if (content.length > 0) {
@@ -45,8 +37,8 @@ export const Chat = ({ chatId, userId }: { chatId: string; userId: string }) => 
         if (error) {
           throw new Error(error.message);
         }
+
         fetchMessages();
-        setText('');
       }
     } catch (error: any) {
       log('Error sending message:', error.message);
@@ -65,7 +57,6 @@ export const Chat = ({ chatId, userId }: { chatId: string; userId: string }) => 
           throw new Error(error.message);
         }
         fetchMessages();
-        setText('');
       }
     } catch (error: any) {
       log('Error sending message:', error.message);
@@ -98,51 +89,10 @@ export const Chat = ({ chatId, userId }: { chatId: string; userId: string }) => 
             <Text>{chatError}</Text>
           </View>
         ) : null}
-        <View style={styles.form}>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter message"
-            value={text}
-            onChangeText={setText}
-          />
-          <Button title="Send" onPress={handleSend} style={styles.button} />
-        </View>
-        <SherpaForm onSubmit={onSherpaFormSubmit} />
+        <MessageForm onSubmit={handleSend} />
+        <MessageForm onSubmit={onSherpaFormSubmit} />
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
-  );
-};
-
-const SherpaForm = ({ onSubmit }: { onSubmit: (text: string) => void }) => {
-  const [text, setText] = useState('');
-  const width = useSharedValue(200);
-
-  const onSubmitButtonClick = useCallback(() => {
-    onSubmit(text);
-  }, [text]);
-
-  const formStyles = useAnimatedStyle(() => ({
-    transform: [
-      {
-        translateY: withClamp({ min: 0, max: 200 }, withSpring(width.value, { duration: 2000 })),
-      },
-    ],
-  }));
-
-  useEffect(() => {
-    width.value = 0;
-  });
-
-  return (
-    <Animated.View style={[styles.form, formStyles]}>
-      <TextInput
-        style={styles.input}
-        placeholder="Ask sherpa"
-        value={text}
-        onChangeText={setText}
-      />
-      <Button title="Send" onPress={onSubmitButtonClick} style={styles.button} />
-    </Animated.View>
   );
 };
 
@@ -165,7 +115,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    paddingHorizontal: 24,
     // paddingVertical: 24,
     marginTop: 16,
     marginBottom: 26,
@@ -176,6 +125,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   messages: {
+    paddingHorizontal: 24,
     flex: 1,
   },
   botMessage: {
@@ -202,25 +152,6 @@ const styles = StyleSheet.create({
   },
   messageText: {
     color: '#fff',
-  },
-  form: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    height: 60,
-  },
-  input: {
-    flex: 1,
-    borderColor: 'gray',
-    borderWidth: 1,
-    paddingHorizontal: 16,
-    marginRight: 8,
-    borderRadius: 5,
-    height: 50,
-  },
-  button: {
-    height: 50,
-    borderRadius: 8,
   },
   error: {
     display: 'flex',

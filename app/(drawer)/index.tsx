@@ -1,15 +1,14 @@
-import { Stack } from 'expo-router';
+import { Redirect, Stack } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { ActivityIndicator, StyleSheet } from 'react-native';
 
-import { LoadingFull } from '~/components/LoadingFull';
 import { Chat } from '~/components/chat';
-import { Box } from '~/theme';
+import { Box, Text } from '~/theme';
 import { useAuth } from '~/utils/auth/auth-context';
 import { chatsService } from '~/utils/services/chats-service';
 
 export default function Dashboard() {
-  const { session } = useAuth();
+  const { session, isLoadingAuth } = useAuth();
   const [activeChat, setActiveChat] = useState<any>(null);
 
   useEffect(() => {
@@ -20,10 +19,15 @@ export default function Dashboard() {
     getActiveChat();
   }, []);
 
+  if (!isLoadingAuth && !session) {
+    return <Redirect href="(auth)/index" />;
+  }
+
   if (!activeChat) {
     return (
       <Box style={styles.loading}>
-        <LoadingFull title="Loading chat" />
+        <Text variant="title">Loading your chat...</Text>
+        <ActivityIndicator size="large" color="black" />
       </Box>
     );
   }

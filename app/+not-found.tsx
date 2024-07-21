@@ -1,5 +1,5 @@
 import { Link, Stack } from 'expo-router';
-import { Box, Text, makeStyles } from 'theme';
+import { Text, makeStyles } from 'theme';
 
 import { Container } from '~/components/Container';
 

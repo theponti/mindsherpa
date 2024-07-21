@@ -73,6 +73,10 @@ export function AuthContextProvider({ children }: PropsWithChildren) {
           }
         }
 
+        if (getProfileResponse.data) {
+          setProfile(getProfileResponse.data);
+        }
+
         setSession(sessionData.session);
       }
 
@@ -83,6 +87,10 @@ export function AuthContextProvider({ children }: PropsWithChildren) {
 
     supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
+
+      if (!session) {
+        setProfile(null);
+      }
     });
   }, []);
 

@@ -1,4 +1,4 @@
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { LinearProgress } from '@rneui/themed';
 import { Link } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
@@ -28,23 +28,37 @@ const DrawerLayout = () => {
         options={{
           // Enable this if you want the same title to be show across all views.
           // headerTitle: 'Mindsherpa',
-          drawerPosition: 'right',
+          drawerPosition: 'left',
           drawerLabel: 'Home',
           drawerIcon: ({ size, color }) => (
-            <Ionicons name="home-outline" size={size} color={color} />
+            <MaterialIcons name="home-filled" size={size} color={color} />
           ),
         }}
       />
       <Drawer.Screen
         name="(tabs)"
         options={{
-          headerTitle: 'Tabs',
-          drawerLabel: 'Tabs',
-          drawerIcon: ({ size, color }) => (
-            <MaterialIcons name="border-bottom" size={size} color={color} />
-          ),
+          headerTitle: 'Notebook',
+          drawerLabel: 'Notebook',
+          drawerIcon: ({ size, color }) => <MaterialIcons name="book" size={size} color={color} />,
           headerRight: () => (
             <Link href="/modal" asChild>
+              <HeaderButton />
+            </Link>
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="(account)"
+        options={{
+          headerTitle: 'Account',
+          drawerLabel: 'Account',
+          drawerPosition: 'left',
+          drawerIcon: ({ size, color }) => (
+            <MaterialIcons name="person" size={size} color={color} />
+          ),
+          headerRight: () => (
+            <Link href="/account" asChild>
               <HeaderButton />
             </Link>
           ),

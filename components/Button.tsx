@@ -23,8 +23,8 @@ export const Button = forwardRef<TouchableOpacity, ButtonProps>(
 const useStyles = makeStyles((theme) => ({
   button: {
     alignItems: 'center',
-    backgroundColor: theme.colors.purple,
-    borderRadius: theme.borderRadii.xl_24,
+    backgroundColor: theme.colors.black,
+    borderRadius: theme.borderRadii.l_12,
     elevation: 5,
     flexDirection: 'row',
     justifyContent: 'center',
