@@ -14,7 +14,7 @@ export const unstable_settings = {
 function InnerRootLayout() {
   const { isLoadingAuth, session } = useAuth();
 
-  if (!isLoadingAuth) {
+  if (isLoadingAuth) {
     return <LoginSheet isLoadingAuth />;
   }
 
