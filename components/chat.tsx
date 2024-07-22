@@ -1,19 +1,19 @@
-import { LinearProgress } from '@rneui/themed';
 import { useState } from 'react';
 import {
+  ActivityIndicator,
   FlatList,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
-  Text,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
 
+import ChatLoading from './chat-loading';
 import MessageForm from './message-form';
 
-import { Box } from '~/theme';
+import { Box, Text } from '~/theme';
 import { log } from '~/utils/logger';
 import { Message, messagesService, useChatMessages } from '~/utils/services/messages-service';
 
@@ -46,30 +46,8 @@ export const Chat = ({ chatId, userId }: { chatId: string; userId: string }) => 
     }
   };
 
-  const onSherpaFormSubmit = async (text: string) => {
-    try {
-      const content = text.trim();
-      if (content.length > 0) {
-        const { error } = await messagesService.create({ chatId, content, userId });
-        // ! TODO - Query Sherpa API for response
-
-        if (error) {
-          throw new Error(error.message);
-        }
-        fetchMessages();
-      }
-    } catch (error: any) {
-      log('Error sending message:', error.message);
-      setChatError(error.message);
-    }
-  };
-
   if (isMessagesLoading) {
-    return (
-      <Box style={styles.loading}>
-        <LinearProgress />
-      </Box>
-    );
+    return <ChatLoading />;
   }
 
   return (
@@ -90,7 +68,6 @@ export const Chat = ({ chatId, userId }: { chatId: string; userId: string }) => 
           </View>
         ) : null}
         <MessageForm onSubmit={handleSend} />
-        <MessageForm onSubmit={onSherpaFormSubmit} />
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   );
@@ -118,11 +95,6 @@ const styles = StyleSheet.create({
     // paddingVertical: 24,
     marginTop: 16,
     marginBottom: 26,
-  },
-  loading: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   messages: {
     paddingHorizontal: 24,
