@@ -40,9 +40,7 @@ export default function RootLayout() {
     <ThemeProvider theme={theme}>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <AuthContextProvider>
-          <UrqlProvider>
-            <InnerRootLayout />
-          </UrqlProvider>
+          <InnerRootLayout />
         </AuthContextProvider>
       </GestureHandlerRootView>
     </ThemeProvider>

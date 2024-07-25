@@ -31,7 +31,15 @@ export const Chat = ({ chatId, userId }: { chatId: string; userId: string }) => 
     try {
       const content = text.trim();
       if (content.length > 0) {
-        const { error } = await messagesService.create({ chatId, content, userId });
+        const { data, error } = await messagesService.create({
+          chatId,
+          content,
+          role: 'user',
+          userId,
+        });
+
+        console.log('data', data);
+        console.log('error', error);
 
         if (error) {
           throw new Error(error.message);

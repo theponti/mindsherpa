@@ -1,5 +1,5 @@
 import { Redirect, Stack } from 'expo-router';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { View } from 'react-native';
 
 import { Button } from '~/components/Button';
@@ -8,12 +8,19 @@ import TextInput from '~/components/text-input';
 import { Text } from '~/theme';
 import { useAuth } from '~/utils/auth/auth-context';
 import { profilesService } from '~/utils/services/profiles-service';
+import { storage } from '~/utils/storage';
 import { supabase } from '~/utils/supabase';
 
 function Account() {
   const { profile, session } = useAuth();
+  const [aiKey, setAiKey] = useState(storage.getString('aiKey') || '');
   const onLogoutPress = () => {
     supabase.auth.signOut();
+  };
+
+  const onAIKeyInputChange = (text: string) => {
+    setAiKey(text);
+    storage.set('aiKey', text);
   };
 
   const onAvatarUpload = useCallback(async (url: string) => {
@@ -52,6 +59,14 @@ function Account() {
             placeholder="Enter your name"
             value={session.user.email}
             // onChangeText={(text) => setName(text)}
+          />
+        </View>
+        <View style={{ rowGap: 8 }}>
+          <Text variant="label">AI Key</Text>
+          <TextInput
+            placeholder="Enter your name"
+            value={aiKey}
+            onChangeText={onAIKeyInputChange}
           />
         </View>
         <View

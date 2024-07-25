@@ -1,4 +1,3 @@
-import { LinearProgress } from '@rneui/themed';
 import { useState } from 'react';
 import {
   FlatList,
@@ -13,7 +12,6 @@ import {
 
 import ChatLoading from '~/components/chat-loading';
 import MessageForm from '~/components/message-form';
-import { Box } from '~/theme';
 import { log } from '~/utils/logger';
 import { Message, messagesService, useChatMessages } from '~/utils/services/messages-service';
 
@@ -33,7 +31,7 @@ export const Chat = ({ chatId, userId }: { chatId: string; userId: string }) => 
     try {
       const content = text.trim();
       if (content.length > 0) {
-        const { error } = await messagesService.create({ chatId, content, userId });
+        const { error } = await messagesService.create({ chatId, content, role: 'user', userId });
         // ! TODO - Query Sherpa API for response
 
         if (error) {
