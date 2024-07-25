@@ -1,7 +1,8 @@
 import { Redirect, Stack } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
+import { LoadingFull } from '~/components/LoadingFull';
 import { Chat } from '~/components/chat';
 import { Box, Text } from '~/theme';
 import { useAuth } from '~/utils/auth/auth-context';
@@ -25,10 +26,9 @@ export default function Dashboard() {
 
   if (!activeChat) {
     return (
-      <Box style={styles.loading}>
+      <LoadingFull>
         <Text variant="title">Loading your chat...</Text>
-        <ActivityIndicator size="large" color="black" />
-      </Box>
+      </LoadingFull>
     );
   }
 

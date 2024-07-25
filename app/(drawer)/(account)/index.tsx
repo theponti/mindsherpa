@@ -40,34 +40,34 @@ function Account() {
     return <Redirect href="(auth)/index" />;
   }
 
-  if (!profile) {
-    console.error('Profile not found', session, profile);
-  }
   const { name, avatar_url } = profile || {};
 
   return (
     <>
       <Stack.Screen options={{ title: 'Account' }} />
       <View style={{ flex: 1, paddingHorizontal: 12, paddingVertical: 24, rowGap: 8 }}>
+        <Text variant="large">Your account</Text>
         <Avatar size={200} url={avatar_url || ''} onUpload={onAvatarUpload} />
-        <Text variant="title">Your account</Text>
-        <View style={{ rowGap: 8 }}>
-          <Text variant="label">Email</Text>
-          <TextInput
-            aria-disabled
-            editable={false}
-            placeholder="Enter your name"
-            value={session.user.email}
-            // onChangeText={(text) => setName(text)}
-          />
-        </View>
-        <View style={{ rowGap: 8 }}>
-          <Text variant="label">AI Key</Text>
-          <TextInput
-            placeholder="Enter your name"
-            value={aiKey}
-            onChangeText={onAIKeyInputChange}
-          />
+
+        <View style={{ flex: 1, rowGap: 24, marginTop: 32 }}>
+          <View style={{ rowGap: 8 }}>
+            <Text variant="label">Email</Text>
+            <TextInput
+              aria-disabled
+              editable={false}
+              placeholder="Enter your name"
+              value={session.user.email}
+              // onChangeText={(text) => setName(text)}
+            />
+          </View>
+          <View style={{ rowGap: 8 }}>
+            <Text variant="label">AI Key</Text>
+            <TextInput
+              placeholder="Enter your name"
+              value={aiKey}
+              onChangeText={onAIKeyInputChange}
+            />
+          </View>
         </View>
         <View
           style={{

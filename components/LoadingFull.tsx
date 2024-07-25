@@ -1,13 +1,13 @@
-import { LinearProgress } from '@rneui/themed';
-import { StyleSheet } from 'react-native';
+import { PropsWithChildren } from 'react';
+import { ActivityIndicator, StyleSheet } from 'react-native';
 
-import { Box, Text } from '~/theme';
+import { Box } from '~/theme';
 
-export const LoadingFull = ({ title }: { title?: string }) => {
+export const LoadingFull = ({ children }: PropsWithChildren) => {
   return (
     <Box style={styles.loading}>
-      {title ? <Text variant="title">{title}</Text> : null}
-      <LinearProgress color="black" />
+      {children}
+      <ActivityIndicator size="large" color="black" />
     </Box>
   );
 };

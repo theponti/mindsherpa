@@ -1,6 +1,6 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, TextInput, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, TextInput, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
@@ -11,7 +11,13 @@ import Animated, {
 
 import { VoiceRecorder, useVoiceRecorder } from './voice-recorder';
 
-const MessageForm = ({ onSubmit }: { onSubmit: (text: string) => void }) => {
+const MessageForm = ({
+  isLoading,
+  onSubmit,
+}: {
+  isLoading: boolean;
+  onSubmit: (text: string) => void;
+}) => {
   const [text, setText] = useState('');
   const { isRecording, startRecording, stopRecording, recordingStatus, soundURI } =
     useVoiceRecorder();
@@ -67,17 +73,19 @@ const MessageForm = ({ onSubmit }: { onSubmit: (text: string) => void }) => {
           value={text}
           onChangeText={setText}
         />
-        {text.length > 0 ? (
+        {isLoading ? (
+          <ActivityIndicator size="small" color="black" />
+        ) : text.length > 0 && !isLoading ? (
           <TouchableOpacity onPress={onSubmitButtonClick} style={[styles.sendButton]}>
             <MaterialIcons name="send" size={24} color="black" />
           </TouchableOpacity>
         ) : null}
-        {isRecording ? (
+        {text.length === 0 && isRecording ? (
           <TouchableOpacity onPress={onStopRecordingPress} style={[styles.sendButton]}>
             <MaterialIcons name="stop" size={24} color="black" />
           </TouchableOpacity>
         ) : null}
-        {!isRecording ? (
+        {text.length === 0 && !isRecording ? (
           <TouchableOpacity onPress={onMicrophonePress} style={[styles.sendButton]}>
             <MaterialIcons name="mic" size={24} color="black" />
           </TouchableOpacity>
