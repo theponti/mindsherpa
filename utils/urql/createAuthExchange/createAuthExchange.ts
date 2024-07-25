@@ -1,7 +1,8 @@
 import { authExchange as urqlAuthExchange } from '@urql/exchange-auth';
 
 import { isTokenExpired } from './isTokenExpired';
-import { useAuth } from '~/utils/auth/auth-context';
+
+import { getToken } from '~/utils/auth/auth-context';
 
 /**
  * # Urql Auth Exchange
@@ -55,5 +56,5 @@ export const createAuthExchange = (getTokenRef: MaybeGetTokenRef) => {
 // ─────────────────────────────────────────────────────────────────────────────
 // ── TYPES ────────────────────────────────────────────────────────────────────
 
-type GetToken = ReturnType<typeof useAuth>['getToken'];
+type GetToken = Awaited<typeof getToken>;
 type MaybeGetTokenRef = React.MutableRefObject<GetToken | undefined>;

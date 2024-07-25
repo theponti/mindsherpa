@@ -1,1 +1,1 @@
-export { graphcacheExchange, offlineStorage } from './graphcacheExchange';
+export { asyncStorage, graphcacheExchange } from './graphcacheExchange';

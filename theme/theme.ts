@@ -30,6 +30,7 @@ const theme = createTheme({
       fontSize: 16,
     },
     title: { fontSize: 20, fontWeight: 'bold' },
+    label: { fontSize: 16, fontWeight: 'bold' },
     large: {
       fontSize: 36,
     },

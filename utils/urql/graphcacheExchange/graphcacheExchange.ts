@@ -1,15 +1,18 @@
-import { makeDefaultStorage } from '@urql/exchange-graphcache/default-storage';
 import { offlineExchange } from '@urql/exchange-graphcache';
-// import schema from '@prolog/schema/introspection';
-// import { type GraphCacheConfig } from '@prolog/schema/cache-config';
+import { makeAsyncStorage } from '@urql/storage-rn';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ── CONFIG ───────────────────────────────────────────────────────────────────
-export const offlineStorage = makeDefaultStorage();
+
+export const asyncStorage = makeAsyncStorage({
+  dataKey: 'graphcache-data', // The AsyncStorage key used for the data (defaults to graphcache-data)
+  metadataKey: 'graphcache-metadata', // The AsyncStorage key used for the metadata (defaults to graphcache-metadata)
+  maxAge: 7, // How long to persist the data in storage (defaults to 7 days)
+});
 const config: GraphCacheConfigWithStorage = {
   // keys: {},
   // schema, // for schema awareness
-  storage: offlineStorage,
+  storage: asyncStorage,
 };
 
 export const graphcacheExchange = offlineExchange(config);
@@ -22,5 +25,5 @@ export const graphcacheExchange = offlineExchange(config);
 // };
 
 type GraphCacheConfigWithStorage = {
-  storage: ReturnType<typeof makeDefaultStorage>;
+  storage: ReturnType<typeof makeAsyncStorage>;
 };

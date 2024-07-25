@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import {
-  ActivityIndicator,
   FlatList,
   Keyboard,
   KeyboardAvoidingView,
@@ -13,7 +12,7 @@ import {
 import ChatLoading from './chat-loading';
 import MessageForm from './message-form';
 
-import { Box, Text } from '~/theme';
+import { Text } from '~/theme';
 import { log } from '~/utils/logger';
 import { Message, messagesService, useChatMessages } from '~/utils/services/messages-service';
 
@@ -61,6 +60,7 @@ export const Chat = ({ chatId, userId }: { chatId: string; userId: string }) => 
           data={messages}
           keyExtractor={(item) => item.id}
           renderItem={renderMessage}
+          contentContainerStyle={styles.messagesContainer}
         />
         {chatError ? (
           <View style={styles.error}>
@@ -111,7 +111,8 @@ const styles = StyleSheet.create({
   },
   userMessage: {
     fontSize: 16,
-    padding: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 16,
     borderBottomRightRadius: 0,
     borderTopRightRadius: 10,
     borderBottomLeftRadius: 10,
@@ -132,5 +133,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
     borderRadius: 5,
     marginVertical: 4,
+  },
+  messagesContainer: {
+    // Prevent messages from being hidden behind the keyboard.
+    paddingBottom: 150,
+    paddingTop: 16,
   },
 });

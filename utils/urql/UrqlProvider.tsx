@@ -1,8 +1,10 @@
-import React, { useCallback, useMemo, useState, createContext, useContext } from 'react';
+import React, { useState, createContext, useContext, useRef } from 'react';
 import { Client, Provider as ActualUrqlProvider, fetchExchange } from 'urql';
-import { graphcacheExchange, offlineStorage } from './graphcacheExchange';
+
 import { createAuthExchange } from './createAuthExchange';
+import { asyncStorage, graphcacheExchange } from './graphcacheExchange';
 import { getToken } from '../auth/auth-context';
+import { supabase } from '../supabase';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ── PROVIDER ─────────────────────────────────────────────────────────────────
@@ -10,12 +12,19 @@ import { getToken } from '../auth/auth-context';
 type Props = Readonly<{ children?: React.ReactNode }>;
 
 export const UrqlProvider = (props: Props) => {
-  const { client, resetClient } = useUrqlClientWithClerkAuth();
+  const getTokenRef = useRef(getToken);
+  const [client, setClient] = useState<Client>(getClient(getTokenRef));
 
-  const value = useMemo(() => ({ resetClient }), [resetClient]);
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_OUT') {
+      asyncStorage?.clear();
+      console.info('UrqlProvider > resetClient: urql client reset');
+      setClient(getClient(getTokenRef));
+    }
+  });
 
   return (
-    <UrqlAppContextWrapper.Provider value={value}>
+    <UrqlAppContextWrapper.Provider value={{}}>
       <ActualUrqlProvider value={client}>{props.children}</ActualUrqlProvider>
     </UrqlAppContextWrapper.Provider>
   );
@@ -26,7 +35,7 @@ export const UrqlProvider = (props: Props) => {
  */
 const UrqlAppContextWrapper = createContext<UrqlContext | undefined>(undefined);
 
-type UrqlContext = Readonly<{ resetClient: () => Promise<void> }>;
+type UrqlContext = Readonly<object>;
 
 export function useUrqlAppContext() {
   const context = useContext(UrqlAppContextWrapper);
@@ -36,23 +45,6 @@ export function useUrqlAppContext() {
   }
 
   return context;
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// ── HOOKS ────────────────────────────────────────────────────────────────────
-
-function useUrqlClientWithClerkAuth() {
-  const getTokenRef = useClerkGetTokenRef();
-
-  const [client, setClient] = useState<Client>(getClient(getTokenRef));
-
-  const resetClient = useCallback(async () => {
-    await offlineStorage?.clear();
-    console.info('UrqlProvider > resetClient: urql client reset');
-    setClient(getClient(getTokenRef));
-  }, [getTokenRef]);
-
-  return { client, resetClient };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -5,6 +5,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import LoginSheet from '~/components/authentication/login-sheet';
 import { theme } from '~/theme';
 import { AuthContextProvider, useAuth } from '~/utils/auth/auth-context';
+import { UrqlProvider } from '~/utils/urql';
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
@@ -39,7 +40,9 @@ export default function RootLayout() {
     <ThemeProvider theme={theme}>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <AuthContextProvider>
-          <InnerRootLayout />
+          <UrqlProvider>
+            <InnerRootLayout />
+          </UrqlProvider>
         </AuthContextProvider>
       </GestureHandlerRootView>
     </ThemeProvider>
