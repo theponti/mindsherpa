@@ -1,6 +1,5 @@
 import { Redirect, Stack } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { StyleSheet } from 'react-native';
 
 import { LoadingFull } from '~/components/LoadingFull';
 import { Chat } from '~/components/chat';
@@ -24,28 +23,17 @@ export default function Dashboard() {
     return <Redirect href="(auth)/index" />;
   }
 
-  if (!activeChat) {
-    return (
-      <LoadingFull>
-        <Text variant="title">Loading your chat...</Text>
-      </LoadingFull>
-    );
-  }
-
   return (
     <>
       <Stack.Screen options={{ title: 'Chats' }} />
       <Box flex={1}>
-        <Chat chatId={activeChat.id} userId={session!.user.id} />
+        {!activeChat ? (
+          <LoadingFull>
+            <Text variant="title">Loading your chat...</Text>
+          </LoadingFull>
+        ) : null}
+        {activeChat ? <Chat chatId={activeChat.id} userId={session!.user.id} /> : null}
       </Box>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  loading: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});

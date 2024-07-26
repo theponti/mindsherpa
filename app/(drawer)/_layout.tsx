@@ -1,4 +1,4 @@
-import { MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome6, MaterialIcons } from '@expo/vector-icons';
 import { LinearProgress } from '@rneui/themed';
 import { Link } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
@@ -29,14 +29,14 @@ const DrawerLayout = () => {
           // Enable this if you want the same title to be show across all views.
           // headerTitle: 'Mindsherpa',
           drawerPosition: 'left',
-          drawerLabel: 'Home',
+          drawerLabel: 'Sherpa',
           drawerIcon: ({ size, color }) => (
-            <MaterialIcons name="home-filled" size={size} color={color} />
+            <FontAwesome6 name="hat-wizard" size={size} color={color} />
           ),
         }}
       />
       <Drawer.Screen
-        name="(tabs)"
+        name="(notebook)"
         options={{
           headerTitle: 'Notebook',
           drawerLabel: 'Notebook',
