@@ -24,7 +24,7 @@ const DrawerLayout = () => {
   return (
     <Drawer>
       <Drawer.Screen
-        name="index"
+        name="(sherpa)"
         options={{
           // Enable this if you want the same title to be show across all views.
           // headerTitle: 'Mindsherpa',

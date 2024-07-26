@@ -8,9 +8,8 @@ const styles = StyleSheet.create({
   input: {
     borderColor: 'gray',
     borderWidth: 1,
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
     paddingVertical: 12,
-    marginRight: 8,
     borderRadius: 6,
   },
 });

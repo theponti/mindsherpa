@@ -35,7 +35,6 @@ export const Chat = ({ chatId, userId }: { chatId: string; userId: string }) => 
         keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
         style={styles.container}>
         <FlatList
-          style={styles.messages}
           data={messages}
           keyExtractor={(item) => item.id}
           renderItem={renderMessage}
@@ -55,13 +54,6 @@ export const Chat = ({ chatId, userId }: { chatId: string; userId: string }) => 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'column',
-    marginTop: 16,
-    marginBottom: 26,
-  },
-  messages: {
-    paddingHorizontal: 24,
-    flex: 1,
   },
   error: {
     display: 'flex',
@@ -73,7 +65,8 @@ const styles = StyleSheet.create({
   },
   messagesContainer: {
     // Prevent messages from being hidden behind the keyboard.
-    paddingBottom: 150,
+    paddingBottom: 250,
     paddingTop: 16,
+    paddingHorizontal: 24,
   },
 });

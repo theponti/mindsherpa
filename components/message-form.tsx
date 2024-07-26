@@ -1,6 +1,6 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, TextInput, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
@@ -9,6 +9,7 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 
+import TextInput from './text-input';
 import { VoiceRecorder, useVoiceRecorder } from './voice-recorder';
 
 const MessageForm = ({
@@ -53,7 +54,7 @@ const MessageForm = ({
   });
 
   return (
-    <View>
+    <View style={{ marginBottom: 26 }}>
       {isRecording ? (
         <VoiceRecorder
           level={recordingStatus?.metering}
@@ -108,20 +109,26 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   form: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 12,
     gap: 8,
     height: 60,
+    zIndex: 100,
   },
   input: {
     flex: 1,
+    backgroundColor: 'white',
+    color: 'black',
     borderColor: 'gray',
     borderWidth: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    marginRight: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 14,
     borderRadius: 50,
   },
 });
