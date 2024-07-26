@@ -12,9 +12,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { ReText } from 'react-native-redash';
 
-import { Box } from '~/theme';
 import { Colors } from '~/utils/styles';
-import LoginSheet from './authentication/login-sheet';
 
 const content = [
   {
@@ -177,22 +175,19 @@ const AnimatedIntro = () => {
   );
 
   return (
-    <Box flex={1}>
-      <Animated.View style={[styles.wrapper, style1]}>
-        <Animated.View style={[styles.container]}>
-          <Animated.View style={[styles.ball, ballStyle]} />
-          <Animated.View style={[styles.mask, mask]} />
-          <ReText
-            onLayout={(e) => {
-              labelWidth.value = e.nativeEvent.layout.width + 4;
-            }}
-            style={[styles.title, textStyle]}
-            text={title}
-          />
-        </Animated.View>
+    <Animated.View style={[styles.wrapper, style1]}>
+      <Animated.View style={[styles.container]}>
+        <Animated.View style={[styles.ball, ballStyle]} />
+        <Animated.View style={[styles.mask, mask]} />
+        <ReText
+          onLayout={(e) => {
+            labelWidth.value = e.nativeEvent.layout.width + 4;
+          }}
+          style={[styles.title, textStyle]}
+          text={title}
+        />
       </Animated.View>
-      <LoginSheet />
-    </Box>
+    </Animated.View>
   );
 };
 

@@ -1,6 +1,6 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View, ViewStyle } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
@@ -15,9 +15,11 @@ import { VoiceRecorder, useVoiceRecorder } from './voice-recorder';
 const MessageForm = ({
   isLoading,
   onSubmit,
+  ...props
 }: {
   isLoading: boolean;
   onSubmit: (text: string) => void;
+  style: ViewStyle;
 }) => {
   const [text, setText] = useState('');
   const { isRecording, startRecording, stopRecording, recordingStatus, soundURI } =
@@ -54,7 +56,7 @@ const MessageForm = ({
   });
 
   return (
-    <View style={{ marginBottom: 26 }}>
+    <View style={[props.style]}>
       {isRecording ? (
         <VoiceRecorder
           level={recordingStatus?.metering}
@@ -97,21 +99,11 @@ const MessageForm = ({
 };
 
 const styles = StyleSheet.create({
-  sendButton: {
-    backgroundColor: '#efefef',
-    borderRadius: 50,
-    padding: 8,
-    borderColor: '#b3b3b3',
-    borderWidth: 1,
-  },
   button: {
     height: 50,
     borderRadius: 8,
   },
   form: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -119,7 +111,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     gap: 8,
     height: 60,
-    zIndex: 100,
   },
   input: {
     flex: 1,
@@ -130,6 +121,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 14,
     borderRadius: 50,
+  },
+  sendButton: {
+    backgroundColor: '#efefef',
+    borderRadius: 50,
+    padding: 8,
+    borderColor: '#b3b3b3',
+    borderWidth: 1,
   },
 });
 
