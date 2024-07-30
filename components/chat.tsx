@@ -67,8 +67,8 @@ const styles = StyleSheet.create({
   messagesContainer: {
     // Prevent messages from being hidden behind the keyboard.
     flexGrow: 1,
-    justifyContent: 'flex-end',
-    paddingBottom: 25,
+    // justifyContent: 'flex-end',
+    paddingBottom: 50,
     paddingTop: 16,
     paddingHorizontal: 24,
   },

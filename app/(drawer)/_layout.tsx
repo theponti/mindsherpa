@@ -9,6 +9,7 @@ import Chat from './(sherpa)';
 import { LoadingFull } from '~/components/LoadingFull';
 import { Text } from '~/theme';
 import { useAuth } from '~/utils/auth/auth-context';
+import { Colors } from '~/utils/styles';
 
 const Tab = createBottomTabNavigator();
 
@@ -35,8 +36,8 @@ const App = () => {
             return <GalleryVerticalEnd color={color} size={size} />;
           }
         },
-        tabBarActiveTintColor: 'tomato',
-        tabBarInactiveTintColor: 'gray',
+        tabBarActiveTintColor: Colors.black,
+        tabBarInactiveTintColor: Colors.gray,
         tabBarIconStyle: {
           alignItems: 'center',
           justifyContent: 'center',

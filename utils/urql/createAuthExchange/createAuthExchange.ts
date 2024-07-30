@@ -3,6 +3,7 @@ import { authExchange as urqlAuthExchange } from '@urql/exchange-auth';
 import { isTokenExpired } from './isTokenExpired';
 
 import { getToken } from '~/utils/auth/auth-context';
+import { log } from '~/utils/logger';
 
 /**
  * # Urql Auth Exchange
@@ -37,6 +38,7 @@ export const createAuthExchange = (getTokenRef: MaybeGetTokenRef) => {
           console.info('urqlAuthExchange > refreshAuth > token updated');
         }
 
+        log('new token', newToken);
         token = newToken; // ⚠️ WARNING MUTATION: Update the mutable reference.
       },
 

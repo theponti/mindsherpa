@@ -1,3 +1,4 @@
+import { MoreHorizontal, Plus } from 'lucide-react-native';
 import { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
@@ -14,11 +15,6 @@ import { supabase } from '~/utils/supabase';
 const NotebookScreen = () => {
   const [notes, setNotes] = useState<NoteType[]>([]);
   const [notesError, setNotesError] = useState<string | null>(null);
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
-
-  const expandCard = (index: number) => {
-    setExpandedIndex(expandedIndex === index ? null : index);
-  };
 
   const loadNotes = useCallback(async () => {
     const { data, error } = await getNotes();
@@ -28,13 +24,7 @@ const NotebookScreen = () => {
     }
 
     if (data) {
-      setNotes([
-        { id: data.length + 1, content: 'Personal', expandedIndex: 0 },
-        { id: data.length + 2, content: 'Work', expandedIndex: 0 },
-        { id: data.length + 3, content: 'Grocery', expandedIndex: 0 },
-        { id: data.length + 4, content: 'Side Project', expandedIndex: 0 },
-        ...data,
-      ]);
+      setNotes(data);
     }
   }, []);
 
@@ -59,24 +49,12 @@ const NotebookScreen = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text variant="header">Notes</Text>
-        {/* <View style={styles.headerIcons}>
-          <Text style={styles.iconPlaceholder}>•••</Text>
-          <Text style={styles.iconPlaceholder}>+</Text>
-        </View> */}
+        <HeaderButtons />
       </View>
 
       <FlatList
-        data={notes.map((item, index) => ({ ...item, expandedIndex }))}
-        renderItem={({ item, index }) => (
-          <NoteListItem key={index} item={item} />
-          // <StackedListItem
-          //   item={item}
-          //   index={index}
-          //   totalItems={listItems.length}
-          //   expandCard={expandCard}
-          //   isExpanded={expandedIndex !== null}
-          // />
-        )}
+        data={notes}
+        renderItem={({ item, index }) => <NoteListItem key={index} item={item} />}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
       />
@@ -107,14 +85,6 @@ const styles = StyleSheet.create({
     fontSize: 34,
     fontWeight: 'bold',
   },
-  headerIcons: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  iconPlaceholder: {
-    fontSize: 24,
-    marginLeft: 20,
-  },
   listContainer: {
     paddingHorizontal: 16,
     paddingBottom: 80,
@@ -127,3 +97,27 @@ const styles = StyleSheet.create({
 });
 
 export default NotebookScreen;
+
+const HeaderButtons = () => {
+  return (
+    <View style={headerButttonStyles.headerIcons}>
+      <Text style={headerButttonStyles.iconPlaceholder}>
+        <MoreHorizontal size={24} color={Colors.black} />
+      </Text>
+      <Text style={headerButttonStyles.iconPlaceholder}>
+        <Plus size={24} color={Colors.black} />
+      </Text>
+    </View>
+  );
+};
+
+const headerButttonStyles = StyleSheet.create({
+  headerIcons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  iconPlaceholder: {
+    fontSize: 24,
+    marginLeft: 20,
+  },
+});

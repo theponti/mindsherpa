@@ -52,7 +52,7 @@ export function useUrqlAppContext() {
 
 function getClient(getTokenRef: MaybeGetTokenRef) {
   return new Client({
-    url: process.env.GRAPHQL_ENDPOINT!,
+    url: process.env.EXPO_PUBLIC_GRAPHQL_ENDPOINT!,
     exchanges: [graphcacheExchange, createAuthExchange(getTokenRef), fetchExchange],
   });
 }
