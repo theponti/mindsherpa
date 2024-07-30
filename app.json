@@ -42,7 +42,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.pontistudios.mindsherpa",
@@ -62,6 +64,12 @@
       "eas": {
         "projectId": "6c717814-8866-46bc-b11f-edeedd1b7a69"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/6c717814-8866-46bc-b11f-edeedd1b7a69"
     }
   }
 }

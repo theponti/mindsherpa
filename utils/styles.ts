@@ -1,15 +1,19 @@
 import { StyleSheet } from 'react-native';
 
 export const Colors = {
+  backgroundColor: '#F9FAFB',
   black: '#000000',
   blue: '#007AFF',
   brown: '#A52A2A',
   darkGray: '#38434D',
   gray: '#808080',
+  grayLight: '#E5E5EA',
   lime: '#00FF00',
   orange: '#FFA500',
   pink: '#FF00FF',
   purple: '#6366F1',
+  red: '#FF0000',
+  redLight: '#FF4500',
   sky: '#87CEEB',
   white: '#fff',
 };

@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 
-function Account() {
+function SherpaStack() {
   return (
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: false }} />
@@ -8,4 +8,4 @@ function Account() {
   );
 }
 
-export default Account;
+export default SherpaStack;

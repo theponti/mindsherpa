@@ -76,7 +76,6 @@ export function AuthContextProvider({ children }: PropsWithChildren) {
         if (getProfileResponse.data) {
           setProfile(getProfileResponse.data);
         }
-
         setSession(sessionData.session);
       }
 

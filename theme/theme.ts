@@ -1,5 +1,6 @@
 import { createTheme, useTheme as useRestyleTheme } from '@shopify/restyle';
 import { ImageStyle, TextStyle, ViewStyle } from 'react-native';
+
 import { Colors } from '~/utils/styles';
 
 type NamedStyles<T> = {
@@ -28,6 +29,10 @@ const theme = createTheme({
   textVariants: {
     body: {
       fontSize: 16,
+    },
+    header: {
+      fontSize: 42,
+      fontWeight: 'bold',
     },
     title: { fontSize: 20, fontWeight: 'bold' },
     label: { fontSize: 16, fontWeight: 'bold' },

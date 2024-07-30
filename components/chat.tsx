@@ -10,6 +10,7 @@ import {
 
 import ChatLoading from './chat-loading';
 import { renderMessage } from './chat-message';
+import { FeedbackBlock } from './feedback-block';
 import MessageForm from './message-form';
 
 import { Text } from '~/theme';
@@ -32,31 +33,24 @@ export const Chat = ({ chatId, userId }: { chatId: string; userId: string }) => 
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
         style={styles.container}>
         <View style={[styles.messagesWrap]}>
           <FlatList
+            scrollEnabled
             data={messages}
             keyExtractor={(item) => item.id}
+            keyboardShouldPersistTaps="handled"
             renderItem={renderMessage}
             contentContainerStyle={styles.messagesContainer}
           />
         </View>
         {chatError ? (
-          <View style={styles.error}>
+          <FeedbackBlock>
             <Text>{chatError}</Text>
-          </View>
+          </FeedbackBlock>
         ) : null}
-        <MessageForm
-          isLoading={isChatSending}
-          onSubmit={sendMessage}
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            marginBottom: 26,
-          }}
-        />
+        <MessageForm isLoading={isChatSending} onSubmit={sendMessage} style={styles.messageForm} />
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   );
@@ -65,23 +59,18 @@ export const Chat = ({ chatId, userId }: { chatId: string; userId: string }) => 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  error: {
-    display: 'flex',
-    gap: 4,
-    padding: 10,
-    backgroundColor: 'red',
-    borderRadius: 5,
-    marginVertical: 4,
+    overflow: 'scroll',
   },
   messagesWrap: {
     flex: 1,
   },
   messagesContainer: {
     // Prevent messages from being hidden behind the keyboard.
-    paddingBottom: 250,
+    flexGrow: 1,
+    justifyContent: 'flex-end',
+    paddingBottom: 25,
     paddingTop: 16,
     paddingHorizontal: 24,
-    flexGrow: 1,
   },
+  messageForm: {},
 });

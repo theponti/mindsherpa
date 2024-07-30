@@ -5,7 +5,6 @@ import { storage } from '../storage';
 
 export function getGroq() {
   const apiKey = storage.getString('aiKey');
-  console.log('apiKey', apiKey);
   return new Groq({ apiKey });
 }
 

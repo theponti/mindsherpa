@@ -27,31 +27,7 @@ export default function Dashboard() {
 
   return (
     <Container>
-      <Svg
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          flex: 1,
-        }}>
-        <Defs>
-          <LinearGradient
-            id="gradient"
-            x1="0%"
-            y1="0%"
-            x2="100%"
-            y2="100%"
-            gradientUnits="userSpaceOnUse">
-            <Stop offset="0%" stopColor="rgb(0,0,0)" />
-            <Stop offset="30%" stopColor="rgb(63,94,251)" />
-            <Stop offset="60%" stopColor="rgb(252,70,107)" />
-          </LinearGradient>
-        </Defs>
-        <Rect width="100%" height="100%" fill="url(#gradient)" />
-      </Svg>
-      <Box style={{ flex: 1, overflow: 'scroll' }}>
+      <Box style={{ flex: 1, overflow: 'scroll', paddingTop: 50 }}>
         {!activeChat ? (
           <LoadingFull>
             <Text variant="title">Loading your chat...</Text>

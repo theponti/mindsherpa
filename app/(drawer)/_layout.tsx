@@ -1,82 +1,64 @@
-import { FontAwesome6, MaterialIcons } from '@expo/vector-icons';
-import { LinearProgress } from '@rneui/themed';
-import { Link } from 'expo-router';
-import { Drawer } from 'expo-router/drawer';
-import { StyleSheet } from 'react-native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Home, MessageSquare, GalleryVerticalEnd } from 'lucide-react-native';
+import React from 'react';
 
-import { HeaderButton } from '../../components/HeaderButton';
+import Focus from './(focus)';
+import Notebook from './(notebook)';
+import Chat from './(sherpa)';
 
-import { Box, Text } from '~/theme';
+import { LoadingFull } from '~/components/LoadingFull';
+import { Text } from '~/theme';
 import { useAuth } from '~/utils/auth/auth-context';
 
-const DrawerLayout = () => {
+const Tab = createBottomTabNavigator();
+
+const App = () => {
   const { session } = useAuth();
 
   if (!session) {
     return (
-      <Box style={styles.loading}>
+      <LoadingFull>
         <Text variant="title">Loading your account...</Text>
-        <LinearProgress color="blue" />
-      </Box>
+      </LoadingFull>
     );
   }
 
   return (
-    <Drawer>
-      <Drawer.Screen
-        name="(sherpa)"
-        options={{
-          // Enable this if you want the same title to be show across all views.
-          // headerTitle: 'Mindsherpa',
-          drawerPosition: 'left',
-          drawerLabel: 'Sherpa',
-          drawerIcon: ({ size, color }) => (
-            <FontAwesome6 name="hat-wizard" size={size} color={color} />
-          ),
-        }}
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {
+          if (route.name === 'Home') {
+            return <Home color={color} size={size} />;
+          } else if (route.name === 'Chat') {
+            return <MessageSquare color={color} size={size} />;
+          } else if (route.name === 'Work') {
+            return <GalleryVerticalEnd color={color} size={size} />;
+          }
+        },
+        tabBarActiveTintColor: 'tomato',
+        tabBarInactiveTintColor: 'gray',
+        tabBarIconStyle: {
+          alignItems: 'center',
+          justifyContent: 'center',
+        },
+      })}>
+      <Tab.Screen
+        name="Home"
+        component={Focus}
+        options={{ headerShown: false, tabBarLabel: () => null }}
       />
-      <Drawer.Screen
-        name="(notebook)"
-        options={{
-          headerTitle: 'Notebook',
-          drawerLabel: 'Notebook',
-          drawerIcon: ({ size, color }) => <MaterialIcons name="book" size={size} color={color} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <HeaderButton />
-            </Link>
-          ),
-        }}
+      <Tab.Screen
+        name="Chat"
+        options={{ headerShown: false, tabBarLabel: () => null }}
+        component={Chat}
       />
-      <Drawer.Screen
-        name="(account)"
-        options={{
-          headerTitle: 'Account',
-          drawerLabel: 'Account',
-          drawerPosition: 'left',
-          drawerIcon: ({ size, color }) => (
-            <MaterialIcons name="person" size={size} color={color} />
-          ),
-          headerRight: () => (
-            <Link href="/account" asChild>
-              <HeaderButton />
-            </Link>
-          ),
-        }}
+      <Tab.Screen
+        name="Work"
+        options={{ headerShown: false, tabBarLabel: () => null }}
+        component={Notebook}
       />
-    </Drawer>
+    </Tab.Navigator>
   );
 };
 
-const styles = StyleSheet.create({
-  loading: {
-    flex: 1,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    gap: 12,
-  },
-});
-
-export default DrawerLayout;
+export default App;

@@ -114,7 +114,6 @@ export const VoiceRecorder = ({
 }) => {
   const circleScale = scaleLinear().domain([-160, 0]).range([0, 100]);
 
-  console.log('level', level);
   return (
     <View style={styles.container}>
       <Svg height="200" width="200">
