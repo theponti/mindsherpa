@@ -4,6 +4,8 @@ import { StyleSheet, View, Alert, Image, Button } from 'react-native';
 
 import { supabase } from '../utils/supabase';
 
+import { Text } from '~/theme';
+
 interface Props {
   size: number;
   url: string | null;
@@ -90,7 +92,7 @@ export default function Avatar({ url, size = 150, onUpload }: Props) {
   }
 
   return (
-    <View>
+    <View style={{ width: '100%', rowGap: 8, alignItems: 'center' }}>
       {avatarUrl ? (
         <Image
           source={{ uri: avatarUrl }}
@@ -98,22 +100,21 @@ export default function Avatar({ url, size = 150, onUpload }: Props) {
           style={[avatarSize, styles.avatar, styles.image]}
         />
       ) : (
-        <View style={[avatarSize, styles.avatar, styles.noImage]} />
+        <View style={[avatarSize, styles.avatar, styles.noImage]}>
+          <Button
+            title={uploading ? 'Uploading ...' : 'Upload'}
+            onPress={uploadAvatar}
+            disabled={uploading}
+          />
+        </View>
       )}
-      <View>
-        <Button
-          title={uploading ? 'Uploading ...' : 'Upload'}
-          onPress={uploadAvatar}
-          disabled={uploading}
-        />
-      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   avatar: {
-    borderRadius: 5,
+    borderRadius: 1000,
     overflow: 'hidden',
     maxWidth: '100%',
   },
@@ -122,10 +123,12 @@ const styles = StyleSheet.create({
     paddingTop: 0,
   },
   noImage: {
-    backgroundColor: '#333',
-    borderWidth: 1,
+    backgroundColor: '#fae1e6',
+    borderWidth: 10,
     borderStyle: 'solid',
     borderColor: 'rgb(200, 200, 200)',
-    borderRadius: 5,
+    borderRadius: 1000,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

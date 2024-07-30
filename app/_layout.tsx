@@ -2,6 +2,7 @@ import { ThemeProvider } from '@shopify/restyle';
 import { Stack } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
+import LoginSheet from '~/components/authentication/login-sheet';
 import { theme } from '~/theme';
 import { AuthContextProvider, useAuth } from '~/utils/auth/auth-context';
 
@@ -11,7 +12,11 @@ export const unstable_settings = {
 };
 
 function InnerRootLayout() {
-  const { session } = useAuth();
+  const { isLoadingAuth, session } = useAuth();
+
+  if (isLoadingAuth) {
+    return <LoginSheet isLoadingAuth />;
+  }
 
   if (session) {
     return (
@@ -24,12 +29,12 @@ function InnerRootLayout() {
 
   return (
     <Stack>
-      <Stack.Screen name="(auth)" options={{ title: 'Auth' }} />
+      <Stack.Screen name="(auth)/index" options={{ title: 'Auth' }} />
     </Stack>
   );
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout() {
   return (
     <ThemeProvider theme={theme}>
       <GestureHandlerRootView style={{ flex: 1 }}>

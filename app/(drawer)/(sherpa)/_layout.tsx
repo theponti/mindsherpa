@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 
-function AuthLayout() {
+function SherpaStack() {
   return (
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: false }} />
@@ -8,4 +8,4 @@ function AuthLayout() {
   );
 }
 
-export default AuthLayout;
+export default SherpaStack;

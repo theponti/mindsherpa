@@ -1,6 +1,8 @@
 import { Session } from '@supabase/supabase-js';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
 
+import { log } from '../logger';
+import { profilesService } from '../services/profiles-service';
 import { supabase } from '../supabase';
 
 export type Profile = {
@@ -29,7 +31,7 @@ export const useAuth = () => {
   return context;
 };
 
-export function AuthContextProvider({ children }: { children: React.ReactNode }) {
+export function AuthContextProvider({ children }: PropsWithChildren) {
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
   const [profile, setProfile] = useState<any>(null);
   const [session, setSession] = useState<AuthContextSession>(null);
@@ -37,35 +39,44 @@ export function AuthContextProvider({ children }: { children: React.ReactNode })
 
   useEffect(() => {
     async function getInitialSession() {
-      const {
-        data: { session },
-        error,
-      } = await supabase.auth.getSession();
+      const getSessionResponse = await supabase.auth.getSession();
 
-      if (session) {
-        const { user } = session;
-        const profile = await supabase.from('profiles').select().eq('user_id', user.id).single();
+      if (getSessionResponse.error) {
+        // ! TODO - Handle error
+        setAuthError('Could not retrieve session');
+        log('Could not retrieve session', getSessionResponse.error.message);
+        setIsLoadingAuth(false);
+        return;
+      }
+
+      const { data: sessionData } = getSessionResponse;
+      if (sessionData.session && sessionData.session.user) {
+        const { user } = sessionData.session;
+        const getProfileResponse = await profilesService.getProfile(user.id);
 
         if (!user.email) {
           return;
         }
 
-        if (!profile.data && user) {
-          const { data, error } = await supabase.from('Profile').insert({});
+        // If the user does not have a profile, attempt to create one
+        if (!getProfileResponse.error && !getProfileResponse.data) {
+          const getCreateResponse = await profilesService.create(user.id);
 
-          if (error) {
-            // ! TODO Replace with a proper error handling (toast notification, etc.)
-            console.error('Error creating profile:', error);
+          if (getCreateResponse.error) {
+            setAuthError(getCreateResponse.error.message);
+            log('Could not create profile', getCreateResponse.error.message);
+            return;
           }
 
-          setProfile(data);
+          if (getCreateResponse.data) {
+            setProfile(getCreateResponse.data);
+          }
         }
 
-        setSession(session);
-      }
-
-      if (error) {
-        setAuthError(error.message);
+        if (getProfileResponse.data) {
+          setProfile(getProfileResponse.data);
+        }
+        setSession(sessionData.session);
       }
 
       setIsLoadingAuth(false);
@@ -75,6 +86,10 @@ export function AuthContextProvider({ children }: { children: React.ReactNode })
 
     supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
+
+      if (!session) {
+        setProfile(null);
+      }
     });
   }, []);
 
@@ -84,3 +99,19 @@ export function AuthContextProvider({ children }: { children: React.ReactNode })
     </AuthContext.Provider>
   );
 }
+
+export const getToken = async () => {
+  // Refresh token to ensure the latest token is used
+  const { data, error } = await supabase.auth.refreshSession();
+
+  if (error) {
+    log('Could not refresh token', error.message);
+    return null;
+  }
+
+  if (data.session) {
+    return data.session.access_token;
+  }
+
+  return null;
+};
