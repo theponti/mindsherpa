@@ -28,26 +28,50 @@ const theme = createTheme({
   },
   textVariants: {
     body: {
+      fontFamily: 'Noto Sans',
       fontSize: 16,
     },
     header: {
+      fontFamily: 'Noto Serif',
       fontSize: 42,
-      fontWeight: 'bold',
     },
-    title: { fontSize: 20, fontWeight: 'bold' },
-    label: { fontSize: 16, fontWeight: 'bold' },
+    title: {
+      fontFamily: 'Noto Serif',
+      fontSize: 20,
+    },
+    label: {
+      fontFamily: 'Noto Serif',
+      fontSize: 16,
+    },
     large: {
+      fontFamily: 'Noto Serif',
       fontSize: 36,
     },
     extra_large: {
+      fontFamily: 'Noto Serif',
       fontSize: 64,
-      fontWeight: 'bold',
     },
     defaults: {
-      // We can define a default text variant here.
+      fontFamily: 'Noto Sans',
+    },
+    shadow: {
+      shadowColor: 'black',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.8,
+      shadowRadius: 2,
     },
   },
 });
+
+export const Shadows = {
+  dark: {
+    shadowColor: Colors.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 1,
+    elevation: 3,
+  },
+};
 
 export const useTheme = () => {
   return useRestyleTheme<Theme>();

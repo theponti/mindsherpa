@@ -39,7 +39,22 @@ export function AuthContextProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     async function getInitialSession() {
-      const getSessionResponse = await supabase.auth.getSession();
+      console.log('getInitialSession');
+      let getSessionResponse: any = {};
+      try {
+        getSessionResponse = await Promise.race([
+          supabase.auth.getSession(),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Session retrieval timed out')), 10000)
+          ),
+        ]);
+      } catch (error) {
+        console.error('Error retrieving session:', error);
+        setAuthError('Session retrieval timed out');
+        setIsLoadingAuth(false);
+        return;
+      }
+      console.log('getSessionResponse', getSessionResponse);
 
       if (getSessionResponse.error) {
         // ! TODO - Handle error

@@ -1,5 +1,12 @@
+import {
+  useFonts,
+  Inter_400Regular,
+  Inter_600SemiBold,
+  Inter_700Bold,
+} from '@expo-google-fonts/inter';
 import { ThemeProvider } from '@shopify/restyle';
-import { Stack } from 'expo-router';
+import { SplashScreen, Stack } from 'expo-router';
+import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import LoginSheet from '~/components/authentication/login-sheet';
@@ -12,9 +19,24 @@ export const unstable_settings = {
   initialRouteName: '(drawer)',
 };
 
+SplashScreen.preventAutoHideAsync();
+
 function InnerRootLayout() {
   const { isLoadingAuth, session } = useAuth();
+  const [loaded, error] = useFonts({
+    'Noto Serif': require('../assets/fonts/Noto_Serif/NotoSerif-VariableFont_wdth,wght.ttf'),
+    'Noto Serif Italic': require('../assets/fonts/Noto_Serif/NotoSerif-Italic-VariableFont_wdth,wght.ttf'),
+    'Noto Sans Italic': require('../assets/fonts/Noto_Sans/NotoSans-Italic-VariableFont_wdth,wght.ttf'),
+    'Noto Sans': require('../assets/fonts/Noto_Sans/NotoSans-VariableFont_wdth,wght.ttf'),
+  });
 
+  useEffect(() => {
+    if (loaded || error || isLoadingAuth) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded, error]);
+
+  console.log('isLoadingAuth', isLoadingAuth);
   if (isLoadingAuth) {
     return <LoginSheet isLoadingAuth />;
   }
@@ -30,12 +52,30 @@ function InnerRootLayout() {
 
   return (
     <Stack>
-      <Stack.Screen name="(auth)/index" options={{ title: 'Auth' }} />
+      <Stack.Screen name="(auth)" options={{ title: 'Auth' }} />
     </Stack>
   );
 }
 
 export default function RootLayout() {
+  const [fontsLoaded, fontError] = useFonts({
+    Inter_400Regular,
+    Inter_600SemiBold,
+    Inter_700Bold,
+  });
+
+  useEffect(() => {
+    if (fontsLoaded || fontError) {
+      // Hide the splash screen after the fonts have loaded (or an error was returned) and the UI is ready.
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded, fontError]);
+
+  // Prevent rendering until the font has loaded or an error was returned
+  if (!fontsLoaded && !fontError) {
+    return null;
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <GestureHandlerRootView style={{ flex: 1 }}>

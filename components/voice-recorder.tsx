@@ -7,7 +7,11 @@ import Svg, { Circle } from 'react-native-svg';
 import { useAuth } from '~/utils/auth/auth-context';
 import { supabase } from '~/utils/supabase';
 
-export const useVoiceRecorder = () => {
+export const useVoiceRecorder = ({
+  onRecordingComplete,
+}: {
+  onRecordingComplete: (uri: string) => void;
+}) => {
   const { session } = useAuth();
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const [recordingStatus, setRecordingStatus] = useState<Audio.RecordingStatus | null>(null);
@@ -65,28 +69,7 @@ export const useVoiceRecorder = () => {
     // ! TODO: handle no URI value
 
     setSoundURI(uri);
-    saveRecording(uri);
-  };
-
-  const saveRecording = async (uri: string) => {
-    const response = await fetch(uri);
-    const blob = await response.blob();
-    const { data, error } = await supabase.storage
-      .from('voice-notes')
-      .upload(`${session!.user.id}/recordings/${Date.now()}.wav`, blob, {
-        cacheControl: '3600',
-        upsert: false,
-      });
-
-    // ! TODO: Save a `voiceNote` record
-    // ! TODO: Save a `message` record with the voice_note_id
-    // ! TODO: Convert voiceNote to text
-
-    if (error) {
-      console.error('Error uploading recording: ', error);
-    } else {
-      console.log('Recording uploaded: ', data);
-    }
+    onRecordingComplete(uri);
   };
 
   return {

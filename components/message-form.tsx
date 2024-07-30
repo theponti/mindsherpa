@@ -8,9 +8,20 @@ import Animated, {
   withClamp,
   withSpring,
 } from 'react-native-reanimated';
+import { gql, useClient, useMutation } from 'urql';
 
 import TextInput from './text-input';
 import { VoiceRecorder, useVoiceRecorder } from './voice-recorder';
+
+import { useAuth } from '~/utils/auth/auth-context';
+
+const uploadVoiceNoteMutation = gql`
+  mutation UploadVoiceNote($audio_file: Upload!, $chatId: String!) {
+    uploadVoiceNote(audio_file: $audio_file, chatId: $chatId) {
+      id
+    }
+  }
+`;
 
 const MessageForm = ({
   isLoading,
@@ -22,8 +33,11 @@ const MessageForm = ({
   style: ViewStyle;
 }) => {
   const [text, setText] = useState('');
+  const { saveRecording, saveRecordingResponse } = useVoiceNoteMutation();
   const { isRecording, startRecording, stopRecording, recordingStatus, soundURI } =
-    useVoiceRecorder();
+    useVoiceRecorder({
+      onRecordingComplete: saveRecording,
+    });
   const translateY = useSharedValue(200);
 
   const onSubmitButtonClick = useCallback(() => {
@@ -55,6 +69,7 @@ const MessageForm = ({
     translateY.value = 0;
   });
 
+  // ! TODO: While voice note is uploading, show a loading indicator, disable the submit button, the microphone button, and the text input
   return (
     <View style={[props.style]}>
       {isRecording ? (
@@ -131,4 +146,45 @@ const styles = StyleSheet.create({
   },
 });
 
+const useVoiceNoteMutation = () => {
+  const { session } = useAuth();
+  const client = useClient();
+  const [uploadVoiceNoteResponse, uploadVoiceNote] = useMutation(uploadVoiceNoteMutation);
+
+  const saveRecording = useCallback(
+    async (uri: string) => {
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      const { data, error } = await uploadVoiceNote(
+        {
+          blob,
+          userId: session!.user.id,
+        },
+        {
+          fetchOptions: {
+            headers: {
+              Authorization: `Bearer ${session!.access_token}`,
+            },
+          },
+        }
+      );
+
+      // ! TODO: Save a `voiceNote` record
+      // ! TODO: Save a `message` record with the voice_note_id
+      // ! TODO: Convert voiceNote to text
+
+      if (error) {
+        console.error('Error uploading recording: ', error);
+      } else {
+        console.log('Recording uploaded: ', data);
+      }
+    },
+    [client]
+  );
+
+  return {
+    saveRecording,
+    saveRecordingResponse: uploadVoiceNoteResponse,
+  };
+};
 export default MessageForm;

@@ -28,6 +28,17 @@
             "newArchEnabled": true
           }
         }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/Noto_Sans/NotoSans-Italic-VariableFont_wdth,wght.ttf",
+            "./assets/fonts/Noto_Sans/NotoSans-Italic-VariableFont_wdth,wght.ttf",
+            "./assets/fonts/Noto_Serif/NotoSerif-VariableFont_wdth,wght.ttf",
+            "./assets/fonts/Noto_Serif/NotoSerif-Italic-VariableFont_wdth,wght.ttf"
+          ]
+        }
       ]
     ],
     "experiments": {
@@ -42,9 +53,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.pontistudios.mindsherpa",

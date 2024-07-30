@@ -37,7 +37,7 @@ function Account() {
   }, []);
 
   if (!session) {
-    return <Redirect href="(auth)/index" />;
+    return <Redirect href="(auth)" />;
   }
 
   const { name, avatar_url } = profile || {};

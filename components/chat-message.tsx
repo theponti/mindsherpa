@@ -9,7 +9,7 @@ const ChatMessage = ({ message }: { message: Message }) => {
 
   return (
     <View style={chatBubbleStyle}>
-      <Text style={role === 'user' ? styles.userMessageText : styles.botMessageText}>
+      <Text variant="body" color={role === 'user' ? 'white' : 'black'}>
         {content}
       </Text>
     </View>
@@ -40,6 +40,13 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: borderRadiusSize,
     backgroundColor: '#f9f9f9',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   userMessage: {
     ...baseMessageStyle,

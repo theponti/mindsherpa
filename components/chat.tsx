@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import {
   FlatList,
   Keyboard,
@@ -24,6 +25,17 @@ export const Chat = ({ chatId, userId }: { chatId: string; userId: string }) => 
     messages,
     sendMessage,
   } = useChatMessages({ chatId, userId });
+  const flatListRef = useRef<FlatList>(null);
+
+  const scrollToBottom = () => {
+    if (flatListRef.current) {
+      flatListRef.current.scrollToOffset({ offset: 2000 });
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   if (isMessagesLoading) {
     return <ChatLoading />;
@@ -35,14 +47,16 @@ export const Chat = ({ chatId, userId }: { chatId: string; userId: string }) => 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
         style={styles.container}>
-        <View style={[styles.messagesWrap]}>
+        <View style={styles.messagesWrap}>
           <FlatList
-            scrollEnabled
+            ref={flatListRef}
+            contentContainerStyle={styles.messagesContainer}
             data={messages}
             keyExtractor={(item) => item.id}
             keyboardShouldPersistTaps="handled"
             renderItem={renderMessage}
-            contentContainerStyle={styles.messagesContainer}
+            onContentSizeChange={scrollToBottom}
+            onLayout={scrollToBottom}
           />
         </View>
         {chatError ? (
@@ -59,17 +73,14 @@ export const Chat = ({ chatId, userId }: { chatId: string; userId: string }) => 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    overflow: 'scroll',
   },
   messagesWrap: {
     flex: 1,
   },
   messagesContainer: {
-    // Prevent messages from being hidden behind the keyboard.
     flexGrow: 1,
-    // justifyContent: 'flex-end',
     paddingBottom: 50,
-    paddingTop: 16,
+    paddingTop: 50,
     paddingHorizontal: 24,
   },
   messageForm: {},

@@ -7,7 +7,7 @@ export const EditScreenInfo = ({ path }: { path: string }) => {
   const { session } = useAuth();
 
   if (!session) {
-    return <Redirect href="(auth)/index" />;
+    return <Redirect href="(auth)" />;
   }
 
   return (

@@ -3,8 +3,6 @@ import { useRouter } from 'expo-router';
 import { Alert, View, StyleSheet, ActivityIndicator } from 'react-native';
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
-import { LoadingFull } from '../LoadingFull';
-
 import { Text } from '~/theme';
 import { profilesService } from '~/utils/services/profiles-service';
 import { supabase } from '~/utils/supabase';
@@ -19,11 +17,11 @@ const LoginSheet = ({ isLoadingAuth }: { isLoadingAuth?: boolean }) => {
   if (isLoadingAuth) {
     return (
       <View style={{ flex: 1, backgroundColor: 'black' }}>
-        <View style={[styles.container]}>
+        <View style={[styles.container, { flex: 1, rowGap: 8, justifyContent: 'center' }]}>
           <Animated.Text style={[styles.text, textStyle]}>
             <Text>Loading your account</Text>
           </Animated.Text>
-          <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1, marginTop: -50 }}>
+          <View style={{ alignItems: 'center', justifyContent: 'center' }}>
             <ActivityIndicator size="large" color="black" />
           </View>
         </View>

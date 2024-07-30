@@ -12,6 +12,7 @@ import Animated, {
 import { NoteForm } from './notes/note-form';
 
 import { Text } from '~/theme';
+import { Shadows } from '~/theme/theme';
 import { NotebookType } from '~/utils/services/notebooks-service';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -77,11 +78,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 10,
     padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    ...Shadows.dark,
   },
   cardHeader: {
     flexDirection: 'row',

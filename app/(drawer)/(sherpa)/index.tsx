@@ -22,7 +22,7 @@ export default function Dashboard() {
   }, []);
 
   if (!isLoadingAuth && !session) {
-    return <Redirect href="(auth)/index" />;
+    return <Redirect href="(auth)" />;
   }
 
   return (
