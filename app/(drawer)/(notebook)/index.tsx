@@ -1,6 +1,6 @@
 import { MoreHorizontal, Plus } from 'lucide-react-native';
 import { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -47,23 +47,28 @@ const NotebookScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text variant="header">Notes</Text>
-        <HeaderButtons />
-      </View>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+        style={styles.container}>
+        <View style={styles.header}>
+          <Text variant="header">Notes</Text>
+          <HeaderButtons />
+        </View>
 
-      <FlatList
-        data={notes}
-        renderItem={({ item, index }) => <NoteListItem key={index} item={item} />}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContainer}
-      />
-      {notesError ? (
-        <FeedbackBlock>
-          <Text>{notesError}</Text>
-        </FeedbackBlock>
-      ) : null}
-      <NoteForm onSubmit={onFormSubmit} />
+        <FlatList
+          data={notes}
+          renderItem={({ item, index }) => <NoteListItem key={index} item={item} />}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContainer}
+        />
+        {notesError ? (
+          <FeedbackBlock>
+            <Text>{notesError}</Text>
+          </FeedbackBlock>
+        ) : null}
+        <NoteForm onSubmit={onFormSubmit} />
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };

@@ -42,23 +42,25 @@ export const Chat = ({ chatId, userId }: { chatId: string; userId: string }) => 
   }
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <View style={styles.container}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
         style={styles.container}>
-        <View style={styles.messagesWrap}>
-          <FlatList
-            ref={flatListRef}
-            contentContainerStyle={styles.messagesContainer}
-            data={messages}
-            keyExtractor={(item) => item.id}
-            keyboardShouldPersistTaps="handled"
-            renderItem={renderMessage}
-            onContentSizeChange={scrollToBottom}
-            onLayout={scrollToBottom}
-          />
-        </View>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={StyleSheet.absoluteFillObject} />
+        </TouchableWithoutFeedback>
+        <FlatList
+          ref={flatListRef}
+          contentContainerStyle={styles.messagesContainer}
+          data={messages}
+          keyExtractor={(item) => item.id}
+          keyboardShouldPersistTaps="handled"
+          renderItem={renderMessage}
+          onContentSizeChange={scrollToBottom}
+          onLayout={scrollToBottom}
+          onStartShouldSetResponder={() => true}
+        />
         {chatError ? (
           <FeedbackBlock>
             <Text>{chatError}</Text>
@@ -66,7 +68,7 @@ export const Chat = ({ chatId, userId }: { chatId: string; userId: string }) => 
         ) : null}
         <MessageForm isLoading={isChatSending} onSubmit={sendMessage} style={styles.messageForm} />
       </KeyboardAvoidingView>
-    </TouchableWithoutFeedback>
+    </View>
   );
 };
 
@@ -74,12 +76,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  messagesWrap: {
-    flex: 1,
-  },
   messagesContainer: {
     flexGrow: 1,
-    paddingBottom: 50,
+    paddingBottom: 20,
     paddingTop: 50,
     paddingHorizontal: 24,
   },

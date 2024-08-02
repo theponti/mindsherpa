@@ -10,7 +10,6 @@ function Auth() {
   const { session } = useAuth();
 
   if (session) {
-    console.log('session', session);
     return <Redirect href="(drawer)" />;
   }
 
