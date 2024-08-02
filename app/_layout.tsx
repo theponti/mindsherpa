@@ -36,7 +36,6 @@ function InnerRootLayout() {
     }
   }, [loaded, error]);
 
-  console.log('isLoadingAuth', isLoadingAuth);
   if (isLoadingAuth) {
     return <LoginSheet isLoadingAuth />;
   }

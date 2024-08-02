@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { gql, useClient } from 'urql';
 
 import { groqService } from '../ai/groq';
 import { log } from '../logger';
@@ -12,7 +13,7 @@ export class Messages {
     role,
     userId,
   }: {
-    chatId: string;
+    chatId: number;
     content: string;
     role: 'user' | 'system' | 'assistant';
     userId: string;
@@ -28,7 +29,7 @@ export class Messages {
     return { data, error };
   }
 
-  async getMessages({ chatId, userId }: { chatId: string; userId: string }) {
+  async getMessages({ chatId, userId }: { chatId: number; userId: string }) {
     log('message_get_start', { chatId, userId });
     const { data, error } = await supabase
       .from('messages')
@@ -47,11 +48,61 @@ export class Messages {
 
 export const messagesService = new Messages();
 
-export const useChatMessages = ({ chatId, userId }: { chatId: string; userId: string }) => {
+export const useChatMessages = ({ chatId, userId }: { chatId: number; userId: string }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isChatSending, setIsChatSending] = useState(false);
   const [chatError, setChatError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>();
+  const client = useClient();
+
+  const sendChatMessage = async ({ message }: { message: string }) => {
+    setChatError(null);
+    setIsChatSending(true);
+
+    try {
+      const response = await client.executeMutation({
+        key: 1,
+        query: gql`
+          mutation SendChatMessage($message: String!, $chatId: Int!) {
+            sendChatMessage(message: $message, chatId: $chatId) {
+              id
+              content
+              createdAt
+              userId
+              chatId
+              role
+            }
+          }
+        `,
+        variables: {
+          chatId,
+          message,
+        },
+      });
+
+      if (response.error) {
+        throw new Error(response.error.message);
+      }
+
+      if (!response.data) {
+        throw new Error('No data returned');
+      }
+
+      if (response.data.sendChatMessage) {
+        console.log('sendChatMessage', JSON.stringify(response.data.sendChatMessage, null, 2));
+        const newMessages = [...messages, ...(response.data.sendChatMessage as Message[])];
+
+        storage.set('chatHistory', JSON.stringify(newMessages));
+
+        setMessages(newMessages);
+      }
+    } catch (error: any) {
+      log('Error sending chat message:', error);
+      setChatError(error.message);
+    } finally {
+      setIsChatSending(false);
+    }
+  };
 
   const fetchMessages = async () => {
     if (loading) {
@@ -127,7 +178,15 @@ export const useChatMessages = ({ chatId, userId }: { chatId: string; userId: st
     }
   };
 
-  return { chatError, fetchMessages, isChatSending, messages, loading, sendMessage };
+  return {
+    chatError,
+    fetchMessages,
+    isChatSending,
+    messages,
+    loading,
+    sendChatMessage,
+    sendMessage,
+  };
 };
 
 export type Message = {

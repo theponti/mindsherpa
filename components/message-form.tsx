@@ -29,7 +29,7 @@ const MessageForm = ({
   ...props
 }: {
   isLoading: boolean;
-  onSubmit: (text: string) => void;
+  onSubmit: (text: string) => Promise<void>;
   style: ViewStyle;
 }) => {
   const [text, setText] = useState('');
@@ -40,8 +40,9 @@ const MessageForm = ({
     });
   const translateY = useSharedValue(200);
 
-  const onSubmitButtonClick = useCallback(() => {
-    onSubmit(text);
+  const onSubmitButtonClick = useCallback(async () => {
+    await onSubmit(text);
+    setText('');
   }, [text]);
 
   const onMicrophonePress = useCallback(() => {

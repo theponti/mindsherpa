@@ -38,7 +38,6 @@ export const createAuthExchange = (getTokenRef: MaybeGetTokenRef) => {
           console.info('urqlAuthExchange > refreshAuth > token updated');
         }
 
-        log('new token', newToken);
         token = newToken; // ⚠️ WARNING MUTATION: Update the mutable reference.
       },
 

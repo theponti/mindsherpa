@@ -5,11 +5,12 @@ import { Message } from '~/utils/services/messages-service';
 
 const ChatMessage = ({ message }: { message: Message }) => {
   const { role, content } = message;
-  const chatBubbleStyle = role === 'user' ? styles.userMessage : styles.botMessage;
+  const formattedRole = role.toLowerCase();
+  const chatBubbleStyle = formattedRole === 'user' ? styles.userMessage : styles.botMessage;
 
   return (
     <View style={chatBubbleStyle}>
-      <Text variant="body" color={role === 'user' ? 'white' : 'black'}>
+      <Text variant="body" color={formattedRole === 'user' ? 'white' : 'black'}>
         {content}
       </Text>
     </View>

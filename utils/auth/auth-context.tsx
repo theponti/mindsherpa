@@ -39,7 +39,6 @@ export function AuthContextProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     async function getInitialSession() {
-      console.log('getInitialSession');
       let getSessionResponse: any = {};
       try {
         getSessionResponse = await Promise.race([
@@ -54,7 +53,6 @@ export function AuthContextProvider({ children }: PropsWithChildren) {
         setIsLoadingAuth(false);
         return;
       }
-      console.log('getSessionResponse', getSessionResponse);
 
       if (getSessionResponse.error) {
         // ! TODO - Handle error

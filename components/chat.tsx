@@ -13,28 +13,31 @@ import ChatLoading from './chat-loading';
 import { renderMessage } from './chat-message';
 import { FeedbackBlock } from './feedback-block';
 import MessageForm from './message-form';
+import { ViewHeader } from './view-header';
 
 import { Text } from '~/theme';
 import { useChatMessages } from '~/utils/services/messages-service';
 
-export const Chat = ({ chatId, userId }: { chatId: string; userId: string }) => {
+export const Chat = ({ chatId, userId }: { chatId: number; userId: string }) => {
   const {
     chatError,
     isChatSending,
     loading: isMessagesLoading,
     messages,
-    sendMessage,
+    sendChatMessage,
   } = useChatMessages({ chatId, userId });
   const flatListRef = useRef<FlatList>(null);
 
   const scrollToBottom = () => {
     if (flatListRef.current) {
-      flatListRef.current.scrollToOffset({ offset: 2000 });
+      flatListRef.current.scrollToEnd({ animated: true });
     }
   };
 
   useEffect(() => {
-    scrollToBottom();
+    setTimeout(() => {
+      scrollToBottom();
+    }, 500);
   }, [messages]);
 
   if (isMessagesLoading) {
@@ -50,6 +53,9 @@ export const Chat = ({ chatId, userId }: { chatId: string; userId: string }) => 
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={StyleSheet.absoluteFillObject} />
         </TouchableWithoutFeedback>
+        <ViewHeader>
+          <Text variant="header">Sherpa</Text>
+        </ViewHeader>
         <FlatList
           ref={flatListRef}
           contentContainerStyle={styles.messagesContainer}
@@ -66,7 +72,11 @@ export const Chat = ({ chatId, userId }: { chatId: string; userId: string }) => 
             <Text>{chatError}</Text>
           </FeedbackBlock>
         ) : null}
-        <MessageForm isLoading={isChatSending} onSubmit={sendMessage} style={styles.messageForm} />
+        <MessageForm
+          isLoading={isChatSending}
+          onSubmit={(message: string) => sendChatMessage({ message })}
+          style={styles.messageForm}
+        />
       </KeyboardAvoidingView>
     </View>
   );
@@ -79,7 +89,6 @@ const styles = StyleSheet.create({
   messagesContainer: {
     flexGrow: 1,
     paddingBottom: 20,
-    paddingTop: 50,
     paddingHorizontal: 24,
   },
   messageForm: {},
