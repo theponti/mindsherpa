@@ -1,18 +1,14 @@
 import { scaleLinear } from 'd3-scale';
 import { Audio } from 'expo-av';
 import React, { useState } from 'react';
-import { View, Button, Text, StyleSheet } from 'react-native';
+import { View, Button, Text, StyleSheet, Alert } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
-
-import { useAuth } from '~/utils/auth/auth-context';
-import { supabase } from '~/utils/supabase';
 
 export const useVoiceRecorder = ({
   onRecordingComplete,
 }: {
   onRecordingComplete: (uri: string) => void;
 }) => {
-  const { session } = useAuth();
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const [recordingStatus, setRecordingStatus] = useState<Audio.RecordingStatus | null>(null);
   const [isRecording, setIsRecording] = useState<boolean>(false);
@@ -62,14 +58,22 @@ export const useVoiceRecorder = ({
   const stopRecording = async () => {
     if (!recording) return;
 
-    await recording.stopAndUnloadAsync();
-    const uri = recording.getURI();
+    try {
+      await recording.stopAndUnloadAsync();
+      const uri = recording.getURI();
 
-    if (!uri) return;
-    // ! TODO: handle no URI value
+      if (!uri) {
+        throw new Error('Failed to get recording URI');
+      }
 
-    setSoundURI(uri);
-    onRecordingComplete(uri);
+      onRecordingComplete(uri);
+    } catch (err) {
+      Alert.alert('Failed to stop recording');
+    } finally {
+      setIsRecording(false);
+      setRecording(null);
+      setRecordingStatus(null);
+    }
   };
 
   return {

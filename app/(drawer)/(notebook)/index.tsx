@@ -8,16 +8,18 @@ import { FeedbackBlock } from '~/components/feedback-block';
 import { NoteForm } from '~/components/notes/note-form';
 import { NoteListItem } from '~/components/notes/note-list-item';
 import { Text } from '~/theme';
+import { useAuth } from '~/utils/auth/auth-context';
 import { getNotes, NoteType } from '~/utils/services/notebooks-service';
 import { Colors } from '~/utils/styles';
 import { supabase } from '~/utils/supabase';
 
 const NotebookScreen = () => {
+  const { session } = useAuth();
   const [notes, setNotes] = useState<NoteType[]>([]);
   const [notesError, setNotesError] = useState<string | null>(null);
 
   const loadNotes = useCallback(async () => {
-    const { data, error } = await getNotes();
+    const { data, error } = await getNotes({ userId: session!.user.id });
 
     if (error) {
       setNotesError(error.message);
@@ -26,7 +28,7 @@ const NotebookScreen = () => {
     if (data) {
       setNotes(data);
     }
-  }, []);
+  }, [session]);
 
   const onFormSubmit = async (content: string) => {
     loadNotes();
@@ -58,7 +60,7 @@ const NotebookScreen = () => {
 
         <FlatList
           data={notes}
-          renderItem={({ item, index }) => <NoteListItem key={index} item={item} />}
+          renderItem={({ item }) => <NoteListItem item={item} />}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContainer}
         />
@@ -105,18 +107,18 @@ export default NotebookScreen;
 
 const HeaderButtons = () => {
   return (
-    <View style={headerButttonStyles.headerIcons}>
-      <Text style={headerButttonStyles.iconPlaceholder}>
+    <View style={headerButtonStyles.headerIcons}>
+      <Text style={headerButtonStyles.iconPlaceholder}>
         <MoreHorizontal size={24} color={Colors.black} />
       </Text>
-      <Text style={headerButttonStyles.iconPlaceholder}>
+      <Text style={headerButtonStyles.iconPlaceholder}>
         <Plus size={24} color={Colors.black} />
       </Text>
     </View>
   );
 };
 
-const headerButttonStyles = StyleSheet.create({
+const headerButtonStyles = StyleSheet.create({
   headerIcons: {
     flexDirection: 'row',
     alignItems: 'center',

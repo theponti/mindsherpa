@@ -5,9 +5,9 @@ import theme from '~/theme/theme';
 import { NoteType } from '~/utils/services/notebooks-service';
 import { Colors } from '~/utils/styles';
 
-export const NoteListItem = ({ item, key }: { item: NoteType; key: number }) => {
+export const NoteListItem = ({ item }: { item: NoteType }) => {
   return (
-    <View key={key} style={styles.listItem}>
+    <View style={styles.listItem}>
       <Text variant="body">{item.content}</Text>
     </View>
   );

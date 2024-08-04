@@ -14,6 +14,7 @@ import TextInput from './text-input';
 import { VoiceRecorder, useVoiceRecorder } from './voice-recorder';
 
 import { useAuth } from '~/utils/auth/auth-context';
+import { Colors } from '~/utils/styles';
 
 const uploadVoiceNoteMutation = gql`
   mutation UploadVoiceNote($audio_file: Upload!, $chatId: String!) {
@@ -30,7 +31,7 @@ const MessageForm = ({
 }: {
   isLoading: boolean;
   onSubmit: (text: string) => Promise<void>;
-  style: ViewStyle;
+  style?: ViewStyle;
 }) => {
   const [text, setText] = useState('');
   const { saveRecording, saveRecordingResponse } = useVoiceNoteMutation();
@@ -120,23 +121,24 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   form: {
-    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginVertical: 8,
     paddingHorizontal: 12,
+    marginHorizontal: 12,
     gap: 8,
     height: 60,
+    borderColor: Colors.gray,
+    borderWidth: 1,
+    borderRadius: 20,
   },
   input: {
     flex: 1,
-    backgroundColor: 'white',
     color: 'black',
     borderColor: 'gray',
-    borderWidth: 1,
     paddingHorizontal: 12,
     paddingVertical: 14,
-    borderRadius: 50,
   },
   sendButton: {
     backgroundColor: '#efefef',

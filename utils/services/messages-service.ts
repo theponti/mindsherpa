@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { gql, useClient } from 'urql';
 
-import { groqService } from '../ai/groq';
 import { log } from '../logger';
 import { storage } from '../storage';
 import { supabase } from '../supabase';
@@ -38,10 +37,10 @@ export class Messages {
       .eq('chat_id', chatId)
       .order('created_at', { ascending: true })
       .limit(100);
+
     if (error) {
       log('message_get_error', { error });
     }
-    log('message_get_success', { data: data?.map((message) => message.content.slice(0, 100)) });
     return { data, error };
   }
 }
@@ -131,53 +130,6 @@ export const useChatMessages = ({ chatId, userId }: { chatId: number; userId: st
     }
   }, [chatId]);
 
-  const sendMessage = async (text: string) => {
-    try {
-      setIsChatSending(true);
-      const content = text.trim();
-
-      if (content.length === 0) {
-        return;
-      }
-
-      const { error } = await messagesService.create({
-        chatId,
-        content,
-        role: 'user',
-        userId,
-      });
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      // 1. Call groq with chat history and new message
-      const groqResponse = await groqService.chat({
-        chatHistory: { messages: [...messages, { role: 'user', content: text }] },
-        message: text,
-      });
-
-      // 2. Update chat history with groqs response
-      await messagesService.create({
-        chatId,
-        content: groqResponse,
-        role: 'assistant',
-        userId,
-      });
-
-      // 3. Save chat history to mmkv
-      storage.set('chatHistory', JSON.stringify([...messages, { role: 'user', content: text }]));
-
-      // 4. Update messages with new message
-      fetchMessages();
-    } catch (error: any) {
-      log('Error sending message:', error.message);
-      setChatError(error.message);
-    } finally {
-      setIsChatSending(false);
-    }
-  };
-
   return {
     chatError,
     fetchMessages,
@@ -185,7 +137,6 @@ export const useChatMessages = ({ chatId, userId }: { chatId: number; userId: st
     messages,
     loading,
     sendChatMessage,
-    sendMessage,
   };
 };
 

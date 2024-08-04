@@ -16,8 +16,8 @@ export type NoteType = {
   created_at: string;
 };
 
-export const getNotes = async () => {
-  const { data, error } = await supabase.from('notes').select('*');
+export const getNotes = async ({ userId }: { userId: string }) => {
+  const { data, error } = await supabase.from('notes').select('*').eq('user_id', userId);
 
   if (error) {
     log('notes_get_error', error.message);

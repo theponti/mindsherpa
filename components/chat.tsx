@@ -48,7 +48,7 @@ export const Chat = ({ chatId, userId }: { chatId: number; userId: string }) => 
     <View style={styles.container}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
         style={styles.container}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={StyleSheet.absoluteFillObject} />
@@ -75,7 +75,6 @@ export const Chat = ({ chatId, userId }: { chatId: number; userId: string }) => 
         <MessageForm
           isLoading={isChatSending}
           onSubmit={(message: string) => sendChatMessage({ message })}
-          style={styles.messageForm}
         />
       </KeyboardAvoidingView>
     </View>
@@ -91,5 +90,4 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     paddingHorizontal: 24,
   },
-  messageForm: {},
 });
