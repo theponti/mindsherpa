@@ -1,0 +1,65 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Chat {
+  createdAt: String!
+  id: Int!
+  profileId: String!
+  title: String!
+}
+
+type Message {
+  chatId: Int!
+  createdAt: String!
+  id: Int!
+  message: String!
+  profileId: String!
+  role: MessageRole!
+}
+
+enum MessageRole {
+  ASSISTANT
+  USER
+}
+
+type Mutation {
+  sendChatMessage(chatId: Int!, message: String!): [Message!]!
+  uploadVoiceNote(audioFile: Upload!, chatId: Int!): UploadVoiceNoteResponse!
+}
+
+type Note {
+  content: String!
+  createdAt: String!
+  id: String!
+  userId: String!
+}
+
+type Notebook {
+  createdAt: String!
+  id: String!
+  title: String!
+  updatedAt: String!
+  userId: String!
+}
+
+type Query {
+  chatMessages(chatId: String!): [Message!]!
+  chats: [Chat!]!
+  currentUser: User!
+  notebooks: [Notebook!]!
+  notes(userId: String!): [Note!]!
+}
+
+scalar Upload
+
+type UploadVoiceNoteResponse {
+  error: String
+  text: String
+}
+
+type User {
+  email: String
+  id: String!
+}

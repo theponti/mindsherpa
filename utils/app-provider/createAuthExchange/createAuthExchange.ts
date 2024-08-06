@@ -1,9 +1,7 @@
 import { authExchange as urqlAuthExchange } from '@urql/exchange-auth';
 
 import { isTokenExpired } from './isTokenExpired';
-
-import { getToken } from '~/utils/auth/auth-context';
-import { log } from '~/utils/logger';
+import { getToken } from '../AppProvider';
 
 /**
  * # Urql Auth Exchange
@@ -22,8 +20,9 @@ export const createAuthExchange = (getTokenRef: MaybeGetTokenRef) => {
     return {
       // Appends corresponding authentication header/s to the outgoing request.
       addAuthToOperation(operation) {
-        if (!token || !getTokenRef.current) return operation;
-        const headers = { authorization: `bearer ${token}` };
+        const currentToken = token; // Cache token reference
+        if (!currentToken || !getTokenRef.current) return operation;
+        const headers = { authorization: `bearer ${currentToken}` };
         return utils.appendHeaders(operation, headers);
       },
 
@@ -31,14 +30,14 @@ export const createAuthExchange = (getTokenRef: MaybeGetTokenRef) => {
 
       // async method, sets/updates token, triggered by `willAuthError`/`didAuthError`
       async refreshAuth() {
-        if (!getTokenRef.current) return;
-        const newToken = await getTokenRef.current();
+        const currentGetToken = getTokenRef.current; // Cache reference
+        if (!currentGetToken) return;
+        const newToken = await currentGetToken();
 
         if (newToken !== token) {
           console.info('urqlAuthExchange > refreshAuth > token updated');
+          token = newToken; // ⚠️ WARNING MUTATION: Update the mutable reference.
         }
-
-        token = newToken; // ⚠️ WARNING MUTATION: Update the mutable reference.
       },
 
       // ─────────────────────────────────────────────────────

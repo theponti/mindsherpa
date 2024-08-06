@@ -18,14 +18,14 @@ import { ViewHeader } from './view-header';
 import { Text } from '~/theme';
 import { useChatMessages } from '~/utils/services/messages-service';
 
-export const Chat = ({ chatId, userId }: { chatId: number; userId: string }) => {
+export const Chat = ({ chatId }: { chatId: string }) => {
   const {
     chatError,
     isChatSending,
     loading: isMessagesLoading,
     messages,
     sendChatMessage,
-  } = useChatMessages({ chatId, userId });
+  } = useChatMessages({ chatId });
   const flatListRef = useRef<FlatList>(null);
 
   const scrollToBottom = () => {
@@ -73,6 +73,7 @@ export const Chat = ({ chatId, userId }: { chatId: number; userId: string }) => 
           </FeedbackBlock>
         ) : null}
         <MessageForm
+          chatId={chatId}
           isLoading={isChatSending}
           onSubmit={(message: string) => sendChatMessage({ message })}
         />

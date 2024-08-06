@@ -1,0 +1,7 @@
+query Chats {
+  chats {
+    id
+    title
+    createdAt
+  }
+}

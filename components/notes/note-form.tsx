@@ -1,76 +1,61 @@
 import { Mic, Notebook, Send } from 'lucide-react-native';
-import { useState } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useCallback, useState } from 'react';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 
-import TextInput from '~/components/text-input';
+import { FormContainer } from '../form-container';
+import AutoGrowingInput from '../text-input-autogrow';
+import { UploadFileButton } from '../upload-file-button';
+import { VoiceInputButton } from '../voice-input-button';
+import { useVoiceRecorder } from '../voice-recorder';
+
+import { useCreateNoteMutation } from '~/utils/services/notes/CreateNote.mutation.generated';
 import { Colors } from '~/utils/styles';
-import { supabase } from '~/utils/supabase';
 
 export const NoteForm = ({ onSubmit }: { onSubmit: (note: any) => void }) => {
   const [content, setContent] = useState('');
+  const [createNoteResponse, createNote] = useCreateNoteMutation();
+  const { isRecording, startRecording, stopRecording } = useVoiceRecorder({
+    onRecordingComplete: () => {},
+  });
+
+  const onMicrophonePress = useCallback(() => {
+    if (!isRecording) {
+      startRecording();
+    }
+  }, [isRecording]);
+
+  const onStopRecordingPress = useCallback(() => {
+    stopRecording();
+  }, [stopRecording]);
 
   const handleSubmit = async () => {
-    const { data, error } = await supabase.from('notes').insert({ content });
+    const { data, error } = await createNote({ input: { content } });
 
     if (error) {
       console.error(error);
-    } else {
-      onSubmit(data);
+    }
+
+    if (data?.createNote) {
+      onSubmit(data.createNote);
       setContent('');
     }
   };
 
   return (
-    <View style={styles.noteSection}>
-      <TouchableOpacity style={styles.noteButton}>
-        <Notebook color={Colors.black} size={20} />
-        <TextInput
-          style={[styles.noteText, { color: content.length > 0 ? Colors.black : Colors.grayLight }]}
-          placeholder="Drop a note..."
-          value={content}
-          onChangeText={setContent}
-        />
-      </TouchableOpacity>
+    <FormContainer>
+      <UploadFileButton />
 
-      {content.length > 0 ? (
-        <TouchableOpacity onPress={handleSubmit} style={styles.sendButton}>
-          <Send color={Colors.white} size={20} />
-        </TouchableOpacity>
-      ) : (
-        <Mic color={Colors.black} size={20} />
-      )}
-    </View>
+      <AutoGrowingInput placeholder="Drop a note..." value={content} onChangeText={setContent} />
+
+      <VoiceInputButton
+        buttonType={content.length === 0 || isRecording ? 'voice' : 'text'}
+        disabled={createNoteResponse.fetching}
+        isLoading={createNoteResponse.fetching}
+        isRecording={isRecording}
+        onStartRecording={onMicrophonePress}
+        onStopRecording={onStopRecordingPress}
+        onSubmitButtonClick={handleSubmit}
+      />
+    </FormContainer>
   );
 };
-
-const styles = StyleSheet.create({
-  noteSection: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    marginBottom: 16,
-    marginHorizontal: 16,
-    borderColor: Colors.gray,
-    borderWidth: 1,
-    borderRadius: 20,
-  },
-  noteButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 24,
-  },
-  noteText: {
-    marginLeft: 8,
-    color: '#999',
-  },
-  sendButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: Colors.black,
-    height: 32,
-    width: 45,
-    borderRadius: 20,
-  },
-});

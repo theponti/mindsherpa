@@ -1,24 +1,27 @@
 import { Redirect } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { SafeAreaView } from 'react-native';
 
 import { LoadingFull } from '~/components/LoadingFull';
 import { Chat } from '~/components/chat';
 import { Text } from '~/theme';
-import { useAuth } from '~/utils/auth/auth-context';
-import { chatsService } from '~/utils/services/chats-service';
+import { useAppContext } from '~/utils/app-provider';
+import { useChatsQuery } from '~/utils/services/Chats.query.generated';
 
-export default function Dashboard() {
-  const { session, isLoadingAuth } = useAuth();
-  const [activeChat, setActiveChat] = useState<any>(null);
+export default function Sherpa() {
+  const { session, isLoadingAuth } = useAppContext();
+  const [getChatResponse, getChats] = useChatsQuery({
+    pause: true,
+    requestPolicy: 'network-only',
+  });
 
   useEffect(() => {
-    async function getActiveChat() {
-      const chat = await chatsService.getActiveChat(session!.user.id);
-      setActiveChat(chat);
+    if (session) {
+      getChats();
     }
-    getActiveChat();
   }, []);
+
+  const activeChat = getChatResponse.data?.chats[0];
 
   if (!isLoadingAuth && !session) {
     return <Redirect href="(auth)" />;
@@ -26,12 +29,12 @@ export default function Dashboard() {
 
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: 60 }}>
-      {!activeChat ? (
+      {getChatResponse.fetching ? (
         <LoadingFull>
           <Text variant="title">Loading your chat...</Text>
         </LoadingFull>
       ) : null}
-      {activeChat ? <Chat chatId={activeChat.id} userId={session!.user.id} /> : null}
+      {activeChat ? <Chat chatId={activeChat.id} /> : null}
     </SafeAreaView>
   );
 }

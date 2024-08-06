@@ -4,12 +4,13 @@ import { Alert, View, StyleSheet, ActivityIndicator } from 'react-native';
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
 import { Text } from '~/theme';
-import { profilesService } from '~/utils/services/profiles-service';
+import { useCreateUserMutation } from '~/utils/services/profiles/CreateUser.mutation.generated';
+import { storage } from '~/utils/storage';
 import { supabase } from '~/utils/supabase';
 
 const LoginSheet = ({ isLoadingAuth }: { isLoadingAuth?: boolean }) => {
   const router = useRouter();
-
+  const [, createUser] = useCreateUserMutation();
   const textStyle = useAnimatedStyle(() => ({
     opacity: withTiming(1, { duration: 1000 }),
   }));
@@ -52,6 +53,9 @@ const LoginSheet = ({ isLoadingAuth }: { isLoadingAuth?: boolean }) => {
                 return null;
               }
 
+              // Save the user to storage
+              storage.set('user', JSON.stringify(credential));
+
               const {
                 data: { user },
                 error,
@@ -61,18 +65,23 @@ const LoginSheet = ({ isLoadingAuth }: { isLoadingAuth?: boolean }) => {
               });
 
               if (error) {
-                Alert.alert(error.message);
+                console.log({ user, error });
+                Alert.alert('Apple Sign-In failed', 'Could not sign in');
                 return null;
               }
 
-              if (user) {
-                const data = await profilesService.create(user.id);
+              if (user && user.email) {
+                const { data, error } = await createUser({
+                  email: user.email,
+                });
 
+                console.log({ data, error });
                 if (data) {
                   router.push('(drawer)');
                 }
               }
             } catch (error: any) {
+              console.error(error);
               if (error.code === 'ERR_REQUEST_CANCELED') {
                 //! TODO handle that the user canceled the sign-in flow
               } else {

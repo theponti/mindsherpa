@@ -1,50 +1,30 @@
 import { MoreHorizontal, Plus } from 'lucide-react-native';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { LoadingFull } from '~/components/LoadingFull';
 import { FeedbackBlock } from '~/components/feedback-block';
 import { NoteForm } from '~/components/notes/note-form';
 import { NoteListItem } from '~/components/notes/note-list-item';
 import { Text } from '~/theme';
-import { useAuth } from '~/utils/auth/auth-context';
-import { getNotes, NoteType } from '~/utils/services/notebooks-service';
+import { NoteOutput } from '~/utils/schema/graphcache';
+import { useNotesQuery } from '~/utils/services/notes/Notes.query.generated';
 import { Colors } from '~/utils/styles';
-import { supabase } from '~/utils/supabase';
 
 const NotebookScreen = () => {
-  const { session } = useAuth();
-  const [notes, setNotes] = useState<NoteType[]>([]);
-  const [notesError, setNotesError] = useState<string | null>(null);
-
-  const loadNotes = useCallback(async () => {
-    const { data, error } = await getNotes({ userId: session!.user.id });
-
-    if (error) {
-      setNotesError(error.message);
-    }
-
-    if (data) {
-      setNotes(data);
-    }
-  }, [session]);
-
-  const onFormSubmit = async (content: string) => {
-    loadNotes();
+  const [getNotesResponse, getNotes] = useNotesQuery({
+    pause: true,
+    requestPolicy: 'network-only',
+  });
+  const notes = getNotesResponse.data?.notes;
+  const onFormSubmit = () => {
+    getNotes();
   };
 
   useEffect(() => {
-    const subscription = supabase
-      .channel('notes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'notes' }, (payload) => {
-        console.log(payload);
-      });
-
-    loadNotes();
-    return () => {
-      supabase.removeChannel(subscription);
-    };
+    getNotes();
   }, []);
 
   return (
@@ -57,16 +37,11 @@ const NotebookScreen = () => {
           <Text variant="header">Notes</Text>
           <HeaderButtons />
         </View>
-
-        <FlatList
-          data={notes}
-          renderItem={({ item }) => <NoteListItem item={item} />}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.listContainer}
-        />
-        {notesError ? (
+        {getNotesResponse.fetching ? <LoadingFull /> : null}
+        {!getNotesResponse.fetching && notes ? <NotesList notes={[...notes]} /> : null}
+        {getNotesResponse.error ? (
           <FeedbackBlock>
-            <Text>{notesError}</Text>
+            <Text>Your notes could not be loaded.</Text>
           </FeedbackBlock>
         ) : null}
         <NoteForm onSubmit={onFormSubmit} />
@@ -128,3 +103,23 @@ const headerButtonStyles = StyleSheet.create({
     marginLeft: 20,
   },
 });
+
+const NotesList = ({ notes }: { readonly notes: NoteOutput[] }) => {
+  if (notes.length === 0) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', rowGap: 24 }}>
+        <Text variant="title">No notes yet.</Text>
+        <Text variant="body">You can add notes by typing in the text field below.</Text>
+      </View>
+    );
+  }
+
+  return (
+    <FlatList
+      data={notes}
+      renderItem={({ item }) => <NoteListItem item={item} />}
+      keyExtractor={(item) => item.id}
+      contentContainerStyle={styles.listContainer}
+    />
+  );
+};

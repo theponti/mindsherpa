@@ -2,13 +2,15 @@ import { StyleSheet, View } from 'react-native';
 
 import { Text } from '~/theme';
 import theme from '~/theme/theme';
-import { NoteType } from '~/utils/services/notebooks-service';
+import { NoteOutput } from '~/utils/schema/graphcache';
 import { Colors } from '~/utils/styles';
 
-export const NoteListItem = ({ item }: { item: NoteType }) => {
+export const NoteListItem = ({ item }: { item: NoteOutput }) => {
   return (
     <View style={styles.listItem}>
-      <Text variant="body">{item.content}</Text>
+      <Text variant="body" numberOfLines={2}>
+        {item.content}
+      </Text>
     </View>
   );
 };
@@ -16,7 +18,7 @@ export const NoteListItem = ({ item }: { item: NoteType }) => {
 const styles = StyleSheet.create({
   listItem: {
     borderColor: Colors.grayLight,
-    borderRadius: 4,
+    borderRadius: 10,
     borderWidth: 1,
     marginBottom: 16,
     padding: 16,

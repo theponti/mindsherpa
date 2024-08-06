@@ -1,10 +1,10 @@
 import { StyleSheet, View } from 'react-native';
 
 import { Text } from '~/theme';
-import { Message } from '~/utils/services/messages-service';
+import { Message } from '~/utils/schema/graphcache';
 
 const ChatMessage = ({ message }: { message: Message }) => {
-  const { role, content } = message;
+  const { role, message: content } = message;
   const formattedRole = role.toLowerCase();
   const chatBubbleStyle = formattedRole === 'user' ? styles.userMessage : styles.botMessage;
 

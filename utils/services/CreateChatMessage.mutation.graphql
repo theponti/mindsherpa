@@ -1,0 +1,10 @@
+mutation CreateChatMessage($chatId: String!, $message: String!) {
+  sendChatMessage(chatId: $chatId, message: $message) {
+    id
+    message
+    role
+    chatId
+    profileId
+    createdAt
+  }
+}

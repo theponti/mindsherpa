@@ -1,0 +1,10 @@
+query ChatMessages($chatId: String!) {
+  chatMessages(chatId: $chatId) {
+    id
+    message
+    role
+    chatId
+    profileId
+    createdAt
+  }
+}

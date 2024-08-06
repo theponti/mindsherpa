@@ -11,8 +11,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import LoginSheet from '~/components/authentication/login-sheet';
 import { theme } from '~/theme';
-import { AuthContextProvider, useAuth } from '~/utils/auth/auth-context';
-import { UrqlProvider } from '~/utils/urql';
+import { AppProvider, useAppContext } from '~/utils/app-provider';
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
@@ -22,7 +21,7 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 function InnerRootLayout() {
-  const { isLoadingAuth, session } = useAuth();
+  const { isLoadingAuth, session } = useAppContext();
   const [loaded, error] = useFonts({
     'Noto Serif': require('../assets/fonts/Noto_Serif/NotoSerif-VariableFont_wdth,wght.ttf'),
     'Noto Serif Italic': require('../assets/fonts/Noto_Serif/NotoSerif-Italic-VariableFont_wdth,wght.ttf'),
@@ -78,11 +77,9 @@ export default function RootLayout() {
   return (
     <ThemeProvider theme={theme}>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <AuthContextProvider>
-          <UrqlProvider>
-            <InnerRootLayout />
-          </UrqlProvider>
-        </AuthContextProvider>
+        <AppProvider>
+          <InnerRootLayout />
+        </AppProvider>
       </GestureHandlerRootView>
     </ThemeProvider>
   );
