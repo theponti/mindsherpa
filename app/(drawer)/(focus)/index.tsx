@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, Animated } from 'react-native';
 
+import { FocusView } from '~/components/focus';
 import { Colors } from '~/utils/styles';
 
 const FocusScreen = () => {
@@ -17,7 +18,8 @@ const FocusScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Animated.View style={[styles.circle, { transform: [{ scale: scaleAnim }] }]} />
+      {/* <Animated.View style={[styles.circle, { transform: [{ scale: scaleAnim }] }]} /> */}
+      <FocusView />
     </View>
   );
 };

@@ -16,11 +16,36 @@ export type Scalars = {
   Upload: { input: any; output: any; }
 };
 
+export type Action = {
+  readonly __typename?: 'Action';
+  readonly goalId: Maybe<Scalars['String']['output']>;
+  readonly metadata: Maybe<ActionMetadata>;
+  readonly sentiment: Maybe<Scalars['String']['output']>;
+  readonly type: Maybe<Scalars['String']['output']>;
+  readonly value: Maybe<Scalars['String']['output']>;
+};
+
+export type ActionMetadata = {
+  readonly __typename?: 'ActionMetadata';
+  readonly belief: Maybe<Scalars['String']['output']>;
+  readonly currentExpenses: Maybe<Scalars['String']['output']>;
+  readonly goalTimeframe: Maybe<Scalars['String']['output']>;
+  readonly location: Maybe<Scalars['String']['output']>;
+  readonly timeframe: Maybe<Scalars['String']['output']>;
+};
+
 export type AuthPayload = {
   readonly __typename?: 'AuthPayload';
   readonly accessToken: Scalars['String']['output'];
   readonly refreshToken: Scalars['String']['output'];
   readonly userId: Scalars['Int']['output'];
+};
+
+export type Belief = {
+  readonly __typename?: 'Belief';
+  readonly sentiment: Maybe<Scalars['String']['output']>;
+  readonly type: Maybe<Scalars['String']['output']>;
+  readonly value: Maybe<Scalars['String']['output']>;
 };
 
 export type Chat = {
@@ -51,11 +76,45 @@ export type CreateUserPayload = {
   readonly user: User;
 };
 
+export type Date = {
+  readonly __typename?: 'Date';
+  readonly action: Maybe<Scalars['String']['output']>;
+  readonly type: Maybe<Scalars['String']['output']>;
+  readonly value: Maybe<Scalars['String']['output']>;
+};
+
+export type Focus = {
+  readonly __typename?: 'Focus';
+  readonly actions: ReadonlyArray<Action>;
+  readonly beliefs: ReadonlyArray<Belief>;
+  readonly dates: ReadonlyArray<Date>;
+  readonly goals: ReadonlyArray<Goal>;
+  readonly locations: ReadonlyArray<Location>;
+  readonly preferences: ReadonlyArray<Preference>;
+  readonly vision: Maybe<Scalars['String']['output']>;
+};
+
 export type GetProfileOutput = {
   readonly __typename?: 'GetProfileOutput';
   readonly fullName: Scalars['String']['output'];
   readonly id: Scalars['String']['output'];
   readonly userId: Scalars['String']['output'];
+};
+
+export type Goal = {
+  readonly __typename?: 'Goal';
+  readonly goalId: Scalars['String']['output'];
+  readonly priorityGrade: Scalars['Int']['output'];
+  readonly sentiment: Scalars['String']['output'];
+  readonly value: Scalars['String']['output'];
+};
+
+export type Location = {
+  readonly __typename?: 'Location';
+  readonly country: Maybe<Scalars['String']['output']>;
+  readonly locationType: Maybe<Scalars['String']['output']>;
+  readonly type: Maybe<Scalars['String']['output']>;
+  readonly value: Maybe<Scalars['String']['output']>;
 };
 
 export type Message = {
@@ -80,6 +139,7 @@ export type Mutation = {
   readonly refreshToken: AuthPayload;
   readonly saveAppleUser: AuthPayload;
   readonly sendChatMessage: ReadonlyArray<Message>;
+  readonly signUpWithEmail: CreateUserPayload;
   readonly updateProfile: UpdateProfilePayload;
   readonly uploadVoiceNote: UploadVoiceNoteResponse;
 };
@@ -112,6 +172,11 @@ export type MutationSendChatMessageArgs = {
 };
 
 
+export type MutationSignUpWithEmailArgs = {
+  email: Scalars['String']['input'];
+};
+
+
 export type MutationUpdateProfileArgs = {
   input: UpdateProfileInput;
 };
@@ -129,6 +194,13 @@ export type NoteOutput = {
   readonly id: Scalars['String']['output'];
 };
 
+export type Preference = {
+  readonly __typename?: 'Preference';
+  readonly sentiment: Maybe<Scalars['String']['output']>;
+  readonly type: Maybe<Scalars['String']['output']>;
+  readonly value: Maybe<Scalars['String']['output']>;
+};
+
 export type Profile = {
   readonly __typename?: 'Profile';
   readonly fullName: Maybe<Scalars['String']['output']>;
@@ -141,6 +213,7 @@ export type Query = {
   readonly chatMessages: ReadonlyArray<Message>;
   readonly chats: ReadonlyArray<Chat>;
   readonly currentUser: User;
+  readonly focus: Focus;
   readonly notes: ReadonlyArray<NoteOutput>;
   readonly profile: GetProfileOutput;
 };

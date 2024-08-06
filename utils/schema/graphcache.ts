@@ -19,11 +19,36 @@ export type Scalars = {
   Upload: { input: any; output: any; }
 };
 
+export type Action = {
+  readonly __typename?: 'Action';
+  readonly goalId: Maybe<Scalars['String']['output']>;
+  readonly metadata: Maybe<ActionMetadata>;
+  readonly sentiment: Maybe<Scalars['String']['output']>;
+  readonly type: Maybe<Scalars['String']['output']>;
+  readonly value: Maybe<Scalars['String']['output']>;
+};
+
+export type ActionMetadata = {
+  readonly __typename?: 'ActionMetadata';
+  readonly belief: Maybe<Scalars['String']['output']>;
+  readonly currentExpenses: Maybe<Scalars['String']['output']>;
+  readonly goalTimeframe: Maybe<Scalars['String']['output']>;
+  readonly location: Maybe<Scalars['String']['output']>;
+  readonly timeframe: Maybe<Scalars['String']['output']>;
+};
+
 export type AuthPayload = {
   readonly __typename?: 'AuthPayload';
   readonly accessToken: Scalars['String']['output'];
   readonly refreshToken: Scalars['String']['output'];
   readonly userId: Scalars['Int']['output'];
+};
+
+export type Belief = {
+  readonly __typename?: 'Belief';
+  readonly sentiment: Maybe<Scalars['String']['output']>;
+  readonly type: Maybe<Scalars['String']['output']>;
+  readonly value: Maybe<Scalars['String']['output']>;
 };
 
 export type Chat = {
@@ -54,11 +79,45 @@ export type CreateUserPayload = {
   readonly user: User;
 };
 
+export type Date = {
+  readonly __typename?: 'Date';
+  readonly action: Maybe<Scalars['String']['output']>;
+  readonly type: Maybe<Scalars['String']['output']>;
+  readonly value: Maybe<Scalars['String']['output']>;
+};
+
+export type Focus = {
+  readonly __typename?: 'Focus';
+  readonly actions: ReadonlyArray<Action>;
+  readonly beliefs: ReadonlyArray<Belief>;
+  readonly dates: ReadonlyArray<Date>;
+  readonly goals: ReadonlyArray<Goal>;
+  readonly locations: ReadonlyArray<Location>;
+  readonly preferences: ReadonlyArray<Preference>;
+  readonly vision: Maybe<Scalars['String']['output']>;
+};
+
 export type GetProfileOutput = {
   readonly __typename?: 'GetProfileOutput';
   readonly fullName: Scalars['String']['output'];
   readonly id: Scalars['String']['output'];
   readonly userId: Scalars['String']['output'];
+};
+
+export type Goal = {
+  readonly __typename?: 'Goal';
+  readonly goalId: Scalars['String']['output'];
+  readonly priorityGrade: Scalars['Int']['output'];
+  readonly sentiment: Scalars['String']['output'];
+  readonly value: Scalars['String']['output'];
+};
+
+export type Location = {
+  readonly __typename?: 'Location';
+  readonly country: Maybe<Scalars['String']['output']>;
+  readonly locationType: Maybe<Scalars['String']['output']>;
+  readonly type: Maybe<Scalars['String']['output']>;
+  readonly value: Maybe<Scalars['String']['output']>;
 };
 
 export type Message = {
@@ -83,6 +142,7 @@ export type Mutation = {
   readonly refreshToken: AuthPayload;
   readonly saveAppleUser: AuthPayload;
   readonly sendChatMessage: ReadonlyArray<Message>;
+  readonly signUpWithEmail: CreateUserPayload;
   readonly updateProfile: UpdateProfilePayload;
   readonly uploadVoiceNote: UploadVoiceNoteResponse;
 };
@@ -115,6 +175,11 @@ export type MutationSendChatMessageArgs = {
 };
 
 
+export type MutationSignUpWithEmailArgs = {
+  email: Scalars['String']['input'];
+};
+
+
 export type MutationUpdateProfileArgs = {
   input: UpdateProfileInput;
 };
@@ -132,6 +197,13 @@ export type NoteOutput = {
   readonly id: Scalars['String']['output'];
 };
 
+export type Preference = {
+  readonly __typename?: 'Preference';
+  readonly sentiment: Maybe<Scalars['String']['output']>;
+  readonly type: Maybe<Scalars['String']['output']>;
+  readonly value: Maybe<Scalars['String']['output']>;
+};
+
 export type Profile = {
   readonly __typename?: 'Profile';
   readonly fullName: Maybe<Scalars['String']['output']>;
@@ -144,6 +216,7 @@ export type Query = {
   readonly chatMessages: ReadonlyArray<Message>;
   readonly chats: ReadonlyArray<Chat>;
   readonly currentUser: User;
+  readonly focus: Focus;
   readonly notes: ReadonlyArray<NoteOutput>;
   readonly profile: GetProfileOutput;
 };
@@ -178,13 +251,21 @@ export type User = {
 export type WithTypename<T extends { __typename?: any }> = Partial<T> & { __typename: NonNullable<T['__typename']> };
 
 export type GraphCacheKeysConfig = {
+  Action?: (data: WithTypename<Action>) => null | string,
+  ActionMetadata?: (data: WithTypename<ActionMetadata>) => null | string,
   AuthPayload?: (data: WithTypename<AuthPayload>) => null | string,
+  Belief?: (data: WithTypename<Belief>) => null | string,
   Chat?: (data: WithTypename<Chat>) => null | string,
   CreateNote?: (data: WithTypename<CreateNote>) => null | string,
   CreateUserPayload?: (data: WithTypename<CreateUserPayload>) => null | string,
+  Date?: (data: WithTypename<Date>) => null | string,
+  Focus?: (data: WithTypename<Focus>) => null | string,
   GetProfileOutput?: (data: WithTypename<GetProfileOutput>) => null | string,
+  Goal?: (data: WithTypename<Goal>) => null | string,
+  Location?: (data: WithTypename<Location>) => null | string,
   Message?: (data: WithTypename<Message>) => null | string,
   NoteOutput?: (data: WithTypename<NoteOutput>) => null | string,
+  Preference?: (data: WithTypename<Preference>) => null | string,
   Profile?: (data: WithTypename<Profile>) => null | string,
   UpdateProfilePayload?: (data: WithTypename<UpdateProfilePayload>) => null | string,
   UploadVoiceNoteResponse?: (data: WithTypename<UploadVoiceNoteResponse>) => null | string,
@@ -196,13 +277,33 @@ export type GraphCacheResolvers = {
     chatMessages?: GraphCacheResolver<WithTypename<Query>, QueryChatMessagesArgs, Array<WithTypename<Message> | string>>,
     chats?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<Chat> | string>>,
     currentUser?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, WithTypename<User> | string>,
+    focus?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, WithTypename<Focus> | string>,
     notes?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<NoteOutput> | string>>,
     profile?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, WithTypename<GetProfileOutput> | string>
+  },
+  Action?: {
+    goalId?: GraphCacheResolver<WithTypename<Action>, Record<string, never>, Scalars['String'] | string>,
+    metadata?: GraphCacheResolver<WithTypename<Action>, Record<string, never>, WithTypename<ActionMetadata> | string>,
+    sentiment?: GraphCacheResolver<WithTypename<Action>, Record<string, never>, Scalars['String'] | string>,
+    type?: GraphCacheResolver<WithTypename<Action>, Record<string, never>, Scalars['String'] | string>,
+    value?: GraphCacheResolver<WithTypename<Action>, Record<string, never>, Scalars['String'] | string>
+  },
+  ActionMetadata?: {
+    belief?: GraphCacheResolver<WithTypename<ActionMetadata>, Record<string, never>, Scalars['String'] | string>,
+    currentExpenses?: GraphCacheResolver<WithTypename<ActionMetadata>, Record<string, never>, Scalars['String'] | string>,
+    goalTimeframe?: GraphCacheResolver<WithTypename<ActionMetadata>, Record<string, never>, Scalars['String'] | string>,
+    location?: GraphCacheResolver<WithTypename<ActionMetadata>, Record<string, never>, Scalars['String'] | string>,
+    timeframe?: GraphCacheResolver<WithTypename<ActionMetadata>, Record<string, never>, Scalars['String'] | string>
   },
   AuthPayload?: {
     accessToken?: GraphCacheResolver<WithTypename<AuthPayload>, Record<string, never>, Scalars['String'] | string>,
     refreshToken?: GraphCacheResolver<WithTypename<AuthPayload>, Record<string, never>, Scalars['String'] | string>,
     userId?: GraphCacheResolver<WithTypename<AuthPayload>, Record<string, never>, Scalars['Int'] | string>
+  },
+  Belief?: {
+    sentiment?: GraphCacheResolver<WithTypename<Belief>, Record<string, never>, Scalars['String'] | string>,
+    type?: GraphCacheResolver<WithTypename<Belief>, Record<string, never>, Scalars['String'] | string>,
+    value?: GraphCacheResolver<WithTypename<Belief>, Record<string, never>, Scalars['String'] | string>
   },
   Chat?: {
     createdAt?: GraphCacheResolver<WithTypename<Chat>, Record<string, never>, Scalars['String'] | string>,
@@ -218,10 +319,36 @@ export type GraphCacheResolvers = {
     profile?: GraphCacheResolver<WithTypename<CreateUserPayload>, Record<string, never>, WithTypename<Profile> | string>,
     user?: GraphCacheResolver<WithTypename<CreateUserPayload>, Record<string, never>, WithTypename<User> | string>
   },
+  Date?: {
+    action?: GraphCacheResolver<WithTypename<Date>, Record<string, never>, Scalars['String'] | string>,
+    type?: GraphCacheResolver<WithTypename<Date>, Record<string, never>, Scalars['String'] | string>,
+    value?: GraphCacheResolver<WithTypename<Date>, Record<string, never>, Scalars['String'] | string>
+  },
+  Focus?: {
+    actions?: GraphCacheResolver<WithTypename<Focus>, Record<string, never>, Array<WithTypename<Action> | string>>,
+    beliefs?: GraphCacheResolver<WithTypename<Focus>, Record<string, never>, Array<WithTypename<Belief> | string>>,
+    dates?: GraphCacheResolver<WithTypename<Focus>, Record<string, never>, Array<WithTypename<Date> | string>>,
+    goals?: GraphCacheResolver<WithTypename<Focus>, Record<string, never>, Array<WithTypename<Goal> | string>>,
+    locations?: GraphCacheResolver<WithTypename<Focus>, Record<string, never>, Array<WithTypename<Location> | string>>,
+    preferences?: GraphCacheResolver<WithTypename<Focus>, Record<string, never>, Array<WithTypename<Preference> | string>>,
+    vision?: GraphCacheResolver<WithTypename<Focus>, Record<string, never>, Scalars['String'] | string>
+  },
   GetProfileOutput?: {
     fullName?: GraphCacheResolver<WithTypename<GetProfileOutput>, Record<string, never>, Scalars['String'] | string>,
     id?: GraphCacheResolver<WithTypename<GetProfileOutput>, Record<string, never>, Scalars['String'] | string>,
     userId?: GraphCacheResolver<WithTypename<GetProfileOutput>, Record<string, never>, Scalars['String'] | string>
+  },
+  Goal?: {
+    goalId?: GraphCacheResolver<WithTypename<Goal>, Record<string, never>, Scalars['String'] | string>,
+    priorityGrade?: GraphCacheResolver<WithTypename<Goal>, Record<string, never>, Scalars['Int'] | string>,
+    sentiment?: GraphCacheResolver<WithTypename<Goal>, Record<string, never>, Scalars['String'] | string>,
+    value?: GraphCacheResolver<WithTypename<Goal>, Record<string, never>, Scalars['String'] | string>
+  },
+  Location?: {
+    country?: GraphCacheResolver<WithTypename<Location>, Record<string, never>, Scalars['String'] | string>,
+    locationType?: GraphCacheResolver<WithTypename<Location>, Record<string, never>, Scalars['String'] | string>,
+    type?: GraphCacheResolver<WithTypename<Location>, Record<string, never>, Scalars['String'] | string>,
+    value?: GraphCacheResolver<WithTypename<Location>, Record<string, never>, Scalars['String'] | string>
   },
   Message?: {
     chatId?: GraphCacheResolver<WithTypename<Message>, Record<string, never>, Scalars['String'] | string>,
@@ -235,6 +362,11 @@ export type GraphCacheResolvers = {
     content?: GraphCacheResolver<WithTypename<NoteOutput>, Record<string, never>, Scalars['String'] | string>,
     createdAt?: GraphCacheResolver<WithTypename<NoteOutput>, Record<string, never>, Scalars['String'] | string>,
     id?: GraphCacheResolver<WithTypename<NoteOutput>, Record<string, never>, Scalars['String'] | string>
+  },
+  Preference?: {
+    sentiment?: GraphCacheResolver<WithTypename<Preference>, Record<string, never>, Scalars['String'] | string>,
+    type?: GraphCacheResolver<WithTypename<Preference>, Record<string, never>, Scalars['String'] | string>,
+    value?: GraphCacheResolver<WithTypename<Preference>, Record<string, never>, Scalars['String'] | string>
   },
   Profile?: {
     fullName?: GraphCacheResolver<WithTypename<Profile>, Record<string, never>, Scalars['String'] | string>,
@@ -260,6 +392,7 @@ export type GraphCacheOptimisticUpdaters = {
   refreshToken?: GraphCacheOptimisticMutationResolver<MutationRefreshTokenArgs, WithTypename<AuthPayload>>,
   saveAppleUser?: GraphCacheOptimisticMutationResolver<MutationSaveAppleUserArgs, WithTypename<AuthPayload>>,
   sendChatMessage?: GraphCacheOptimisticMutationResolver<MutationSendChatMessageArgs, Array<WithTypename<Message>>>,
+  signUpWithEmail?: GraphCacheOptimisticMutationResolver<MutationSignUpWithEmailArgs, WithTypename<CreateUserPayload>>,
   updateProfile?: GraphCacheOptimisticMutationResolver<MutationUpdateProfileArgs, WithTypename<UpdateProfilePayload>>,
   uploadVoiceNote?: GraphCacheOptimisticMutationResolver<MutationUploadVoiceNoteArgs, WithTypename<UploadVoiceNoteResponse>>
 };
@@ -269,6 +402,7 @@ export type GraphCacheUpdaters = {
     chatMessages?: GraphCacheUpdateResolver<{ chatMessages: Array<WithTypename<Message>> }, QueryChatMessagesArgs>,
     chats?: GraphCacheUpdateResolver<{ chats: Array<WithTypename<Chat>> }, Record<string, never>>,
     currentUser?: GraphCacheUpdateResolver<{ currentUser: WithTypename<User> }, Record<string, never>>,
+    focus?: GraphCacheUpdateResolver<{ focus: WithTypename<Focus> }, Record<string, never>>,
     notes?: GraphCacheUpdateResolver<{ notes: Array<WithTypename<NoteOutput>> }, Record<string, never>>,
     profile?: GraphCacheUpdateResolver<{ profile: WithTypename<GetProfileOutput> }, Record<string, never>>
   },
@@ -278,14 +412,34 @@ export type GraphCacheUpdaters = {
     refreshToken?: GraphCacheUpdateResolver<{ refreshToken: WithTypename<AuthPayload> }, MutationRefreshTokenArgs>,
     saveAppleUser?: GraphCacheUpdateResolver<{ saveAppleUser: WithTypename<AuthPayload> }, MutationSaveAppleUserArgs>,
     sendChatMessage?: GraphCacheUpdateResolver<{ sendChatMessage: Array<WithTypename<Message>> }, MutationSendChatMessageArgs>,
+    signUpWithEmail?: GraphCacheUpdateResolver<{ signUpWithEmail: WithTypename<CreateUserPayload> }, MutationSignUpWithEmailArgs>,
     updateProfile?: GraphCacheUpdateResolver<{ updateProfile: WithTypename<UpdateProfilePayload> }, MutationUpdateProfileArgs>,
     uploadVoiceNote?: GraphCacheUpdateResolver<{ uploadVoiceNote: WithTypename<UploadVoiceNoteResponse> }, MutationUploadVoiceNoteArgs>
   },
   Subscription?: {},
+  Action?: {
+    goalId?: GraphCacheUpdateResolver<Maybe<WithTypename<Action>>, Record<string, never>>,
+    metadata?: GraphCacheUpdateResolver<Maybe<WithTypename<Action>>, Record<string, never>>,
+    sentiment?: GraphCacheUpdateResolver<Maybe<WithTypename<Action>>, Record<string, never>>,
+    type?: GraphCacheUpdateResolver<Maybe<WithTypename<Action>>, Record<string, never>>,
+    value?: GraphCacheUpdateResolver<Maybe<WithTypename<Action>>, Record<string, never>>
+  },
+  ActionMetadata?: {
+    belief?: GraphCacheUpdateResolver<Maybe<WithTypename<ActionMetadata>>, Record<string, never>>,
+    currentExpenses?: GraphCacheUpdateResolver<Maybe<WithTypename<ActionMetadata>>, Record<string, never>>,
+    goalTimeframe?: GraphCacheUpdateResolver<Maybe<WithTypename<ActionMetadata>>, Record<string, never>>,
+    location?: GraphCacheUpdateResolver<Maybe<WithTypename<ActionMetadata>>, Record<string, never>>,
+    timeframe?: GraphCacheUpdateResolver<Maybe<WithTypename<ActionMetadata>>, Record<string, never>>
+  },
   AuthPayload?: {
     accessToken?: GraphCacheUpdateResolver<Maybe<WithTypename<AuthPayload>>, Record<string, never>>,
     refreshToken?: GraphCacheUpdateResolver<Maybe<WithTypename<AuthPayload>>, Record<string, never>>,
     userId?: GraphCacheUpdateResolver<Maybe<WithTypename<AuthPayload>>, Record<string, never>>
+  },
+  Belief?: {
+    sentiment?: GraphCacheUpdateResolver<Maybe<WithTypename<Belief>>, Record<string, never>>,
+    type?: GraphCacheUpdateResolver<Maybe<WithTypename<Belief>>, Record<string, never>>,
+    value?: GraphCacheUpdateResolver<Maybe<WithTypename<Belief>>, Record<string, never>>
   },
   Chat?: {
     createdAt?: GraphCacheUpdateResolver<Maybe<WithTypename<Chat>>, Record<string, never>>,
@@ -301,10 +455,36 @@ export type GraphCacheUpdaters = {
     profile?: GraphCacheUpdateResolver<Maybe<WithTypename<CreateUserPayload>>, Record<string, never>>,
     user?: GraphCacheUpdateResolver<Maybe<WithTypename<CreateUserPayload>>, Record<string, never>>
   },
+  Date?: {
+    action?: GraphCacheUpdateResolver<Maybe<WithTypename<Date>>, Record<string, never>>,
+    type?: GraphCacheUpdateResolver<Maybe<WithTypename<Date>>, Record<string, never>>,
+    value?: GraphCacheUpdateResolver<Maybe<WithTypename<Date>>, Record<string, never>>
+  },
+  Focus?: {
+    actions?: GraphCacheUpdateResolver<Maybe<WithTypename<Focus>>, Record<string, never>>,
+    beliefs?: GraphCacheUpdateResolver<Maybe<WithTypename<Focus>>, Record<string, never>>,
+    dates?: GraphCacheUpdateResolver<Maybe<WithTypename<Focus>>, Record<string, never>>,
+    goals?: GraphCacheUpdateResolver<Maybe<WithTypename<Focus>>, Record<string, never>>,
+    locations?: GraphCacheUpdateResolver<Maybe<WithTypename<Focus>>, Record<string, never>>,
+    preferences?: GraphCacheUpdateResolver<Maybe<WithTypename<Focus>>, Record<string, never>>,
+    vision?: GraphCacheUpdateResolver<Maybe<WithTypename<Focus>>, Record<string, never>>
+  },
   GetProfileOutput?: {
     fullName?: GraphCacheUpdateResolver<Maybe<WithTypename<GetProfileOutput>>, Record<string, never>>,
     id?: GraphCacheUpdateResolver<Maybe<WithTypename<GetProfileOutput>>, Record<string, never>>,
     userId?: GraphCacheUpdateResolver<Maybe<WithTypename<GetProfileOutput>>, Record<string, never>>
+  },
+  Goal?: {
+    goalId?: GraphCacheUpdateResolver<Maybe<WithTypename<Goal>>, Record<string, never>>,
+    priorityGrade?: GraphCacheUpdateResolver<Maybe<WithTypename<Goal>>, Record<string, never>>,
+    sentiment?: GraphCacheUpdateResolver<Maybe<WithTypename<Goal>>, Record<string, never>>,
+    value?: GraphCacheUpdateResolver<Maybe<WithTypename<Goal>>, Record<string, never>>
+  },
+  Location?: {
+    country?: GraphCacheUpdateResolver<Maybe<WithTypename<Location>>, Record<string, never>>,
+    locationType?: GraphCacheUpdateResolver<Maybe<WithTypename<Location>>, Record<string, never>>,
+    type?: GraphCacheUpdateResolver<Maybe<WithTypename<Location>>, Record<string, never>>,
+    value?: GraphCacheUpdateResolver<Maybe<WithTypename<Location>>, Record<string, never>>
   },
   Message?: {
     chatId?: GraphCacheUpdateResolver<Maybe<WithTypename<Message>>, Record<string, never>>,
@@ -318,6 +498,11 @@ export type GraphCacheUpdaters = {
     content?: GraphCacheUpdateResolver<Maybe<WithTypename<NoteOutput>>, Record<string, never>>,
     createdAt?: GraphCacheUpdateResolver<Maybe<WithTypename<NoteOutput>>, Record<string, never>>,
     id?: GraphCacheUpdateResolver<Maybe<WithTypename<NoteOutput>>, Record<string, never>>
+  },
+  Preference?: {
+    sentiment?: GraphCacheUpdateResolver<Maybe<WithTypename<Preference>>, Record<string, never>>,
+    type?: GraphCacheUpdateResolver<Maybe<WithTypename<Preference>>, Record<string, never>>,
+    value?: GraphCacheUpdateResolver<Maybe<WithTypename<Preference>>, Record<string, never>>
   },
   Profile?: {
     fullName?: GraphCacheUpdateResolver<Maybe<WithTypename<Profile>>, Record<string, never>>,

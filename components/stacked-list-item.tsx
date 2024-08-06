@@ -13,7 +13,6 @@ import { NoteForm } from './notes/note-form';
 
 import { Text } from '~/theme';
 import { Shadows } from '~/theme/theme';
-import { NotebookType } from '~/utils/services/notebooks-service';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -24,7 +23,11 @@ const StackedListItem = ({
   expandCard,
   isExpanded,
 }: Readonly<{
-  item: NotebookType;
+  item: {
+    title: string;
+    count: number;
+    expandedIndex: number | null;
+  };
   index: number;
   totalItems: number;
   expandCard: (index: number) => void;
