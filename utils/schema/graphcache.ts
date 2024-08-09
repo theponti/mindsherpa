@@ -33,6 +33,17 @@ export type Chat = {
   readonly title: Scalars['String']['output'];
 };
 
+export type ChatMessagesResponse = {
+  readonly __typename?: 'ChatMessagesResponse';
+  readonly messages: ReadonlyArray<Message>;
+  readonly summary: ReadonlyArray<ChatSummaryOutputItem>;
+};
+
+export type ChatSummaryOutputItem = {
+  readonly __typename?: 'ChatSummaryOutputItem';
+  readonly text: Scalars['String']['output'];
+};
+
 export type CreateNote = {
   readonly __typename?: 'CreateNote';
   readonly content: Scalars['String']['output'];
@@ -158,7 +169,7 @@ export type Profile = {
 
 export type Query = {
   readonly __typename?: 'Query';
-  readonly chatMessages: ReadonlyArray<Message>;
+  readonly chatMessages: ChatMessagesResponse;
   readonly chats: ReadonlyArray<Chat>;
   readonly currentUser: User;
   readonly focus: FocusOutput;
@@ -198,6 +209,8 @@ export type WithTypename<T extends { __typename?: any }> = Partial<T> & { __type
 export type GraphCacheKeysConfig = {
   AuthPayload?: (data: WithTypename<AuthPayload>) => null | string,
   Chat?: (data: WithTypename<Chat>) => null | string,
+  ChatMessagesResponse?: (data: WithTypename<ChatMessagesResponse>) => null | string,
+  ChatSummaryOutputItem?: (data: WithTypename<ChatSummaryOutputItem>) => null | string,
   CreateNote?: (data: WithTypename<CreateNote>) => null | string,
   CreateUserPayload?: (data: WithTypename<CreateUserPayload>) => null | string,
   FocusOutput?: (data: WithTypename<FocusOutput>) => null | string,
@@ -213,7 +226,7 @@ export type GraphCacheKeysConfig = {
 
 export type GraphCacheResolvers = {
   Query?: {
-    chatMessages?: GraphCacheResolver<WithTypename<Query>, QueryChatMessagesArgs, Array<WithTypename<Message> | string>>,
+    chatMessages?: GraphCacheResolver<WithTypename<Query>, QueryChatMessagesArgs, WithTypename<ChatMessagesResponse> | string>,
     chats?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<Chat> | string>>,
     currentUser?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, WithTypename<User> | string>,
     focus?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, WithTypename<FocusOutput> | string>,
@@ -229,6 +242,13 @@ export type GraphCacheResolvers = {
     createdAt?: GraphCacheResolver<WithTypename<Chat>, Record<string, never>, Scalars['String'] | string>,
     id?: GraphCacheResolver<WithTypename<Chat>, Record<string, never>, Scalars['String'] | string>,
     title?: GraphCacheResolver<WithTypename<Chat>, Record<string, never>, Scalars['String'] | string>
+  },
+  ChatMessagesResponse?: {
+    messages?: GraphCacheResolver<WithTypename<ChatMessagesResponse>, Record<string, never>, Array<WithTypename<Message> | string>>,
+    summary?: GraphCacheResolver<WithTypename<ChatMessagesResponse>, Record<string, never>, Array<WithTypename<ChatSummaryOutputItem> | string>>
+  },
+  ChatSummaryOutputItem?: {
+    text?: GraphCacheResolver<WithTypename<ChatSummaryOutputItem>, Record<string, never>, Scalars['String'] | string>
   },
   CreateNote?: {
     content?: GraphCacheResolver<WithTypename<CreateNote>, Record<string, never>, Scalars['String'] | string>,
@@ -300,7 +320,7 @@ export type GraphCacheOptimisticUpdaters = {
 
 export type GraphCacheUpdaters = {
   Query?: {
-    chatMessages?: GraphCacheUpdateResolver<{ chatMessages: Array<WithTypename<Message>> }, QueryChatMessagesArgs>,
+    chatMessages?: GraphCacheUpdateResolver<{ chatMessages: WithTypename<ChatMessagesResponse> }, QueryChatMessagesArgs>,
     chats?: GraphCacheUpdateResolver<{ chats: Array<WithTypename<Chat>> }, Record<string, never>>,
     currentUser?: GraphCacheUpdateResolver<{ currentUser: WithTypename<User> }, Record<string, never>>,
     focus?: GraphCacheUpdateResolver<{ focus: WithTypename<FocusOutput> }, Record<string, never>>,
@@ -326,6 +346,13 @@ export type GraphCacheUpdaters = {
     createdAt?: GraphCacheUpdateResolver<Maybe<WithTypename<Chat>>, Record<string, never>>,
     id?: GraphCacheUpdateResolver<Maybe<WithTypename<Chat>>, Record<string, never>>,
     title?: GraphCacheUpdateResolver<Maybe<WithTypename<Chat>>, Record<string, never>>
+  },
+  ChatMessagesResponse?: {
+    messages?: GraphCacheUpdateResolver<Maybe<WithTypename<ChatMessagesResponse>>, Record<string, never>>,
+    summary?: GraphCacheUpdateResolver<Maybe<WithTypename<ChatMessagesResponse>>, Record<string, never>>
+  },
+  ChatSummaryOutputItem?: {
+    text?: GraphCacheUpdateResolver<Maybe<WithTypename<ChatSummaryOutputItem>>, Record<string, never>>
   },
   CreateNote?: {
     content?: GraphCacheUpdateResolver<Maybe<WithTypename<CreateNote>>, Record<string, never>>,

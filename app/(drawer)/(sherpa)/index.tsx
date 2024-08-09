@@ -3,7 +3,9 @@ import { useEffect } from 'react';
 import { SafeAreaView } from 'react-native';
 
 import { LoadingFull } from '~/components/LoadingFull';
+import { ScreenContent } from '~/components/ScreenContent';
 import { Chat } from '~/components/chat';
+import { ViewHeader } from '~/components/view-header';
 import { Text } from '~/theme';
 import { useAppContext } from '~/utils/app-provider';
 import { useChatsQuery } from '~/utils/services/Chats.query.generated';
@@ -28,13 +30,16 @@ export default function Sherpa() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: 60 }}>
-      {getChatResponse.fetching ? (
-        <LoadingFull>
-          <Text variant="title">Loading your chat...</Text>
-        </LoadingFull>
-      ) : null}
-      {activeChat ? <Chat chatId={activeChat.id} /> : null}
-    </SafeAreaView>
+    <ScreenContent>
+      <ViewHeader />
+      <SafeAreaView style={{ flex: 1, paddingTop: 60 }}>
+        {getChatResponse.fetching ? (
+          <LoadingFull>
+            <Text variant="title">Loading your chat...</Text>
+          </LoadingFull>
+        ) : null}
+        {activeChat ? <Chat chatId={activeChat.id} /> : null}
+      </SafeAreaView>
+    </ScreenContent>
   );
 }

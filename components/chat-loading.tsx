@@ -1,12 +1,13 @@
 import { ActivityIndicator, StyleSheet } from 'react-native';
 
 import { Box, Text } from '~/theme';
+import { PulsingCircle } from './animated/pulsing-circle';
 
 function ChatLoading() {
   return (
     <Box style={styles.loading}>
       <Text variant="title">Loading chat messages</Text>
-      <ActivityIndicator size="large" color="#000" />
+      <PulsingCircle />
     </Box>
   );
 }
@@ -14,7 +15,7 @@ function ChatLoading() {
 const styles = StyleSheet.create({
   loading: {
     flex: 1,
-    rowGap: 16,
+    rowGap: 75,
     justifyContent: 'center',
     alignItems: 'center',
   },

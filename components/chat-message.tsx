@@ -2,6 +2,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { Text } from '~/theme';
 import { Message } from '~/utils/schema/graphcache';
+import { Colors, borderStyle } from '~/utils/styles';
 
 const ChatMessage = ({ message }: { message: Message }) => {
   const { role, message: content } = message;
@@ -9,8 +10,10 @@ const ChatMessage = ({ message }: { message: Message }) => {
   const chatBubbleStyle = formattedRole === 'user' ? styles.userMessage : styles.botMessage;
 
   return (
-    <View style={chatBubbleStyle}>
-      <Text variant="body" color={formattedRole === 'user' ? 'white' : 'black'}>
+    <View style={[borderStyle.border, chatBubbleStyle]}>
+      <Text
+        variant="body"
+        style={formattedRole === 'user' ? styles.userMessageText : styles.botMessageText}>
         {content}
       </Text>
     </View>
@@ -21,7 +24,7 @@ export const renderMessage = ({ item }: { item: Message }) => {
   return <ChatMessage message={item} />;
 };
 
-const borderRadiusSize = 20;
+const borderRadiusSize = 8;
 
 const baseMessageStyle = {
   padding: 14,
@@ -29,40 +32,29 @@ const baseMessageStyle = {
   borderTopRightRadius: borderRadiusSize,
   borderBottomLeftRadius: borderRadiusSize,
   borderTopLeftRadius: borderRadiusSize,
-  backgroundColor: '#000',
-  borderRadius: 5,
-  marginVertical: 8,
 };
 const styles = StyleSheet.create({
   botMessage: {
     ...baseMessageStyle,
-    borderTopLeftRadius: borderRadiusSize,
-    borderTopRightRadius: borderRadiusSize,
+    backgroundColor: Colors.white,
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: borderRadiusSize,
-    backgroundColor: '#f9f9f9',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    borderTopLeftRadius: borderRadiusSize,
+    borderTopRightRadius: borderRadiusSize,
   },
   userMessage: {
     ...baseMessageStyle,
-    borderBottomRightRadius: 0,
-    borderTopRightRadius: 10,
+    backgroundColor: Colors.white,
     borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 0,
     borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
   },
   userMessageText: {
-    color: '#fff',
-    fontSize: 20,
+    color: Colors.black,
+    justifyContent: 'flex-end',
   },
   botMessageText: {
-    color: '#000',
-    fontSize: 18,
-    lineHeight: 26,
+    color: Colors.black,
   },
 });

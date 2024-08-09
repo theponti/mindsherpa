@@ -14,7 +14,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 60,
-    // backgroundColor: Colors.backgroundColor,
-    backgroundColor: '#F8FBFF',
+    backgroundColor: Colors.backgroundColor,
   },
 });

@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import { Card } from '~/components/card';
 import { Text } from '~/theme';
@@ -19,6 +19,6 @@ export const FocusCard = ({ title, data }: { title: string; data: FocusOutputIte
 
 const EmptyCardContent = ({ cardName }: { cardName: string }) => (
   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingVertical: 24 }}>
-    <Text variant="body" style={{ color: '#BDBDBD' }}>{`No ${cardName} to show`}</Text>
+    <Text variant="body">{`No ${cardName} to show`}</Text>
   </View>
 );

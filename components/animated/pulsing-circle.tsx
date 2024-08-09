@@ -9,8 +9,8 @@ export const PulsingCircle = () => {
   useEffect(() => {
     Animated.loop(
       Animated.sequence([
-        Animated.timing(scaleAnim, { toValue: 1.2, duration: 1000, useNativeDriver: true }),
-        Animated.timing(scaleAnim, { toValue: 1, duration: 1000, useNativeDriver: true }),
+        Animated.timing(scaleAnim, { toValue: 3, duration: 1500, useNativeDriver: true }),
+        Animated.timing(scaleAnim, { toValue: 1, duration: 550, useNativeDriver: true }),
       ])
     ).start();
   }, [scaleAnim]);
@@ -20,9 +20,9 @@ export const PulsingCircle = () => {
 
 const styles = StyleSheet.create({
   circle: {
-    width: 100,
-    height: 100,
+    width: 50,
+    height: 50,
     borderRadius: 50,
-    backgroundColor: Colors.grayLight,
+    backgroundColor: Colors.blue,
   },
 });

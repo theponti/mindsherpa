@@ -54,7 +54,7 @@ const theme = createTheme({
     body: {
       fontFamily: 'Noto Sans',
       fontSize: 16,
-      color: 'quatarnary',
+      color: 'quaternary',
     },
     bodyLarge: {
       fontFamily: 'Noto Sans',

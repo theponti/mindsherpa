@@ -30,6 +30,17 @@ export type Chat = {
   readonly title: Scalars['String']['output'];
 };
 
+export type ChatMessagesResponse = {
+  readonly __typename?: 'ChatMessagesResponse';
+  readonly messages: ReadonlyArray<Message>;
+  readonly summary: ReadonlyArray<ChatSummaryOutputItem>;
+};
+
+export type ChatSummaryOutputItem = {
+  readonly __typename?: 'ChatSummaryOutputItem';
+  readonly text: Scalars['String']['output'];
+};
+
 export type CreateNote = {
   readonly __typename?: 'CreateNote';
   readonly content: Scalars['String']['output'];
@@ -155,7 +166,7 @@ export type Profile = {
 
 export type Query = {
   readonly __typename?: 'Query';
-  readonly chatMessages: ReadonlyArray<Message>;
+  readonly chatMessages: ChatMessagesResponse;
   readonly chats: ReadonlyArray<Chat>;
   readonly currentUser: User;
   readonly focus: FocusOutput;

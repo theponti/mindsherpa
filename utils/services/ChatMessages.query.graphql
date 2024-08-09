@@ -1,10 +1,15 @@
 query ChatMessages($chatId: String!) {
   chatMessages(chatId: $chatId) {
-    id
-    message
-    role
-    chatId
-    profileId
-    createdAt
+    summary {
+      text
+    }
+    messages {
+      id
+      message
+      role
+      chatId
+      profileId
+      createdAt
+    }
   }
 }

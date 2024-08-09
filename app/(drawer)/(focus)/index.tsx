@@ -1,9 +1,7 @@
-import { Link, useFocusEffect, useRouter } from 'expo-router';
-import { Calendar, CircleDot, UserCircle } from 'lucide-react-native';
+import { useFocusEffect, useRouter } from 'expo-router';
 import React, { useCallback, useMemo } from 'react';
-import { View, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Circle } from 'react-native-svg';
 
 import { LoadingContainer } from '~/components/LoadingFull';
 import { ScreenContent } from '~/components/ScreenContent';
@@ -15,7 +13,6 @@ import { FocusListItem } from '~/components/focus/focus-list-item';
 import { Text } from '~/theme';
 import type { FocusOutputItem } from '~/utils/schema/graphcache';
 import { useFocusQuery } from '~/utils/services/Focus.query.generated';
-import { Colors } from '~/utils/styles';
 
 export const FocusView = () => {
   const router = useRouter();
@@ -34,13 +31,6 @@ export const FocusView = () => {
 
   return (
     <ScreenContent>
-      <View style={styles.navbar}>
-        <View style={{ width: 32 }} />
-        <Image source={require('../../../assets/header-logo.png')} height={20} width={35} />
-        <Link href="/(drawer)/(account)">
-          <UserCircle size={32} color={Colors.gray} />
-        </Link>
-      </View>
       <View style={[styles.container]}>
         <View style={styles.header}>
           <Text variant="cardHeader">Today's Focus</Text>
@@ -89,11 +79,13 @@ const Focus = ({ items }: { readonly items: FocusOutputItem[] }) => {
   };
 
   const entries = Object.keys(accumulatedCategories);
+  const focusItems = useMemo(() => {
+    return items.filter((item) => item.type === 'task' || item.type === 'event');
+  }, [items]);
   return (
     <ScrollView style={styles.scrollContainer}>
       <Card>
-        <FocusList data={tasks} icon={<CircleDot size={24} color={Colors.gray} />} />
-        <FocusList data={events} icon={<Calendar size={24} color={Colors.gray} />} />
+        <FocusList data={focusItems} />
       </Card>
       <View style={{ height: 48 }} />
       <Card>
@@ -102,7 +94,7 @@ const Focus = ({ items }: { readonly items: FocusOutputItem[] }) => {
             onPress={onCategoryPress.bind(null, category)}
             key={category}
             label={category}
-            isLastItem={index === entries.length - 1}
+            showBorder={index !== entries.length - 1}
             headerRight={
               <Text variant="small" style={{ color: '#BDBDBD' }}>
                 {accumulatedCategories[category].length}{' '}
@@ -117,12 +109,6 @@ const Focus = ({ items }: { readonly items: FocusOutputItem[] }) => {
 };
 
 const styles = StyleSheet.create({
-  navbar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 8,
-  },
   header: {
     justifyContent: 'center',
     alignItems: 'center',
