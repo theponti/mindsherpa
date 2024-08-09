@@ -1,4 +1,4 @@
-import { useFocusEffect, useRouter } from 'expo-router';
+import { Link, useFocusEffect, useRouter } from 'expo-router';
 import { Calendar, CircleDot, UserCircle } from 'lucide-react-native';
 import React, { useCallback, useMemo } from 'react';
 import { View, Image, StyleSheet, TouchableOpacity } from 'react-native';
@@ -37,9 +37,9 @@ export const FocusView = () => {
       <View style={styles.navbar}>
         <View style={{ width: 32 }} />
         <Image source={require('../../../assets/header-logo.png')} height={20} width={35} />
-        <TouchableOpacity onPress={() => router.push('(drawer)/(account)')}>
+        <Link href="/(drawer)/(account)">
           <UserCircle size={32} color={Colors.gray} />
-        </TouchableOpacity>
+        </Link>
       </View>
       <View style={[styles.container]}>
         <View style={styles.header}>
@@ -84,14 +84,9 @@ const Focus = ({ items }: { readonly items: FocusOutputItem[] }) => {
     return map;
   }, [items]);
 
-  const onCategoryPress = useCallback(
-    (category: string) => {
-      console.log('category', category);
-      // router.push(`(drawer)/(notebook)/${category}`);
-      router.replace('/(drawer)/note-list');
-    },
-    [router]
-  );
+  const onCategoryPress = (category: string) => {
+    router.push('/(drawer)/(focus)/modal');
+  };
 
   const entries = Object.keys(accumulatedCategories);
   return (
