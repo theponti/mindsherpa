@@ -7,45 +7,21 @@ export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type FocusQueryVariables = Types.Exact<{ [key: string]: never; }>;
 
 
-export type FocusQuery = { readonly __typename?: 'Query', readonly focus: { readonly __typename?: 'Focus', readonly vision: string | null, readonly goals: ReadonlyArray<{ readonly __typename?: 'Goal', readonly priorityGrade: number, readonly value: string, readonly sentiment: string, readonly goalId: string }>, readonly actions: ReadonlyArray<{ readonly __typename?: 'Action', readonly type: string | null, readonly value: string | null, readonly sentiment: string | null, readonly goalId: string | null }>, readonly beliefs: ReadonlyArray<{ readonly __typename?: 'Belief', readonly type: string | null, readonly value: string | null, readonly sentiment: string | null }>, readonly preferences: ReadonlyArray<{ readonly __typename?: 'Preference', readonly type: string | null, readonly value: string | null, readonly sentiment: string | null }>, readonly locations: ReadonlyArray<{ readonly __typename?: 'Location', readonly type: string | null, readonly value: string | null, readonly locationType: string | null, readonly country: string | null }>, readonly dates: ReadonlyArray<{ readonly __typename?: 'Date', readonly type: string | null, readonly value: string | null, readonly action: string | null }> } };
+export type FocusQuery = { readonly __typename?: 'Query', readonly focus: { readonly __typename?: 'FocusOutput', readonly items: ReadonlyArray<{ readonly __typename?: 'FocusOutputItem', readonly id: string, readonly type: string, readonly taskSize: string, readonly text: string, readonly category: string, readonly priority: string, readonly sentiment: string, readonly dueDate: string }> } };
 
 
 export const FocusDocument = gql`
     query Focus {
   focus {
-    vision
-    goals {
-      priorityGrade
-      value
+    items {
+      id
+      type
+      taskSize
+      text
+      category
+      priority
       sentiment
-      goalId
-    }
-    actions {
-      type
-      value
-      sentiment
-      goalId
-    }
-    beliefs {
-      type
-      value
-      sentiment
-    }
-    preferences {
-      type
-      value
-      sentiment
-    }
-    locations {
-      type
-      value
-      locationType
-      country
-    }
-    dates {
-      type
-      value
-      action
+      dueDate
     }
   }
 }

@@ -10,7 +10,14 @@ export const asyncStorage = makeAsyncStorage({
   maxAge: 7, // How long to persist the data in storage (defaults to 7 days)
 });
 const config: GraphCacheConfigWithStorage = {
-  // keys: {},
+  // keys: {
+  //   Focus: () => null,
+  //   Goal: () => null,
+  //   Action: () => null,
+  //   Preference: () => null,
+  //   Location: () => null,
+  //   Date: () => null,
+  // },
   // schema, // for schema awareness
   storage: asyncStorage,
 };

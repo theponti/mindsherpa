@@ -64,12 +64,10 @@ export function AppProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('AppProvider > onAuthStateChange', event, session);
       setIsLoadingAuth(false);
       setSession(session);
       if (event === 'SIGNED_OUT') {
         asyncStorage?.clear();
-        console.info('AppProvider > resetClient: urql client reset');
         getTokenRef.current = getToken;
       }
     });

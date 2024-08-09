@@ -1,38 +1,14 @@
 query Focus {
   focus {
-    vision
-    goals {
-      priorityGrade
-      value
+    items {
+      id
+      type
+      taskSize
+      text
+      category
+      priority
       sentiment
-      goalId
-    }
-    actions {
-      type
-      value
-      sentiment
-      goalId
-    }
-    beliefs {
-      type
-      value
-      sentiment
-    }
-    preferences {
-      type
-      value
-      sentiment
-    }
-    locations {
-      type
-      value
-      locationType
-      country
-    }
-    dates {
-      type
-      value
-      action
+      dueDate
     }
   }
 }

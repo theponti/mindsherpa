@@ -10,101 +10,6 @@
     "types": [
       {
         "kind": "OBJECT",
-        "name": "Action",
-        "fields": [
-          {
-            "name": "goalId",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
-            },
-            "args": []
-          },
-          {
-            "name": "metadata",
-            "type": {
-              "kind": "OBJECT",
-              "name": "ActionMetadata",
-              "ofType": null
-            },
-            "args": []
-          },
-          {
-            "name": "sentiment",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
-            },
-            "args": []
-          },
-          {
-            "name": "type",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
-            },
-            "args": []
-          },
-          {
-            "name": "value",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
-            },
-            "args": []
-          }
-        ],
-        "interfaces": []
-      },
-      {
-        "kind": "OBJECT",
-        "name": "ActionMetadata",
-        "fields": [
-          {
-            "name": "belief",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
-            },
-            "args": []
-          },
-          {
-            "name": "currentExpenses",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
-            },
-            "args": []
-          },
-          {
-            "name": "goalTimeframe",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
-            },
-            "args": []
-          },
-          {
-            "name": "location",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
-            },
-            "args": []
-          },
-          {
-            "name": "timeframe",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
-            },
-            "args": []
-          }
-        ],
-        "interfaces": []
-      },
-      {
-        "kind": "OBJECT",
         "name": "AuthPayload",
         "fields": [
           {
@@ -137,37 +42,6 @@
                 "kind": "SCALAR",
                 "name": "Any"
               }
-            },
-            "args": []
-          }
-        ],
-        "interfaces": []
-      },
-      {
-        "kind": "OBJECT",
-        "name": "Belief",
-        "fields": [
-          {
-            "name": "sentiment",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
-            },
-            "args": []
-          },
-          {
-            "name": "type",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
-            },
-            "args": []
-          },
-          {
-            "name": "value",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
             },
             "args": []
           }
@@ -287,29 +161,23 @@
       },
       {
         "kind": "OBJECT",
-        "name": "Date",
+        "name": "FocusOutput",
         "fields": [
           {
-            "name": "action",
+            "name": "items",
             "type": {
-              "kind": "SCALAR",
-              "name": "Any"
-            },
-            "args": []
-          },
-          {
-            "name": "type",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
-            },
-            "args": []
-          },
-          {
-            "name": "value",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "LIST",
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "FocusOutputItem",
+                    "ofType": null
+                  }
+                }
+              }
             },
             "args": []
           }
@@ -318,121 +186,93 @@
       },
       {
         "kind": "OBJECT",
-        "name": "Focus",
+        "name": "FocusOutputItem",
         "fields": [
           {
-            "name": "actions",
+            "name": "category",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
-                "kind": "LIST",
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "Action",
-                    "ofType": null
-                  }
-                }
+                "kind": "SCALAR",
+                "name": "Any"
               }
             },
             "args": []
           },
           {
-            "name": "beliefs",
+            "name": "dueDate",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
-                "kind": "LIST",
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "Belief",
-                    "ofType": null
-                  }
-                }
+                "kind": "SCALAR",
+                "name": "Any"
               }
             },
             "args": []
           },
           {
-            "name": "dates",
+            "name": "id",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
-                "kind": "LIST",
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "Date",
-                    "ofType": null
-                  }
-                }
+                "kind": "SCALAR",
+                "name": "Any"
               }
             },
             "args": []
           },
           {
-            "name": "goals",
+            "name": "priority",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
-                "kind": "LIST",
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "Goal",
-                    "ofType": null
-                  }
-                }
+                "kind": "SCALAR",
+                "name": "Any"
               }
             },
             "args": []
           },
           {
-            "name": "locations",
+            "name": "sentiment",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
-                "kind": "LIST",
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "Location",
-                    "ofType": null
-                  }
-                }
+                "kind": "SCALAR",
+                "name": "Any"
               }
             },
             "args": []
           },
           {
-            "name": "preferences",
+            "name": "taskSize",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
-                "kind": "LIST",
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "Preference",
-                    "ofType": null
-                  }
-                }
+                "kind": "SCALAR",
+                "name": "Any"
               }
             },
             "args": []
           },
           {
-            "name": "vision",
+            "name": "text",
             "type": {
-              "kind": "SCALAR",
-              "name": "Any"
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "type",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
             },
             "args": []
           }
@@ -473,96 +313,6 @@
                 "kind": "SCALAR",
                 "name": "Any"
               }
-            },
-            "args": []
-          }
-        ],
-        "interfaces": []
-      },
-      {
-        "kind": "OBJECT",
-        "name": "Goal",
-        "fields": [
-          {
-            "name": "goalId",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
-            },
-            "args": []
-          },
-          {
-            "name": "priorityGrade",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
-            },
-            "args": []
-          },
-          {
-            "name": "sentiment",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
-            },
-            "args": []
-          },
-          {
-            "name": "value",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
-            },
-            "args": []
-          }
-        ],
-        "interfaces": []
-      },
-      {
-        "kind": "OBJECT",
-        "name": "Location",
-        "fields": [
-          {
-            "name": "country",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
-            },
-            "args": []
-          },
-          {
-            "name": "locationType",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
-            },
-            "args": []
-          },
-          {
-            "name": "type",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
-            },
-            "args": []
-          },
-          {
-            "name": "value",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
             },
             "args": []
           }
@@ -682,29 +432,6 @@
             "args": [
               {
                 "name": "input",
-                "type": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "Any"
-                  }
-                }
-              }
-            ]
-          },
-          {
-            "name": "refreshToken",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "AuthPayload",
-                "ofType": null
-              }
-            },
-            "args": [
-              {
-                "name": "refreshToken",
                 "type": {
                   "kind": "NON_NULL",
                   "ofType": {
@@ -911,37 +638,6 @@
       },
       {
         "kind": "OBJECT",
-        "name": "Preference",
-        "fields": [
-          {
-            "name": "sentiment",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
-            },
-            "args": []
-          },
-          {
-            "name": "type",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
-            },
-            "args": []
-          },
-          {
-            "name": "value",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
-            },
-            "args": []
-          }
-        ],
-        "interfaces": []
-      },
-      {
-        "kind": "OBJECT",
         "name": "Profile",
         "fields": [
           {
@@ -1046,7 +742,7 @@
               "kind": "NON_NULL",
               "ofType": {
                 "kind": "OBJECT",
-                "name": "Focus",
+                "name": "FocusOutput",
                 "ofType": null
               }
             },

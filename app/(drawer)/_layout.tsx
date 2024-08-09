@@ -19,16 +19,16 @@ const App = () => {
   const [profileQueryResponse, fetchProfile] = useProfileQuery({ pause: true });
 
   useEffect(() => {
-    if (session) {
+    if (session && !profileQueryResponse.data) {
       fetchProfile();
     }
-  }, []);
+  }, [session, fetchProfile, profileQueryResponse.data]);
 
   useEffect(() => {
     if (profileQueryResponse.data?.profile) {
       setProfile(profileQueryResponse.data.profile);
     }
-  }, [profileQueryResponse.data]);
+  }, [profileQueryResponse.data, setProfile]);
 
   if (!session || profileQueryResponse.fetching) {
     return (
@@ -42,12 +42,13 @@ const App = () => {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => {
-          if (route.name === 'Home') {
-            return <Home color={color} size={size} />;
-          } else if (route.name === 'Chat') {
-            return <MessageSquare color={color} size={size} />;
-          } else if (route.name === 'Notebook') {
-            return <GalleryVerticalEnd color={color} size={size} />;
+          switch (route.name) {
+            case 'Home':
+              return <Home color={color} size={size} />;
+            case 'Chat':
+              return <MessageSquare color={color} size={size} />;
+            case 'Notebook':
+              return <GalleryVerticalEnd color={color} size={size} />;
           }
         },
         tabBarActiveTintColor: Colors.black,

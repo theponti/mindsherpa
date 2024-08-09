@@ -33,7 +33,7 @@ function InnerRootLayout() {
     if (loaded || error || isLoadingAuth) {
       SplashScreen.hideAsync();
     }
-  }, [loaded, error]);
+  }, [isLoadingAuth, loaded, error]);
 
   if (isLoadingAuth) {
     return <LoginSheet isLoadingAuth />;

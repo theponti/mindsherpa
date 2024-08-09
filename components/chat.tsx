@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import {
   FlatList,
   Keyboard,
@@ -28,17 +28,17 @@ export const Chat = ({ chatId }: { chatId: string }) => {
   } = useChatMessages({ chatId });
   const flatListRef = useRef<FlatList>(null);
 
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback(() => {
     if (flatListRef.current) {
       flatListRef.current.scrollToEnd({ animated: true });
     }
-  };
+  }, []);
 
   useEffect(() => {
     setTimeout(() => {
       scrollToBottom();
     }, 500);
-  }, [messages]);
+  }, [scrollToBottom]);
 
   if (isMessagesLoading) {
     return <ChatLoading />;

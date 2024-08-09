@@ -1,15 +1,19 @@
-import { PropsWithChildren } from 'react';
+import type { PropsWithChildren } from 'react';
 import { ActivityIndicator, StyleSheet } from 'react-native';
 
 import { Box } from '~/theme';
 
 export const LoadingFull = ({ children }: PropsWithChildren) => {
   return (
-    <Box style={styles.loading}>
+    <LoadingContainer>
       {children}
       <ActivityIndicator size="large" color="black" />
-    </Box>
+    </LoadingContainer>
   );
+};
+
+export const LoadingContainer = ({ children }: PropsWithChildren) => {
+  return <Box style={styles.loading}>{children}</Box>;
 };
 
 const styles = StyleSheet.create({
@@ -19,6 +23,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 24,
-    gap: 12,
+    rowGap: 24,
   },
 });

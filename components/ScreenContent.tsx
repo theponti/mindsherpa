@@ -1,17 +1,20 @@
-import { PropsWithChildren } from 'react';
-import { Box, Text } from 'theme';
+import type { PropsWithChildren } from 'react';
+import { StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-type ScreenContentProps = PropsWithChildren<{
-  title: string;
-  path: string;
-}>;
+import { Colors } from '~/utils/styles';
 
-export const ScreenContent = ({ title, children }: ScreenContentProps) => {
-  return (
-    <Box flex={1} alignItems="center" justifyContent="center">
-      <Text variant="title">{title}</Text>
-      <Box height={1} marginVertical="l_32" width="80%" backgroundColor="gray" />
-      {children}
-    </Box>
-  );
+type ScreenContentProps = PropsWithChildren<object>;
+
+export const ScreenContent = ({ children }: ScreenContentProps) => {
+  return <SafeAreaView style={styles.container}>{children}</SafeAreaView>;
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingTop: 60,
+    // backgroundColor: Colors.backgroundColor,
+    backgroundColor: '#F8FBFF',
+  },
+});
