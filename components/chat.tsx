@@ -39,7 +39,7 @@ export const Chat = ({ chatId }: { chatId: string }) => {
     setTimeout(() => {
       scrollToBottom();
     }, 500);
-  }, [scrollToBottom]);
+  }, [scrollToBottom, messages]);
 
   return (
     <View style={styles.container}>
@@ -53,6 +53,8 @@ export const Chat = ({ chatId }: { chatId: string }) => {
         </TouchableWithoutFeedback>
 
         {isMessagesLoading ? (
+          <ChatLoading />
+        ) : (
           <FlatList
             ref={flatListRef}
             contentContainerStyle={styles.messagesContainer}
@@ -64,8 +66,6 @@ export const Chat = ({ chatId }: { chatId: string }) => {
             onLayout={scrollToBottom}
             onStartShouldSetResponder={() => true}
           />
-        ) : (
-          <ChatLoading />
         )}
         {chatError ? (
           <FeedbackBlock>

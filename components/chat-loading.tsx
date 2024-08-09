@@ -1,4 +1,4 @@
-import { ActivityIndicator, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { Box, Text } from '~/theme';
 import { PulsingCircle } from './animated/pulsing-circle';

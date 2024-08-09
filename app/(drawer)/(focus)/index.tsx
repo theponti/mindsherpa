@@ -37,7 +37,6 @@ export const FocusView = () => {
         </View>
         {focusResponse.fetching ? (
           <LoadingContainer>
-            <Text variant="body">getting your focus...</Text>
             <PulsingCircle />
           </LoadingContainer>
         ) : null}

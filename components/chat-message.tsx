@@ -10,7 +10,7 @@ const ChatMessage = ({ message }: { message: Message }) => {
   const chatBubbleStyle = formattedRole === 'user' ? styles.userMessage : styles.botMessage;
 
   return (
-    <View style={[borderStyle.border, chatBubbleStyle]}>
+    <View style={[borderStyle.border, chatBubbleStyle, {}]}>
       <Text
         variant="body"
         style={formattedRole === 'user' ? styles.userMessageText : styles.botMessageText}>
@@ -36,7 +36,8 @@ const baseMessageStyle = {
 const styles = StyleSheet.create({
   botMessage: {
     ...baseMessageStyle,
-    backgroundColor: Colors.white,
+    alignSelf: 'flex-start',
+    backgroundColor: Colors.blue,
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: borderRadiusSize,
     borderTopLeftRadius: borderRadiusSize,
@@ -44,6 +45,7 @@ const styles = StyleSheet.create({
   },
   userMessage: {
     ...baseMessageStyle,
+    alignSelf: 'flex-end',
     backgroundColor: Colors.white,
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 0,
@@ -52,7 +54,6 @@ const styles = StyleSheet.create({
   },
   userMessageText: {
     color: Colors.black,
-    justifyContent: 'flex-end',
   },
   botMessageText: {
     color: Colors.black,

@@ -20,7 +20,9 @@ export const ChatSummary = ({ summary }: { summary: ChatMessagesResponse['summar
             <Text variant="title">Summary</Text>
             <View style={{ rowGap: 10, paddingVertical: 8 }}>
               {summary.map((item) => (
-                <View style={{ columnGap: 8, alignItems: 'center', flexDirection: 'row' }}>
+                <View
+                  key={item.text}
+                  style={{ columnGap: 8, alignItems: 'center', flexDirection: 'row' }}>
                   <CircleDot size={16} color={Colors.gray} />
                   <Text key={item.text} variant="body">
                     {item.text}
