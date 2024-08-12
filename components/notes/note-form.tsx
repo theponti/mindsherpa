@@ -1,11 +1,10 @@
-import { Mic, Notebook, Send } from 'lucide-react-native';
 import { useCallback, useState } from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { FormContainer } from '../form-container';
 import AutoGrowingInput from '../text-input-autogrow';
-import { UploadFileButton } from '../upload-file-button';
-import { VoiceInputButton } from '../voice-input-button';
+import { SpeakButton, UploadFileButton } from '../upload-file-button';
+import { FormSubmitButton } from '../voice-input-button';
 import { useVoiceRecorder } from '../voice-recorder';
 
 import { useCreateNoteMutation } from '~/utils/services/notes/CreateNote.mutation.generated';
@@ -43,19 +42,41 @@ export const NoteForm = ({ onSubmit }: { onSubmit: (note: any) => void }) => {
 
   return (
     <FormContainer>
-      <UploadFileButton />
-
-      <AutoGrowingInput placeholder="Drop a note..." value={content} onChangeText={setContent} />
-
-      <VoiceInputButton
-        buttonType={content.length === 0 || isRecording ? 'voice' : 'text'}
-        disabled={createNoteResponse.fetching}
-        isLoading={createNoteResponse.fetching}
-        isRecording={isRecording}
-        onStartRecording={onMicrophonePress}
-        onStopRecording={onStopRecordingPress}
-        onSubmitButtonClick={handleSubmit}
-      />
+      <View style={[styles.inputContainer]}>
+        <AutoGrowingInput placeholder="Drop a note..." value={content} onChangeText={setContent} />
+      </View>
+      <View style={[styles.actionButtons]}>
+        <View style={[styles.mediaButtons]}>
+          <UploadFileButton />
+          <SpeakButton />
+        </View>
+        <FormSubmitButton
+          buttonType={isRecording ? 'voice' : 'text'}
+          disabled={createNoteResponse.fetching}
+          isLoading={createNoteResponse.fetching}
+          isRecording={isRecording}
+          onStartRecording={onMicrophonePress}
+          onStopRecording={onStopRecordingPress}
+          onSubmitButtonClick={handleSubmit}
+        />
+      </View>
     </FormContainer>
   );
 };
+
+const styles = StyleSheet.create({
+  inputContainer: {},
+  actionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingBottom: 4,
+  },
+  mediaButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    columnGap: 4,
+    alignSelf: 'flex-start',
+  },
+});

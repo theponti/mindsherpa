@@ -1,8 +1,9 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { ActivityIndicator, StyleSheet } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Colors } from '~/utils/styles';
 
-export const VoiceInputButton = ({
+export const FormSubmitButton = ({
   buttonType,
   disabled,
   isLoading,
@@ -45,17 +46,15 @@ export const VoiceInputButton = ({
 
   return (
     <TouchableOpacity onPress={onSubmitButtonClick} style={[styles.sendButton]}>
-      <MaterialIcons name="send" size={24} color="black" />
+      <MaterialIcons name="arrow-upward" size={24} color={Colors.white} />
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   sendButton: {
-    backgroundColor: '#efefef',
+    backgroundColor: Colors.blueDark,
     borderRadius: 50,
     padding: 8,
-    borderColor: '#b3b3b3',
-    borderWidth: 1,
   },
 });

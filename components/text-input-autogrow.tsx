@@ -3,7 +3,7 @@ import { TextInput, StyleSheet, TextInputProps } from 'react-native';
 
 import { Colors } from '~/utils/styles';
 
-const AutoGrowingInput = ({ onChangeText, placeholder, style, value }: TextInputProps) => {
+const AutoGrowingInput = ({ onChangeText, placeholder, value }: TextInputProps) => {
   const inputRef = useRef(null);
 
   return (
@@ -20,12 +20,9 @@ const AutoGrowingInput = ({ onChangeText, placeholder, style, value }: TextInput
 
 const styles = StyleSheet.create({
   input: {
-    flex: 1,
-    fontSize: 16,
-    maxHeight: 120,
-    paddingTop: 10,
-    paddingBottom: 10,
-    color: '#999',
+    alignSelf: 'stretch',
+    fontSize: 20,
+    paddingVertical: 16,
     flexWrap: 'wrap',
   },
 });

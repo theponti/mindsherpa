@@ -1,7 +1,8 @@
 import { useFocusEffect, useRouter } from 'expo-router';
-import React, { useCallback, useMemo } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useCallback, useEffect, useMemo } from 'react';
+import { View, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { LoadingContainer } from '~/components/LoadingFull';
 import { ScreenContent } from '~/components/ScreenContent';
@@ -10,12 +11,14 @@ import { Card } from '~/components/card';
 import { FeedbackBlock } from '~/components/feedback-block';
 import { FocusList } from '~/components/focus/focus-list';
 import { FocusListItem } from '~/components/focus/focus-list-item';
+import { NoteForm } from '~/components/notes/note-form';
+import { ViewHeader } from '~/components/view-header';
 import { Text } from '~/theme';
 import type { FocusOutputItem } from '~/utils/schema/graphcache';
 import { useFocusQuery } from '~/utils/services/Focus.query.generated';
+import { useNotesQuery } from '~/utils/services/notes/Notes.query.generated';
 
 export const FocusView = () => {
-  const router = useRouter();
   const [focusResponse, getFocus] = useFocusQuery({
     pause: true,
     requestPolicy: 'network-only',
@@ -28,37 +31,46 @@ export const FocusView = () => {
   );
 
   const focusData = focusResponse.data?.focus;
+  const onFormSubmit = () => {
+    getFocus();
+  };
 
   return (
     <ScreenContent>
-      <View style={[styles.container]}>
-        <View style={styles.header}>
-          <Text variant="cardHeader">Today's Focus</Text>
-        </View>
-        {focusResponse.fetching ? (
-          <LoadingContainer>
-            <PulsingCircle />
-          </LoadingContainer>
-        ) : null}
+      <ViewHeader />
+      <SafeAreaView style={styles.container}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+          style={styles.container}>
+          <View style={[styles.focusContainer]}>
+            <View style={styles.header}>
+              <Text variant="cardHeader">Today's Focus</Text>
+            </View>
+            {focusResponse.fetching ? (
+              <LoadingContainer>
+                <PulsingCircle />
+              </LoadingContainer>
+            ) : null}
 
-        {!focusResponse.fetching && (focusResponse.error || !focusResponse.data) ? (
-          <FeedbackBlock>
-            <Text variant="body">could not get your focus</Text>
-          </FeedbackBlock>
-        ) : null}
-        {!focusResponse.fetching && !focusResponse.error && focusData ? (
-          <Focus items={[...focusData.items]} />
-        ) : null}
-      </View>
+            {!focusResponse.fetching && (focusResponse.error || !focusResponse.data) ? (
+              <FeedbackBlock>
+                <Text variant="body">could not get your focus</Text>
+              </FeedbackBlock>
+            ) : null}
+            {!focusResponse.fetching && !focusResponse.error && focusData ? (
+              <Focus items={[...focusData.items]} />
+            ) : null}
+          </View>
+          <NoteForm onSubmit={onFormSubmit} />
+        </KeyboardAvoidingView>
+      </SafeAreaView>
     </ScreenContent>
   );
 };
 
 const Focus = ({ items }: { readonly items: FocusOutputItem[] }) => {
   const router = useRouter();
-  const tasks = items.filter((item) => item.type === 'task');
-  const events = items.filter((item) => item.type === 'event');
-
   const accumulatedCategories = useMemo(() => {
     const map: Record<string, FocusOutputItem[]> = {};
 
@@ -108,19 +120,24 @@ const Focus = ({ items }: { readonly items: FocusOutputItem[] }) => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingTop: 30,
+    rowGap: 12,
+  },
+  focusContainer: {
+    flex: 1,
+    paddingTop: 30,
+    paddingHorizontal: 12,
+    rowGap: 12,
+  },
   header: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 48,
-  },
-  container: {
-    flex: 1,
-    paddingTop: 150,
-    paddingHorizontal: 8,
-    rowGap: 12,
   },
   scrollContainer: {
     flexGrow: 1,
+    paddingTop: 48,
   },
 });
 

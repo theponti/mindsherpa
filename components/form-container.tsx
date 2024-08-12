@@ -34,17 +34,14 @@ export const FormContainer = ({ children }: { children: React.ReactNode }) => {
 
 const formContainerStyles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    marginVertical: 8,
-    marginHorizontal: 12,
+    backgroundColor: Colors.white,
+    paddingHorizontal: 16,
     gap: 8,
-    height: 60,
-    borderColor: Colors.gray,
+    borderColor: '#E4E7EC',
     borderWidth: 1,
-    borderRadius: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
   },
 });

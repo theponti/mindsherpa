@@ -4,6 +4,7 @@ export const Colors = {
   backgroundColor: '#f8f9fa',
   black: '#000000',
   blue: 'rgba(217, 231, 255, 1.00)',
+  blueDark: '#344054',
   brown: '#A52A2A',
   darkGray: '#38434D',
   gray: '#808080',

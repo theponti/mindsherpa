@@ -4,7 +4,7 @@ import { View, ViewStyle } from 'react-native';
 import { FormContainer } from './form-container';
 import AutoGrowingInput from './text-input-autogrow';
 import { UploadFileButton } from './upload-file-button';
-import { VoiceInputButton } from './voice-input-button';
+import { FormSubmitButton } from './voice-input-button';
 import { VoiceRecorder, useVoiceRecorder } from './voice-recorder';
 
 import { Chat } from '~/utils/schema/graphcache';
@@ -56,7 +56,7 @@ const MessageForm = ({
         <UploadFileButton />
         <AutoGrowingInput placeholder="Ask sherpa" value={text} onChangeText={setText} />
 
-        <VoiceInputButton
+        <FormSubmitButton
           buttonType={text.length === 0 || isRecording ? 'voice' : 'text'}
           disabled={isLoading}
           isLoading={isLoading || saveRecordingResponse.fetching}
