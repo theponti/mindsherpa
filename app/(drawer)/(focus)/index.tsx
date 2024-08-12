@@ -91,7 +91,7 @@ const Focus = ({ items }: { readonly items: FocusOutputItem[] }) => {
 
   const entries = Object.keys(accumulatedCategories);
   const focusItems = useMemo(() => {
-    return items.filter((item) => item.type === 'task' || item.type === 'event');
+    return items.filter((item) => ['task', 'event', 'reminder'].includes(item.type));
   }, [items]);
   return (
     <ScrollView style={styles.scrollContainer}>

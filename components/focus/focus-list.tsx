@@ -6,6 +6,7 @@ import { FocusListItem } from './focus-list-item';
 import { Calendar, CircleIcon } from 'lucide-react-native';
 import { Colors } from '~/utils/styles';
 import { theme } from '~/theme';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const FocusIcon = ({ item }: { item: FocusOutputItem }) => {
   const iconSize = theme.textVariants.body.fontSize;
@@ -14,6 +15,8 @@ const FocusIcon = ({ item }: { item: FocusOutputItem }) => {
       return <CircleIcon color={Colors.quaternary} size={iconSize} />;
     case 'event':
       return <Calendar color={Colors.quaternary} size={iconSize} />;
+    case 'reminder':
+      return <MaterialIcons name="remember-me" size={iconSize} color={Colors.quaternary} />;
     default:
       return null;
   }

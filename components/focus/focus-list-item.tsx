@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 import { TouchableOpacity, type TouchableOpacityProps } from 'react-native-gesture-handler';
 
 import { Text } from '~/theme';
-import { Colors, borderStyle } from '~/utils/styles';
+import { borderStyle } from '~/utils/styles';
 
 export const FocusListItem = ({
   icon,
