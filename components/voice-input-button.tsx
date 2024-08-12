@@ -8,7 +8,6 @@ export const FormSubmitButton = ({
   disabled,
   isLoading,
   isRecording,
-  onStartRecording,
   onStopRecording,
   onSubmitButtonClick,
 }: {
@@ -16,7 +15,6 @@ export const FormSubmitButton = ({
   disabled: boolean;
   isLoading: boolean;
   isRecording: boolean;
-  onStartRecording: () => void;
   onStopRecording: () => void;
   onSubmitButtonClick: () => void;
 }) => {
@@ -28,18 +26,10 @@ export const FormSubmitButton = ({
     );
   }
 
-  if (buttonType === 'voice') {
-    if (isRecording) {
-      return (
-        <TouchableOpacity onPress={onStopRecording} style={[styles.sendButton]} disabled={disabled}>
-          <MaterialIcons name="stop" size={24} color="black" />
-        </TouchableOpacity>
-      );
-    }
-
+  if (buttonType === 'voice' && isRecording) {
     return (
-      <TouchableOpacity onPress={onStartRecording} style={[styles.sendButton]} disabled={disabled}>
-        <MaterialIcons name="mic" size={24} color="black" />
+      <TouchableOpacity onPress={onStopRecording} style={[styles.sendButton]} disabled={disabled}>
+        <MaterialIcons name="stop" size={24} color="black" />
       </TouchableOpacity>
     );
   }

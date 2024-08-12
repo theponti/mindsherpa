@@ -9,7 +9,7 @@ export const asyncStorage = makeAsyncStorage({
 
 export const graphcacheExchange = offlineExchange({
   keys: {
-    focus: () => null,
+    FocusOutput: () => null,
   },
   storage: asyncStorage,
 })

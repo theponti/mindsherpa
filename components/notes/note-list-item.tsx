@@ -1,21 +1,45 @@
-import { StyleSheet, View } from 'react-native';
-
+import { useCallback } from 'react';
+import {
+  GestureResponderEvent,
+  Pressable,
+  type PressableProps,
+  type ViewStyle,
+} from 'react-native';
+import { TouchableOpacity, TouchableOpacityProps } from 'react-native-gesture-handler';
 import { Text } from '~/theme';
 import { NoteOutput } from '~/utils/schema/graphcache';
+import { borderStyle, listStyles } from '~/utils/styles';
 
-export const NoteListItem = ({ item }: { item: NoteOutput }) => {
+export const NoteListItem = ({
+  icon,
+  headerRight,
+  label,
+  showBorder,
+  item,
+  style,
+  ...props
+}: TouchableOpacityProps & {
+  icon?: React.ReactNode;
+  item: NoteOutput;
+  headerRight?: React.ReactNode;
+  label: string;
+  showBorder?: boolean;
+  style?: ViewStyle[];
+}) => {
+  const onSwipeRight = useCallback((event: GestureResponderEvent) => {}, []);
   return (
-    <View style={styles.listItem}>
-      <Text variant="body" numberOfLines={2}>
-        {item.content}
+    <TouchableOpacity
+      style={[
+        listStyles.container,
+        showBorder ? borderStyle.borderBottom : borderStyle.noBorder,
+        style,
+      ]}
+      {...props}>
+      {icon ?? null}
+      <Text variant="body" style={listStyles.text}>
+        {label}
       </Text>
-    </View>
+      {headerRight ?? null}
+    </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  listItem: {
-    marginBottom: 16,
-    paddingVertical: 24,
-  },
-});

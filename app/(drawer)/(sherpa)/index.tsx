@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native';
 
 import { LoadingFull } from '~/components/LoadingFull';
 import { ScreenContent } from '~/components/ScreenContent';
-import { Chat } from '~/components/chat';
+import { Chat } from '~/components/chat/chat';
 import { ViewHeader } from '~/components/view-header';
 import { Text } from '~/theme';
 import { useAppContext } from '~/utils/app-provider';

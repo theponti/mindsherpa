@@ -1,5 +1,5 @@
 import { ChatMessagesResponse } from '~/utils/schema/schema-types';
-import { Card } from './card';
+import { Card } from '../card';
 import { View } from 'react-native';
 import { Text } from '~/theme';
 import { CircleDot, Scroll } from 'lucide-react-native';

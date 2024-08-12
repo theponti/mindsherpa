@@ -1,5 +1,5 @@
 import { createTheme, useTheme as useRestyleTheme } from '@shopify/restyle'
-import type { ImageStyle, TextStyle, ViewStyle } from 'react-native'
+import { type ImageStyle, type TextStyle, type ViewStyle } from 'react-native'
 
 import { Colors } from '~/utils/styles'
 
@@ -42,6 +42,7 @@ const theme = createTheme({
     cardHeader: {
       fontFamily: 'Noto Sans',
       fontSize: 28,
+      fontWeight: 600,
     },
     title: {
       fontFamily: 'Noto Serif',

@@ -16,6 +16,8 @@
     "Mindsherpa",
     "Ionicons",
     "noto",
-    "urql"
+    "urql",
+    "pressable",
+    "autogrow"
   ]
 }

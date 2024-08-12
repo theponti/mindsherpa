@@ -14,7 +14,6 @@ import { theme } from '~/theme';
 import { AppProvider, useAppContext } from '~/utils/app-provider';
 
 export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
   initialRouteName: '(drawer)',
 };
 
@@ -23,10 +22,10 @@ SplashScreen.preventAutoHideAsync();
 function InnerRootLayout() {
   const { isLoadingAuth, session } = useAppContext();
   const [loaded, error] = useFonts({
-    'Noto Serif': require('../assets/fonts/Noto_Serif/NotoSerif-VariableFont_wdth,wght.ttf'),
-    'Noto Serif Italic': require('../assets/fonts/Noto_Serif/NotoSerif-Italic-VariableFont_wdth,wght.ttf'),
-    'Noto Sans Italic': require('../assets/fonts/Noto_Sans/NotoSans-Italic-VariableFont_wdth,wght.ttf'),
-    'Noto Sans': require('../assets/fonts/Noto_Sans/NotoSans-VariableFont_wdth,wght.ttf'),
+    'Noto Serif': require('../assets/fonts/Noto_Serif/NotoSerif.ttf'),
+    'Noto Serif Italic': require('../assets/fonts/Noto_Serif/NotoSerif-Italic.ttf'),
+    'Noto Sans': require('../assets/fonts/Noto_Sans/NotoSans.ttf'),
+    'Noto Sans Italic': require('../assets/fonts/Noto_Sans/NotoSans-Italic.ttf'),
   });
 
   useEffect(() => {
@@ -43,7 +42,6 @@ function InnerRootLayout() {
     return (
       <Stack>
         <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ title: 'Modal', presentation: 'modal' }} />
       </Stack>
     );
   }

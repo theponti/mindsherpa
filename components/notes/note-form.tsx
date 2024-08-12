@@ -8,7 +8,6 @@ import { FormSubmitButton } from '../voice-input-button';
 import { useVoiceRecorder } from '../voice-recorder';
 
 import { useCreateNoteMutation } from '~/utils/services/notes/CreateNote.mutation.generated';
-import { Colors } from '~/utils/styles';
 
 export const NoteForm = ({ onSubmit }: { onSubmit: (note: any) => void }) => {
   const [content, setContent] = useState('');
@@ -48,14 +47,13 @@ export const NoteForm = ({ onSubmit }: { onSubmit: (note: any) => void }) => {
       <View style={[styles.actionButtons]}>
         <View style={[styles.mediaButtons]}>
           <UploadFileButton />
-          <SpeakButton />
+          {!isRecording && <SpeakButton onPress={onMicrophonePress} />}
         </View>
         <FormSubmitButton
           buttonType={isRecording ? 'voice' : 'text'}
           disabled={createNoteResponse.fetching}
           isLoading={createNoteResponse.fetching}
           isRecording={isRecording}
-          onStartRecording={onMicrophonePress}
           onStopRecording={onStopRecordingPress}
           onSubmitButtonClick={handleSubmit}
         />

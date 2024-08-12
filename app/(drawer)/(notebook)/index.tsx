@@ -77,10 +77,7 @@ const styles = StyleSheet.create({
     fontSize: 34,
     fontWeight: 'bold',
   },
-  listContainer: {
-    paddingHorizontal: 16,
-    paddingBottom: 80,
-  },
+  listContainer: {},
   centerContent: {
     flex: 1,
     justifyContent: 'center',
@@ -127,7 +124,9 @@ const NotesList = ({ notes }: { readonly notes: NoteOutput[] }) => {
   return (
     <FlatList
       data={notes}
-      renderItem={({ item }) => <NoteListItem item={item} />}
+      renderItem={({ item, index }) => (
+        <NoteListItem item={item} label={item.content} showBorder={index !== notes.length - 1} />
+      )}
       keyExtractor={(item) => item.id}
       contentContainerStyle={styles.listContainer}
     />

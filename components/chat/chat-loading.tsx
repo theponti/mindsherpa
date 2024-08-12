@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 import { Box, Text } from '~/theme';
-import { PulsingCircle } from './animated/pulsing-circle';
+import { PulsingCircle } from '../animated/pulsing-circle';
 
 function ChatLoading() {
   return (

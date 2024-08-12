@@ -11,12 +11,12 @@ import {
 
 import ChatLoading from './chat-loading';
 import { renderMessage } from './chat-message';
-import { FeedbackBlock } from './feedback-block';
-import MessageForm from './message-form';
+import { FeedbackBlock } from '../feedback-block';
 
 import { Text } from '~/theme';
 import { useChatMessages } from '~/utils/services/messages-service';
 import { ChatSummary } from './chat-summary';
+import { NoteForm } from '../notes/note-form';
 
 export const Chat = ({ chatId }: { chatId: string }) => {
   const {
@@ -72,11 +72,7 @@ export const Chat = ({ chatId }: { chatId: string }) => {
             <Text>{chatError}</Text>
           </FeedbackBlock>
         ) : null}
-        <MessageForm
-          chatId={chatId}
-          isLoading={isChatSending || isMessagesLoading}
-          onSubmit={(message: string) => sendChatMessage({ message })}
-        />
+        <NoteForm onSubmit={(message: string) => sendChatMessage({ message })} />
       </KeyboardAvoidingView>
     </View>
   );

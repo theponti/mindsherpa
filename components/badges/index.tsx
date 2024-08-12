@@ -2,6 +2,7 @@ import type { PropsWithChildren } from 'react';
 
 import Text from '~/theme/Text';
 import { Colors } from '~/utils/styles';
+import { FocusCategory } from '../focus/focus-category';
 
 export const Badge = ({
   children,
@@ -38,5 +39,7 @@ function getCategoryColor(category: string): { color: string; textColor: string 
 }
 
 export const CategoryBadge = ({ category }: { category: string }) => (
-  <Badge color={getCategoryColor(category)}>{category}</Badge>
+  <Badge color={getCategoryColor(category)}>
+    <FocusCategory category={category as any} />
+  </Badge>
 );

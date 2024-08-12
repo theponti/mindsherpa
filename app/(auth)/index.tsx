@@ -10,7 +10,7 @@ function Auth() {
   const { session } = useAppContext();
 
   if (session) {
-    return <Redirect href="(drawer)" />;
+    return <Redirect href="/(drawer)/focus" />;
   }
 
   return (

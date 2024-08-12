@@ -1,18 +1,10 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Home, MessageSquare, GalleryVerticalEnd } from 'lucide-react-native';
+import { Stack } from 'expo-router';
 import React, { useEffect } from 'react';
-
-import Focus from './(focus)';
-import Notebook from './(notebook)';
-import Chat from './(sherpa)';
 
 import { LoadingFull } from '~/components/LoadingFull';
 import { Text } from '~/theme';
 import { useAppContext } from '~/utils/app-provider';
 import { useProfileQuery } from '~/utils/services/profiles/Profiles.query.generated';
-import { Colors } from '~/utils/styles';
-
-const Tab = createBottomTabNavigator();
 
 const App = () => {
   const { session, setProfile } = useAppContext();
@@ -39,41 +31,12 @@ const App = () => {
   }
 
   return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ color, size }) => {
-          switch (route.name) {
-            case 'Home':
-              return <Home color={color} size={size} />;
-            case 'Chat':
-              return <MessageSquare color={color} size={size} />;
-            case 'Notebook':
-              return <GalleryVerticalEnd color={color} size={size} />;
-          }
-        },
-        tabBarActiveTintColor: Colors.black,
-        tabBarInactiveTintColor: Colors.gray,
-        tabBarIconStyle: {
-          alignItems: 'center',
-          justifyContent: 'center',
-        },
-      })}>
-      <Tab.Screen
-        name="Home"
-        component={Focus}
-        options={{ headerShown: false, tabBarLabel: () => null }}
-      />
-      <Tab.Screen
-        name="Chat"
-        options={{ headerShown: false, tabBarLabel: () => null }}
-        component={Chat}
-      />
-      <Tab.Screen
-        name="Notebook"
-        options={{ headerShown: false, tabBarLabel: () => null }}
-        component={Notebook}
-      />
-    </Tab.Navigator>
+    <Stack initialRouteName="focus">
+      <Stack.Screen name="focus" options={{ headerShown: false }} />
+      <Stack.Screen name="(sherpa)" options={{ headerShown: false }} />
+      <Stack.Screen name="(notebook)" options={{ headerShown: false }} />
+      <Stack.Screen name="(account)" options={{ presentation: 'modal', gestureEnabled: true }} />
+    </Stack>
   );
 };
 

@@ -19,6 +19,7 @@ export const Colors = {
   red: '#FF0000',
   redLight: '#FF4500',
   sky: '#87CEEB',
+  tomato: 'rgba(245, 99, 69, 1.00)',
   white: '#fff',
   quaternary: '#9097a6',
 }
@@ -57,5 +58,19 @@ export const borderStyle = StyleSheet.create({
     borderColor: Colors.grayMedium,
     borderWidth: 1,
     borderRadius: 32,
+  },
+})
+
+export const listStyles = StyleSheet.create({
+  container: {
+    paddingVertical: 24,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    flexDirection: 'row',
+    columnGap: 12,
+  },
+  text: {
+    flex: 1,
+    alignItems: 'center',
   },
 })

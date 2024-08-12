@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 
-function Account() {
+function AccountLayout() {
   return (
     <Stack>
       <Stack.Screen
@@ -11,4 +11,4 @@ function Account() {
   );
 }
 
-export default Account;
+export default AccountLayout;

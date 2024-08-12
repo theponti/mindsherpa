@@ -1,4 +1,5 @@
-import { Redirect, Stack } from 'expo-router';
+import { MaterialIcons } from '@expo/vector-icons';
+import { Link, Redirect, Stack } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
 
@@ -9,6 +10,7 @@ import { Text } from '~/theme';
 import { useAppContext } from '~/utils/app-provider';
 // import { useUpdateProfileMutation } from '~/utils/services/profiles/UpdateProfile.mutation.generated';
 import { storage } from '~/utils/storage';
+import { Colors } from '~/utils/styles';
 import { supabase } from '~/utils/supabase';
 
 function Account() {
@@ -47,6 +49,25 @@ function Account() {
     <>
       <Stack.Screen options={{ title: 'Account' }} />
       <View style={{ flex: 1, paddingHorizontal: 12, paddingVertical: 24, rowGap: 8 }}>
+        <View
+          style={{
+            marginBottom: 15,
+            borderWidth: 1,
+            borderRadius: 12,
+            borderColor: Colors.black,
+            alignSelf: 'flex-start',
+            paddingVertical: 12,
+            paddingHorizontal: 12,
+          }}>
+          <Link
+            href="/(drawer)/focus"
+            style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <MaterialIcons name="arrow-back" size={24} color={Colors.black} />
+            <Text variant="body" color="black" style={{ alignSelf: 'center' }}>
+              Back
+            </Text>
+          </Link>
+        </View>
         <Text variant="large">Your account</Text>
         {/* <Avatar size={200} url={avatar_url || ''} onUpload={onAvatarUpload} /> */}
 
