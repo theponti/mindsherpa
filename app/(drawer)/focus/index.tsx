@@ -93,7 +93,7 @@ export const FocusView = () => {
       <SafeAreaView style={styles.container}>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
           style={styles.container}>
           <View style={[styles.focusContainer]}>
             <View style={styles.header}>

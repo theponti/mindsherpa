@@ -20,7 +20,7 @@ export const FocusCategory = ({ category }: { category: keyof CategoryMap }) => 
 };
 
 type CategoryMap = typeof CATEGORIES;
-const CATEGORIES = {
+export const CATEGORIES: Record<string, { emoji: string; label: string }> = {
   career: {
     emoji: '💼',
     label: 'Career',

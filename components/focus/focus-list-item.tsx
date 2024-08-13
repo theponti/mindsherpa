@@ -1,4 +1,3 @@
-import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
 import { Pressable, View, type PressableProps, type ViewStyle } from 'react-native';
 import * as ContextMenu from 'zeego/context-menu';
