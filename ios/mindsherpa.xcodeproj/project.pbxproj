@@ -7,19 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		135607036A34463699812467 /* NotoSans.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A1ADB82D17054746AC0B5F20 /* NotoSans.ttf */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		343F234AC2544702AA48AD28 /* NotoSerif-Italic-VariableFont_wdth,wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 791EADD33303424084E0E587 /* NotoSerif-Italic-VariableFont_wdth,wght.ttf */; };
-		3A3CDBE758F4429AA728CF3E /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DCE0A39077849B0B8BB5D30 /* noop-file.swift */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		856B074B8213754D902032C9 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 4383F4597363C50FC78A9FD2 /* PrivacyInfo.xcprivacy */; };
-		8C42FFC3B8DD4BF394916A2C /* NotoSerif-VariableFont_wdth,wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E4A7C2CE89EA4B8786D7CE7F /* NotoSerif-VariableFont_wdth,wght.ttf */; };
+		61C8F759360C94DFD795DF5A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 16E8E8DDC1A5DEE7C735E3D1 /* PrivacyInfo.xcprivacy */; };
+		954A746D665D4B9C9B3CC874 /* NotoSerif.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A636D09C39D847F29AFD4A83 /* NotoSerif.ttf */; };
 		96905EF65AED1B983A6B3ABC /* libPods-mindsherpa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-mindsherpa.a */; };
+		A4081C25D38847438E7AB04F /* NotoSerif-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 59EA150E6AA5408494C2B8D9 /* NotoSerif-Italic.ttf */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
-		B78F8D2F18174C3D97537A17 /* NotoSans-VariableFont_wdth,wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7734E0E2DDAB4C9CA70C98DF /* NotoSans-VariableFont_wdth,wght.ttf */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		BE622000D3B24F38BB18BB59 /* NotoSans-Italic-VariableFont_wdth,wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2D93DAB59945417A8FA447B0 /* NotoSans-Italic-VariableFont_wdth,wght.ttf */; };
+		D9EBFFC399434F6E91170AC9 /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE304B8E69C245B8925AF3A5 /* noop-file.swift */; };
+		E5AB642254BE473B9FD35678 /* NotoSans-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 705E589925BB4E928251428D /* NotoSans-Italic.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,20 +29,20 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = mindsherpa/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = mindsherpa/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = mindsherpa/main.m; sourceTree = "<group>"; };
-		2D93DAB59945417A8FA447B0 /* NotoSans-Italic-VariableFont_wdth,wght.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "NotoSans-Italic-VariableFont_wdth,wght.ttf"; path = "../assets/fonts/Noto_Sans/NotoSans-Italic-VariableFont_wdth,wght.ttf"; sourceTree = "<group>"; };
-		4383F4597363C50FC78A9FD2 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = mindsherpa/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		4DCE0A39077849B0B8BB5D30 /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "mindsherpa/noop-file.swift"; sourceTree = "<group>"; };
+		16E8E8DDC1A5DEE7C735E3D1 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = mindsherpa/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		58EEBF8E8E6FB1BC6CAF49B5 /* libPods-mindsherpa.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-mindsherpa.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		6A7045931FCF469D9E5FA250 /* mindsherpa-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "mindsherpa-Bridging-Header.h"; path = "mindsherpa/mindsherpa-Bridging-Header.h"; sourceTree = "<group>"; };
+		59EA150E6AA5408494C2B8D9 /* NotoSerif-Italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "NotoSerif-Italic.ttf"; path = "../assets/fonts/Noto_Serif/NotoSerif-Italic.ttf"; sourceTree = "<group>"; };
 		6C2E3173556A471DD304B334 /* Pods-mindsherpa.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mindsherpa.debug.xcconfig"; path = "Target Support Files/Pods-mindsherpa/Pods-mindsherpa.debug.xcconfig"; sourceTree = "<group>"; };
-		7734E0E2DDAB4C9CA70C98DF /* NotoSans-VariableFont_wdth,wght.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "NotoSans-VariableFont_wdth,wght.ttf"; path = "../assets/fonts/Noto_Sans/NotoSans-VariableFont_wdth,wght.ttf"; sourceTree = "<group>"; };
-		791EADD33303424084E0E587 /* NotoSerif-Italic-VariableFont_wdth,wght.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "NotoSerif-Italic-VariableFont_wdth,wght.ttf"; path = "../assets/fonts/Noto_Serif/NotoSerif-Italic-VariableFont_wdth,wght.ttf"; sourceTree = "<group>"; };
+		705E589925BB4E928251428D /* NotoSans-Italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "NotoSans-Italic.ttf"; path = "../assets/fonts/Noto_Sans/NotoSans-Italic.ttf"; sourceTree = "<group>"; };
+		741C9462D15D496198ED4915 /* mindsherpa-Bridging-Header.h */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.h; name = "mindsherpa-Bridging-Header.h"; path = "mindsherpa/mindsherpa-Bridging-Header.h"; sourceTree = "<group>"; };
 		7A4D352CD337FB3A3BF06240 /* Pods-mindsherpa.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mindsherpa.release.xcconfig"; path = "Target Support Files/Pods-mindsherpa/Pods-mindsherpa.release.xcconfig"; sourceTree = "<group>"; };
+		A1ADB82D17054746AC0B5F20 /* NotoSans.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = NotoSans.ttf; path = ../assets/fonts/Noto_Sans/NotoSans.ttf; sourceTree = "<group>"; };
+		A636D09C39D847F29AFD4A83 /* NotoSerif.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = NotoSerif.ttf; path = ../assets/fonts/Noto_Serif/NotoSerif.ttf; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = mindsherpa/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		E4A7C2CE89EA4B8786D7CE7F /* NotoSerif-VariableFont_wdth,wght.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "NotoSerif-VariableFont_wdth,wght.ttf"; path = "../assets/fonts/Noto_Serif/NotoSerif-VariableFont_wdth,wght.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-mindsherpa/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		FE304B8E69C245B8925AF3A5 /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "mindsherpa/noop-file.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,9 +67,9 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				4DCE0A39077849B0B8BB5D30 /* noop-file.swift */,
-				6A7045931FCF469D9E5FA250 /* mindsherpa-Bridging-Header.h */,
-				4383F4597363C50FC78A9FD2 /* PrivacyInfo.xcprivacy */,
+				FE304B8E69C245B8925AF3A5 /* noop-file.swift */,
+				741C9462D15D496198ED4915 /* mindsherpa-Bridging-Header.h */,
+				16E8E8DDC1A5DEE7C735E3D1 /* PrivacyInfo.xcprivacy */,
 			);
 			name = mindsherpa;
 			sourceTree = "<group>";
@@ -81,18 +81,6 @@
 				58EEBF8E8E6FB1BC6CAF49B5 /* libPods-mindsherpa.a */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		74BE3C0AE7AB4563A8D92F3F /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				2D93DAB59945417A8FA447B0 /* NotoSans-Italic-VariableFont_wdth,wght.ttf */,
-				7734E0E2DDAB4C9CA70C98DF /* NotoSans-VariableFont_wdth,wght.ttf */,
-				E4A7C2CE89EA4B8786D7CE7F /* NotoSerif-VariableFont_wdth,wght.ttf */,
-				791EADD33303424084E0E587 /* NotoSerif-Italic-VariableFont_wdth,wght.ttf */,
-			);
-			name = Resources;
-			path = "";
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -111,7 +99,7 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				D65327D7A22EEC0BE12398D9 /* Pods */,
 				D7E4C46ADA2E9064B798F356 /* ExpoModulesProviders */,
-				74BE3C0AE7AB4563A8D92F3F /* Resources */,
+				F828B4F9D4FB4C599425B25C /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -160,6 +148,18 @@
 			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
+		F828B4F9D4FB4C599425B25C /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A1ADB82D17054746AC0B5F20 /* NotoSans.ttf */,
+				705E589925BB4E928251428D /* NotoSans-Italic.ttf */,
+				A636D09C39D847F29AFD4A83 /* NotoSerif.ttf */,
+				59EA150E6AA5408494C2B8D9 /* NotoSerif-Italic.ttf */,
+			);
+			name = Resources;
+			path = "";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -168,13 +168,13 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "mindsherpa" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				BA6C895770CBD32F59A893D5 /* [Expo] Configure project */,
+				FD3B0C558D43AE3EED3B1918 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				D7343C5A987E68FC5EB8C261 /* [CP] Embed Pods Frameworks */,
+				CAEFBA5E8DED36147CF1CF1E /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -226,11 +226,11 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				BE622000D3B24F38BB18BB59 /* NotoSans-Italic-VariableFont_wdth,wght.ttf in Resources */,
-				B78F8D2F18174C3D97537A17 /* NotoSans-VariableFont_wdth,wght.ttf in Resources */,
-				8C42FFC3B8DD4BF394916A2C /* NotoSerif-VariableFont_wdth,wght.ttf in Resources */,
-				343F234AC2544702AA48AD28 /* NotoSerif-Italic-VariableFont_wdth,wght.ttf in Resources */,
-				856B074B8213754D902032C9 /* PrivacyInfo.xcprivacy in Resources */,
+				135607036A34463699812467 /* NotoSans.ttf in Resources */,
+				E5AB642254BE473B9FD35678 /* NotoSans-Italic.ttf in Resources */,
+				954A746D665D4B9C9B3CC874 /* NotoSerif.ttf in Resources */,
+				A4081C25D38847438E7AB04F /* NotoSerif-Italic.ttf in Resources */,
+				61C8F759360C94DFD795DF5A /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -312,7 +312,25 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-mindsherpa/Pods-mindsherpa-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		BA6C895770CBD32F59A893D5 /* [Expo] Configure project */ = {
+		CAEFBA5E8DED36147CF1CF1E /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-mindsherpa/Pods-mindsherpa-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-mindsherpa/Pods-mindsherpa-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		FD3B0C558D43AE3EED3B1918 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -331,24 +349,6 @@
 			shellPath = /bin/sh;
 			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-mindsherpa/expo-configure-project.sh\"\n";
 		};
-		D7343C5A987E68FC5EB8C261 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-mindsherpa/Pods-mindsherpa-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-mindsherpa/Pods-mindsherpa-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -359,7 +359,7 @@
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
-				3A3CDBE758F4429AA728CF3E /* noop-file.swift in Sources */,
+				D9EBFFC399434F6E91170AC9 /* noop-file.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

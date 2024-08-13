@@ -1,4 +1,4 @@
-import { Stack } from 'expo-router';
+import { SplashScreen, Stack } from 'expo-router';
 import React, { useEffect } from 'react';
 
 import { LoadingFull } from '~/components/LoadingFull';

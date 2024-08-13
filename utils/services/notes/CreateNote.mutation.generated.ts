@@ -9,7 +9,7 @@ export type CreateNoteMutationVariables = Types.Exact<{
 }>;
 
 
-export type CreateNoteMutation = { readonly __typename?: 'Mutation', readonly createNote: { readonly __typename?: 'CreateNote', readonly id: string, readonly content: string, readonly createdAt: string } };
+export type CreateNoteMutation = { readonly __typename?: 'Mutation', readonly createNote: { readonly __typename?: 'CreateNoteOutput', readonly id: string, readonly content: string, readonly createdAt: string } };
 
 
 export const CreateNoteDocument = gql`

@@ -35,14 +35,6 @@ build-prod:
 	$(EAS_CLI) build --profile production
 
 # Development commands
-.PHONY: lint
-lint:
-	npx eslint "**/*.{js,jsx,ts,tsx}" && npx prettier -c "**/*.{js,jsx,ts,tsx,json}"
-
-.PHONY: format
-format:
-	npx eslint "**/*.{js,jsx,ts,tsx}" --fix && npx prettier "**/*.{js,jsx,ts,tsx,json}" --write
-
 .PHONY: prebuild
 prebuild:
 	cd ios && pod install && cd ..

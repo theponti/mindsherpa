@@ -151,7 +151,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "CreateNote",
+        "name": "CreateNoteOutput",
         "fields": [
           {
             "name": "content",
@@ -222,6 +222,24 @@
       },
       {
         "kind": "OBJECT",
+        "name": "DeleteFocusItemOutput",
+        "fields": [
+          {
+            "name": "success",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          }
+        ],
+        "interfaces": []
+      },
+      {
+        "kind": "OBJECT",
         "name": "FocusOutput",
         "fields": [
           {
@@ -263,11 +281,8 @@
           {
             "name": "dueDate",
             "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
+              "kind": "SCALAR",
+              "name": "Any"
             },
             "args": []
           },
@@ -463,7 +478,7 @@
               "kind": "NON_NULL",
               "ofType": {
                 "kind": "OBJECT",
-                "name": "CreateNote",
+                "name": "CreateNoteOutput",
                 "ofType": null
               }
             },
@@ -487,6 +502,29 @@
               "ofType": {
                 "kind": "OBJECT",
                 "name": "CreateUserPayload",
+                "ofType": null
+              }
+            },
+            "args": [
+              {
+                "name": "input",
+                "type": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Any"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "deleteFocusItem",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "DeleteFocusItemOutput",
                 "ofType": null
               }
             },
@@ -565,29 +603,6 @@
               },
               {
                 "name": "message",
-                "type": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "Any"
-                  }
-                }
-              }
-            ]
-          },
-          {
-            "name": "signUpWithEmail",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "CreateUserPayload",
-                "ofType": null
-              }
-            },
-            "args": [
-              {
-                "name": "email",
                 "type": {
                   "kind": "NON_NULL",
                   "ofType": {
@@ -801,7 +816,15 @@
                 "ofType": null
               }
             },
-            "args": []
+            "args": [
+              {
+                "name": "filter",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              }
+            ]
           },
           {
             "name": "notes",

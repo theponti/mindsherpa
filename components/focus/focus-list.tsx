@@ -1,22 +1,31 @@
+import { MaterialIcons } from '@expo/vector-icons';
+import { FlatList, View } from 'react-native';
+import { useCallback } from 'react';
+
 import type { FocusOutputItem } from '~/utils/schema/graphcache';
-import { CategoryBadge } from '../badges';
-import { FocusListItem } from './focus-list-item';
-import { Calendar, CircleIcon } from 'lucide-react-native';
 import { Colors } from '~/utils/styles';
 import { theme } from '~/theme';
-import { MaterialIcons } from '@expo/vector-icons';
+import { CategoryBadge } from '../badges';
 import { Card } from '../card';
-import { FlatList, View } from 'react-native';
+import { FocusListItem } from './focus-list-item';
 
-const FocusIcon = ({ item }: { item: FocusOutputItem }) => {
-  const iconSize = theme.textVariants.body.fontSize;
+const ITEM_ICON_SIZE = theme.textVariants.body.fontSize;
+const FocusItemIcon = ({ item }: { item: FocusOutputItem }) => {
   switch (item.type) {
     case 'task':
-      return <CircleIcon color={Colors.quaternary} size={iconSize} />;
+      return (
+        <MaterialIcons
+          name="check-box-outline-blank"
+          color={Colors.quaternary}
+          size={ITEM_ICON_SIZE}
+        />
+      );
     case 'event':
-      return <Calendar color={Colors.quaternary} size={iconSize} />;
+      return (
+        <MaterialIcons name="calendar-today" color={Colors.quaternary} size={ITEM_ICON_SIZE} />
+      );
     case 'reminder':
-      return <MaterialIcons name="alarm-add" size={iconSize} color={Colors.quaternary} />;
+      return <MaterialIcons name="notifications" color={Colors.quaternary} size={ITEM_ICON_SIZE} />;
     default:
       return null;
   }
@@ -36,7 +45,30 @@ const FocusListIcon = ({ type }: { type: string }) => {
   }
 };
 
-export const FocusList = ({ data, type }: { data: FocusOutputItem[]; type: string }) => {
+export const FocusList = ({
+  data,
+  onItemDelete,
+  type,
+}: {
+  data: FocusOutputItem[];
+  onItemDelete: (id: string) => void;
+  type: string;
+}) => {
+  const renderItem = useCallback(
+    ({ item, index }: any) => {
+      return (
+        <FocusListItem
+          icon={<FocusItemIcon item={item} />}
+          label={item.text}
+          onDelete={() => onItemDelete(item.id)}
+          showBorder={index < data.length - 1}
+          headerRight={<CategoryBadge category={item.category} />}
+        />
+      );
+    },
+    [data, onItemDelete]
+  );
+
   return (
     <Card>
       <View style={{ paddingHorizontal: 12, paddingTop: 16, paddingBottom: 20 }}>
@@ -45,15 +77,9 @@ export const FocusList = ({ data, type }: { data: FocusOutputItem[]; type: strin
       <View>
         <FlatList
           data={data}
-          renderItem={({ item, index }) => (
-            <FocusListItem
-              icon={<FocusIcon item={item} />}
-              label={item.text}
-              showBorder={index < data.length - 1}
-              headerRight={<CategoryBadge category={item.category} />}
-            />
-          )}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => `${item.id}`}
+          renderItem={renderItem}
+          scrollEnabled={false}
         />
       </View>
     </Card>

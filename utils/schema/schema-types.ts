@@ -23,6 +23,28 @@ export type AuthPayload = {
   readonly userId: Scalars['Int']['output'];
 };
 
+export enum Category {
+  Adventure = 'ADVENTURE',
+  Career = 'CAREER',
+  Creativity = 'CREATIVITY',
+  Culture = 'CULTURE',
+  Education = 'EDUCATION',
+  Events = 'EVENTS',
+  Finance = 'FINANCE',
+  Health = 'HEALTH',
+  Home = 'HOME',
+  Interests = 'INTERESTS',
+  Legal = 'LEGAL',
+  MentalHealth = 'MENTAL_HEALTH',
+  PersonalDevelopment = 'PERSONAL_DEVELOPMENT',
+  Productivity = 'PRODUCTIVITY',
+  Projects = 'PROJECTS',
+  Relationships = 'RELATIONSHIPS',
+  Social = 'SOCIAL',
+  Spirituality = 'SPIRITUALITY',
+  Technology = 'TECHNOLOGY'
+}
+
 export type Chat = {
   readonly __typename?: 'Chat';
   readonly createdAt: Scalars['String']['output'];
@@ -41,15 +63,15 @@ export type ChatSummaryOutputItem = {
   readonly text: Scalars['String']['output'];
 };
 
-export type CreateNote = {
-  readonly __typename?: 'CreateNote';
+export type CreateNoteInput = {
+  readonly content: Scalars['String']['input'];
+};
+
+export type CreateNoteOutput = {
+  readonly __typename?: 'CreateNoteOutput';
   readonly content: Scalars['String']['output'];
   readonly createdAt: Scalars['String']['output'];
   readonly id: Scalars['String']['output'];
-};
-
-export type CreateNoteInput = {
-  readonly content: Scalars['String']['input'];
 };
 
 export type CreateUserInput = {
@@ -62,6 +84,15 @@ export type CreateUserPayload = {
   readonly user: User;
 };
 
+export type DeleteFocusItemInput = {
+  readonly id: Scalars['Int']['input'];
+};
+
+export type DeleteFocusItemOutput = {
+  readonly __typename?: 'DeleteFocusItemOutput';
+  readonly success: Scalars['Boolean']['output'];
+};
+
 export type FocusOutput = {
   readonly __typename?: 'FocusOutput';
   readonly items: ReadonlyArray<FocusOutputItem>;
@@ -70,13 +101,17 @@ export type FocusOutput = {
 export type FocusOutputItem = {
   readonly __typename?: 'FocusOutputItem';
   readonly category: Scalars['String']['output'];
-  readonly dueDate: Scalars['String']['output'];
-  readonly id: Scalars['String']['output'];
+  readonly dueDate: Maybe<Scalars['String']['output']>;
+  readonly id: Scalars['Int']['output'];
   readonly priority: Scalars['String']['output'];
   readonly sentiment: Scalars['String']['output'];
   readonly taskSize: Scalars['String']['output'];
   readonly text: Scalars['String']['output'];
   readonly type: Scalars['String']['output'];
+};
+
+export type GetFocusFilter = {
+  readonly category: InputMaybe<Category>;
 };
 
 export type GetProfileOutput = {
@@ -103,11 +138,11 @@ export enum MessageRole {
 
 export type Mutation = {
   readonly __typename?: 'Mutation';
-  readonly createNote: CreateNote;
+  readonly createNote: CreateNoteOutput;
   readonly createUser: CreateUserPayload;
+  readonly deleteFocusItem: DeleteFocusItemOutput;
   readonly saveAppleUser: AuthPayload;
   readonly sendChatMessage: ReadonlyArray<Message>;
-  readonly signUpWithEmail: CreateUserPayload;
   readonly updateProfile: UpdateProfilePayload;
   readonly uploadVoiceNote: UploadVoiceNoteResponse;
 };
@@ -123,6 +158,11 @@ export type MutationCreateUserArgs = {
 };
 
 
+export type MutationDeleteFocusItemArgs = {
+  input: DeleteFocusItemInput;
+};
+
+
 export type MutationSaveAppleUserArgs = {
   idToken: Scalars['String']['input'];
   nonce: Scalars['String']['input'];
@@ -132,11 +172,6 @@ export type MutationSaveAppleUserArgs = {
 export type MutationSendChatMessageArgs = {
   chatId: Scalars['String']['input'];
   message: Scalars['String']['input'];
-};
-
-
-export type MutationSignUpWithEmailArgs = {
-  email: Scalars['String']['input'];
 };
 
 
@@ -177,6 +212,11 @@ export type Query = {
 
 export type QueryChatMessagesArgs = {
   chatId: Scalars['String']['input'];
+};
+
+
+export type QueryFocusArgs = {
+  filter?: InputMaybe<GetFocusFilter>;
 };
 
 export type UpdateProfileInput = {

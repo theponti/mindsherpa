@@ -1,16 +1,32 @@
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
+import { Button } from 'react-native';
 
 export default function FocusLayout() {
+  const router = useRouter();
+
   return (
-    <Stack initialRouteName="home">
-      <Stack.Screen name="home" options={{ headerShown: false }} />
+    <Stack initialRouteName="/(drawer)/focus">
+      <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen
-        name="modal"
+        name="notebook"
         options={{
-          headerShown: true,
-          presentation: 'modal',
-          headerBackTitle: 'close',
-          headerBackButtonMenuEnabled: true,
+          headerBackTitle: 'Notebook',
+          headerLeft: () => (
+            <Button
+              title="Back"
+              onPress={() => {
+                router.push('/(drawer)/focus');
+              }}
+            />
+          ),
+          headerRight: () => (
+            <Button
+              title="Add"
+              onPress={() => {
+                router.push('/(drawer)/focus/notebook/new');
+              }}
+            />
+          ),
         }}
       />
     </Stack>

@@ -33,10 +33,10 @@
         "expo-font",
         {
           "fonts": [
-            "./assets/fonts/Noto_Sans/NotoSans-Italic-VariableFont_wdth,wght.ttf",
-            "./assets/fonts/Noto_Sans/NotoSans-VariableFont_wdth,wght.ttf",
-            "./assets/fonts/Noto_Serif/NotoSerif-VariableFont_wdth,wght.ttf",
-            "./assets/fonts/Noto_Serif/NotoSerif-Italic-VariableFont_wdth,wght.ttf"
+            "./assets/fonts/Noto_Sans/NotoSans.ttf",
+            "./assets/fonts/Noto_Sans/NotoSans-Italic.ttf",
+            "./assets/fonts/Noto_Serif/NotoSerif.ttf",
+            "./assets/fonts/Noto_Serif/NotoSerif-Italic.ttf"
           ]
         }
       ]
