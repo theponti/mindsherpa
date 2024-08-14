@@ -1,3 +1,4 @@
+import Constants from 'expo-constants';
 import { Session } from '@supabase/supabase-js';
 import React, {
   createContext,
@@ -15,6 +16,7 @@ import { asyncStorage, graphcacheExchange } from './graphcacheExchange';
 import { log } from '../logger';
 import { GetProfileOutput } from '../schema/schema-types';
 import { supabase } from '../supabase';
+const { manifest2 } = Constants;
 
 type AppContextType = {
   isLoadingAuth: boolean;
@@ -47,6 +49,14 @@ export const getToken = async () => {
   return data.session?.access_token ?? null;
 };
 
+const getHostURI = () => {
+  if (manifest2?.extra?.expoClient?.hostUri) {
+    return `http://${manifest2.extra.expoClient.hostUri.split(':').shift()}:8002/graphql`;
+  }
+
+  return process.env.EXPO_PUBLIC_GRAPHQL_ENDPOINT!;
+};
+
 export function AppProvider({ children }: PropsWithChildren) {
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
   const [session, setSession] = useState<Session | null>(null);
@@ -56,7 +66,7 @@ export function AppProvider({ children }: PropsWithChildren) {
   const urqlClient = useMemo<Client>(
     () =>
       new Client({
-        url: process.env.EXPO_PUBLIC_GRAPHQL_ENDPOINT!,
+        url: getHostURI(),
         exchanges: [graphcacheExchange, createAuthExchange(getTokenRef), fetchExchange],
       }),
     [getTokenRef]

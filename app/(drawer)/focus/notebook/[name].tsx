@@ -86,7 +86,7 @@ export default function Notebook() {
             />
           </Card>
         ) : null}
-        {hasNotebookItems ? (
+        {!hasNotebookItems ? (
           <Text variant="body" style={{ textAlign: 'center', padding: 16 }}>
             No items in this notebook
           </Text>

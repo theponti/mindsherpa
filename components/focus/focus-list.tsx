@@ -29,7 +29,7 @@ export const FocusList = ({
   type,
 }: {
   data: FocusOutputItem[];
-  onItemDelete: (id: string) => void;
+  onItemDelete: (id: number) => void;
   type: string;
 }) => {
   const renderItem = useCallback(

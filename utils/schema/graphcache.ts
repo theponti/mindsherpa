@@ -26,28 +26,6 @@ export type AuthPayload = {
   readonly userId: Scalars['Int']['output'];
 };
 
-export enum Category {
-  Adventure = 'ADVENTURE',
-  Career = 'CAREER',
-  Creativity = 'CREATIVITY',
-  Culture = 'CULTURE',
-  Education = 'EDUCATION',
-  Events = 'EVENTS',
-  Finance = 'FINANCE',
-  Health = 'HEALTH',
-  Home = 'HOME',
-  Interests = 'INTERESTS',
-  Legal = 'LEGAL',
-  MentalHealth = 'MENTAL_HEALTH',
-  PersonalDevelopment = 'PERSONAL_DEVELOPMENT',
-  Productivity = 'PRODUCTIVITY',
-  Projects = 'PROJECTS',
-  Relationships = 'RELATIONSHIPS',
-  Social = 'SOCIAL',
-  Spirituality = 'SPIRITUALITY',
-  Technology = 'TECHNOLOGY'
-}
-
 export type Chat = {
   readonly __typename?: 'Chat';
   readonly createdAt: Scalars['String']['output'];
@@ -114,7 +92,7 @@ export type FocusOutputItem = {
 };
 
 export type GetFocusFilter = {
-  readonly category: InputMaybe<Category>;
+  readonly category: Scalars['String']['input'];
 };
 
 export type GetProfileOutput = {
@@ -185,7 +163,6 @@ export type MutationUpdateProfileArgs = {
 
 export type MutationUploadVoiceNoteArgs = {
   audioFile: Scalars['Upload']['input'];
-  chatId: Scalars['Int']['input'];
 };
 
 export type NoteOutput = {

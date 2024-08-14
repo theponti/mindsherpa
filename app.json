@@ -39,6 +39,12 @@
             "./assets/fonts/Noto_Serif/NotoSerif-Italic.ttf"
           ]
         }
+      ],
+      [
+        "expo-av",
+        {
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
+        }
       ]
     ],
     "experiments": {

@@ -1,5 +1,5 @@
 import { useFocusEffect } from 'expo-router';
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import { RefreshControl, ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -12,29 +12,72 @@ import { FocusList } from '~/components/focus/focus-list';
 import { NoteForm } from '~/components/notes/note-form';
 import { NotebookStack } from '~/components/notes/notebook-stack';
 import { Text } from '~/theme';
+import { FocusOutput } from '~/utils/schema/schema-types';
 import { FocusQuery, useFocusQuery } from '~/utils/services/Focus.query.generated';
 import { useDeleteFocusItemMutation } from '~/utils/services/notes/DeleteFocusItem.mutation.generated';
 
+const baseFocusItems = {
+  tasks: [],
+  events: [],
+  reminders: [],
+  notebooks: [],
+};
+
 type FocusItem = FocusQuery['focus']['items'][0];
+
+type FocusItemsMap = {
+  tasks: FocusItem[];
+  events: FocusItem[];
+  reminders: FocusItem[];
+  notebooks: FocusItem[];
+};
 export const FocusView = () => {
   const [isDeleting, setIsDeleting] = React.useState(false);
-  const [refreshing, setRefreshing] = React.useState(true);
+  const [refreshing, setRefreshing] = React.useState(false);
   const [focusResponse, getFocus] = useFocusQuery({
     pause: true,
     requestPolicy: 'network-only',
   });
   const [deleteResponse, deleteFocusItem] = useDeleteFocusItemMutation();
+  const [focusItems, setFocusItems] = useState<FocusItemsMap>(baseFocusItems);
 
-  useFocusEffect(
-    useCallback(() => {
-      getFocus();
-    }, [getFocus])
-  );
+  const setFocusItemsFromResponse = useCallback((items: FocusQuery['focus']['items']) => {
+    const tasks: FocusItem[] = [];
+    const events: FocusItem[] = [];
+    const reminders: FocusItem[] = [];
+    const notebooks: FocusItem[] = [];
 
-  const focusData = focusResponse.data?.focus;
-  const isLoaded = !focusResponse.fetching;
-  const hasError = isLoaded && (focusResponse.error || !focusResponse.data);
-  const hasData = isLoaded && focusData;
+    if (!items.length) {
+      return baseFocusItems;
+    }
+
+    for (const item of items) {
+      switch (item.type) {
+        case 'task':
+          tasks.push(item);
+          break;
+        case 'event':
+          events.push(item);
+          break;
+        case 'reminder':
+          reminders.push(item);
+          break;
+        default:
+      }
+      notebooks.push(item);
+    }
+
+    return setFocusItems({
+      tasks,
+      events,
+      reminders,
+      notebooks,
+    });
+  }, []);
+
+  const isLoading = focusResponse.fetching;
+  const hasError = !isLoading && (focusResponse.error || !focusResponse.data);
+  const hasData = !isLoading && focusItems.notebooks.length > 0;
 
   const onFormSubmit = useCallback(() => {
     getFocus();
@@ -43,57 +86,43 @@ export const FocusView = () => {
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     getFocus();
+    setFocusItemsFromResponse([]);
   }, [getFocus]);
 
-  const onItemDelete = useCallback((id: string) => {
-    setIsDeleting(true);
-    deleteFocusItem({ input: { id } });
-  }, []);
+  const onItemDelete = useCallback(
+    async (id: number) => {
+      setIsDeleting(true);
+      await deleteFocusItem({ input: { id } });
+      setFocusItemsFromResponse(focusItems.notebooks.filter((item) => item.id !== id));
+      setIsDeleting(false);
+    },
+    [focusItems.notebooks, deleteFocusItem]
+  );
 
-  const focusItems = useMemo(() => {
-    const acc = {
-      tasks: [] as FocusItem[],
-      events: [] as FocusItem[],
-      reminders: [] as FocusItem[],
-      notebooks: [] as FocusItem[],
-    };
-
-    for (const item of focusData?.items || []) {
-      switch (item.type) {
-        case 'task':
-          acc.tasks.push(item);
-          break;
-        case 'event':
-          acc.events.push(item);
-          break;
-        case 'reminder':
-          acc.reminders.push(item);
-          break;
-        default:
-          acc.notebooks.push(item);
-      }
-    }
-
-    return acc;
-  }, [focusData?.items]);
+  useFocusEffect(
+    useCallback(() => {
+      getFocus();
+    }, [])
+  );
 
   useEffect(() => {
-    if (refreshing && isLoaded) {
+    if (refreshing && !isLoading) {
       setRefreshing(false);
     }
+  }, [isLoading, refreshing]);
 
-    if (isDeleting && deleteResponse.data?.deleteFocusItem.success) {
-      setIsDeleting(false);
-      getFocus();
+  useEffect(() => {
+    if (focusResponse.data?.focus.items) {
+      setFocusItemsFromResponse(focusResponse.data?.focus.items);
     }
-  }, [deleteResponse, isLoaded, refreshing]);
+  }, [focusResponse.data?.focus.items]);
 
   return (
     <ScreenContent>
       <SafeAreaView style={styles.container}>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 50 : 0}
           style={styles.container}>
           <View style={[styles.focusContainer]}>
             <View style={styles.header}>
@@ -103,7 +132,7 @@ export const FocusView = () => {
               </Text>
             </View>
 
-            {focusResponse.fetching ? (
+            {isLoading ? (
               <LoadingContainer>
                 <PulsingCircle />
               </LoadingContainer>

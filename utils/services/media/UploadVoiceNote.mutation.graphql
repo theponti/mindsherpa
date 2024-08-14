@@ -1,5 +1,5 @@
-mutation UploadVoiceNote($audioFile: Upload!, $chatId: Int!) {
-  uploadVoiceNote(audioFile: $audioFile, chatId: $chatId) {
+mutation UploadVoiceNote($audioFile: Upload!) {
+  uploadVoiceNote(audioFile: $audioFile) {
     text
   }
 }

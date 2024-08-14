@@ -1,4 +1,5 @@
 import { Audio } from 'expo-av';
+import * as FileSystem from 'expo-file-system';
 import React, { useState, useCallback } from 'react';
 import { View, Button, StyleSheet, Alert } from 'react-native';
 import Animated, { useSharedValue, useAnimatedProps } from 'react-native-reanimated';
@@ -14,62 +15,28 @@ export const useVoiceRecorder = ({
 }) => {
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const [recordingStatus, setRecordingStatus] = useState<Audio.RecordingStatus | null>(null);
-  const [isRecording, setIsRecording] = useState<boolean>(false);
   const client = useClient();
   const [uploadVoiceNoteResponse, uploadVoiceNote] = useUploadVoiceNoteMutation();
 
-  const saveRecording = useCallback(
-    async (uri: string) => {
-      const response = await fetch(uri);
-      const blob = await response.blob();
-      const { data, error } = await uploadVoiceNote({
-        audioFile: blob,
-      });
-
-      if (error) {
-        console.error('Error uploading recording: ', error);
-      } else {
-        console.log('Recording uploaded: ', data);
-      }
-    },
-    [client]
-  );
   const startRecording = async () => {
     try {
       const permission = await Audio.requestPermissionsAsync();
-      if (permission.status === 'granted') {
-        await Audio.setAudioModeAsync({
-          allowsRecordingIOS: true,
-          playsInSilentModeIOS: true,
-        });
-
-        setIsRecording(true);
-        const { recording, status } = await Audio.Recording.createAsync({
-          ios: {
-            audioQuality: Audio.IOSAudioQuality.HIGH,
-            bitRate: 128000,
-            sampleRate: 44100,
-            numberOfChannels: 1,
-            extension: '.wav',
-          },
-          android: {
-            extension: '.wav',
-            outputFormat: Audio.AndroidOutputFormat.MPEG_4,
-            audioEncoder: Audio.AndroidAudioEncoder.AAC,
-            sampleRate: 44100,
-            numberOfChannels: 1,
-            bitRate: 128000,
-          },
-          web: {
-            mimeType: 'audio/wav',
-          },
-        });
-
-        setRecording(recording);
-        setRecordingStatus(status);
-      } else {
-        alert('Permission to access microphone is required!');
+      if (permission.status !== 'granted') {
+        throw new Error('Permission to access microphone is required!');
       }
+
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+      });
+
+      const recording = new Audio.Recording();
+      await recording.prepareToRecordAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
+      await recording.startAsync();
+      setRecording(recording);
+      recording.setOnRecordingStatusUpdate((status) => {
+        setRecordingStatus(status);
+      });
     } catch (err) {
       console.error('Failed to start recording', err);
     }
@@ -79,33 +46,57 @@ export const useVoiceRecorder = ({
     if (!recording) return;
 
     try {
+      // 👇 Stop recording
+      // setRecording(null);
       await recording.stopAndUnloadAsync();
-      const uri = recording.getURI();
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: false,
+      });
 
+      // 👇 Get the URI of the recording
+      const uri = recording.getURI();
       if (!uri) {
-        throw new Error('Failed to get recording URI');
+        throw new Error('Failed to get the URI of the recording');
       }
 
-      // Save the recording to database
-      await saveRecording(uri);
+      // 👇 Log file information
+      const fileInfo = await FileSystem.getInfoAsync(uri);
+
+      // 👇 Read the file content as base64
+      const fileContent = await FileSystem.readAsStringAsync(uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      // 👇 Create a Blob from the base64 content
+      const blob = new Blob([fileContent], { type: 'audio/m4a' });
+
+      // 👇 Upload the voice note
+      const { data, error } = await uploadVoiceNote({
+        audioFile: blob,
+      });
+
+      if (error) {
+        console.error('Error uploading recording: ', error);
+      } else {
+        console.log('Recording uploaded: ', data);
+      }
 
       onRecordingComplete(uri);
     } catch (err) {
+      console.error('Failed to start recording', err);
       Alert.alert('Failed to stop recording');
     } finally {
-      setIsRecording(false);
       setRecording(null);
       setRecordingStatus(null);
     }
   };
 
   return {
-    isRecording,
+    isRecording: recordingStatus?.isRecording,
     recording,
     recordingStatus,
     startRecording,
     stopRecording,
-    saveRecording,
     saveRecordingResponse: uploadVoiceNoteResponse,
   };
 };

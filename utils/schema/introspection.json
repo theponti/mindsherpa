@@ -656,16 +656,6 @@
                     "name": "Any"
                   }
                 }
-              },
-              {
-                "name": "chatId",
-                "type": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "Any"
-                  }
-                }
               }
             ]
           }

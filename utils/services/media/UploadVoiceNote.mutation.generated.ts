@@ -6,7 +6,6 @@ import * as Urql from 'urql';
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type UploadVoiceNoteMutationVariables = Types.Exact<{
   audioFile: Types.Scalars['Upload']['input'];
-  chatId: Types.Scalars['Int']['input'];
 }>;
 
 
@@ -14,8 +13,8 @@ export type UploadVoiceNoteMutation = { readonly __typename?: 'Mutation', readon
 
 
 export const UploadVoiceNoteDocument = gql`
-    mutation UploadVoiceNote($audioFile: Upload!, $chatId: Int!) {
-  uploadVoiceNote(audioFile: $audioFile, chatId: $chatId) {
+    mutation UploadVoiceNote($audioFile: Upload!) {
+  uploadVoiceNote(audioFile: $audioFile) {
     text
   }
 }
