@@ -1,5 +1,5 @@
 import { useFocusEffect } from 'expo-router'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { View, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native'
 import { RefreshControl, ScrollView } from 'react-native-gesture-handler'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -7,13 +7,11 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { LoadingContainer } from '~/components/LoadingFull'
 import { ScreenContent } from '~/components/ScreenContent'
 import { PulsingCircle } from '~/components/animated/pulsing-circle'
-import { BottomSheet } from '~/components/bottom-sheet'
 import { FeedbackBlock } from '~/components/feedback-block'
 import { FocusList } from '~/components/focus/focus-list'
 import { NoteForm } from '~/components/notes/note-form'
 import { NotebookStack } from '~/components/notes/notebook-stack'
 import { Text } from '~/theme'
-import { FocusOutput } from '~/utils/schema/schema-types'
 import { FocusQuery, useFocusQuery } from '~/utils/services/Focus.query.generated'
 import { useDeleteFocusItemMutation } from '~/utils/services/notes/DeleteFocusItem.mutation.generated'
 
@@ -172,7 +170,6 @@ export const FocusView = () => {
               </ScrollView>
             ) : null}
           </View>
-          {/* <BottomSheet isOpen={isOpen} toggleSheet={toggleSheet} /> */}
           <NoteForm onSubmit={onFormSubmit} />
         </KeyboardAvoidingView>
       </SafeAreaView>
