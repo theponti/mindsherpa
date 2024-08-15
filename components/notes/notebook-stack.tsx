@@ -1,64 +1,101 @@
-import { useRouter } from 'expo-router';
-import { useCallback, useMemo } from 'react';
-import { FlatList, ListRenderItem, Pressable, View } from 'react-native';
+import { useRouter } from 'expo-router'
+import { FontAwesome6 } from '@expo/vector-icons'
+import { useCallback, useMemo } from 'react'
+import { FlatList, ListRenderItem, Pressable, StyleSheet, View } from 'react-native'
 
-import { FocusOutputItem } from '~/utils/schema/schema-types';
-import { FocusQuery } from '~/utils/services/Focus.query.generated';
-import { Text } from '~/theme';
-import { borderStyle, listStyles as styles } from '~/utils/styles';
-import { Card } from '../card';
+import { FocusQuery } from '~/utils/services/Focus.query.generated'
+import { Text } from '~/theme'
+import { borderStyle, listStyles } from '~/utils/styles'
+import { Card } from '../card'
+import { CATEGORIES } from '../focus/focus-category'
 
+type List = { label: string; count: number }
+type Lists = List[]
 export const NotebookStack = ({ items }: { items: FocusQuery['focus']['items'] }) => {
-  const router = useRouter();
-  const accumulatedCategories = useMemo(() => {
-    const map: Record<string, FocusOutputItem[]> = {};
+  const router = useRouter()
+  const notebooks = useMemo<Lists>(() => {
+    const categoryCounts = new Map<string, number>()
 
     for (const item of items) {
-      if (item.type === 'task' || item.type === 'event') continue;
-      if (!map[item.category]) map[item.category] = [];
-
-      const category = map[item.category];
-      if (category) category.push(item);
+      const count = categoryCounts.get(item.category) || 0
+      categoryCounts.set(item.category, count + 1)
     }
 
-    return map;
-  }, [items]);
-  const notebooks = useMemo(() => Object.keys(accumulatedCategories), [accumulatedCategories]);
+    return Array.from(categoryCounts.entries()).map(([label, count]) => ({ label, count }))
+  }, [items])
 
   const onCategoryPress = useCallback(
     (name: string) => {
-      return router.replace(`/(drawer)/focus/notebook/${name}`);
+      return router.replace(`/(drawer)/focus/notebook/${name}`)
     },
     [router]
-  );
+  )
 
-  const renderItem = useCallback<ListRenderItem<string>>(
+  const renderItem = useCallback<ListRenderItem<List>>(
     ({ item, index }) => (
       <Pressable
-        onPress={() => onCategoryPress(item)}
+        onPress={() => onCategoryPress(item.label)}
         style={[
-          styles.container,
+          listStyles.container,
           index !== notebooks.length - 1 ? borderStyle.borderBottom : borderStyle.noBorder,
-          { flexDirection: 'column' },
-        ]}>
-        <View style={{ flexDirection: 'row', columnGap: 8, alignItems: 'center' }}>
-          <Text variant="body" style={styles.text}>
-            {item}
+          styles.listItem,
+        ]}
+      >
+        <View
+          style={{
+            flexDirection: 'row',
+            columnGap: 8,
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Text variant="body" style={listStyles.text}>
+            {`${CATEGORIES[item.label].emoji}   ${CATEGORIES[item.label].label}`}
+          </Text>
+          <Text variant="body" color="gray">
+            {item.count}
           </Text>
         </View>
       </Pressable>
     ),
     [onCategoryPress]
-  );
+  )
+
+  if (notebooks.length === 0) return null
 
   return (
-    <Card>
-      <FlatList
-        data={notebooks}
-        scrollEnabled={false}
-        renderItem={renderItem}
-        keyExtractor={(item) => item}
-      />
-    </Card>
-  );
-};
+    <View style={{ paddingHorizontal: 12, rowGap: 12, paddingTop: 16, paddingBottom: 20 }}>
+      <View style={[styles.header]}>
+        <FontAwesome6 name="icons" size={20} color="gray" />
+        <Text variant="title" color="grayDark">
+          Collections
+        </Text>
+      </View>
+      <Card>
+        <FlatList
+          data={notebooks}
+          scrollEnabled={false}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.label}
+        />
+      </Card>
+    </View>
+  )
+}
+
+const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    columnGap: 12,
+    alignItems: 'center',
+    paddingHorizontal: 2,
+    paddingTop: 12,
+    paddingBottom: 6,
+  },
+  listItem: {
+    flexDirection: 'column',
+    paddingLeft: 8,
+    paddingRight: 24,
+    paddingVertical: 12,
+  },
+})

@@ -9,12 +9,14 @@ export const Colors = {
   darkGray: '#38434D',
   gray: '#808080',
   grayMedium: '#edeef1',
+  grayDark: "rgba(83, 93, 115, 1.00)",
   grayLight: '#F8FBFF',
   green: '#008000',
   greenLight: '#00FF00',
   lime: '#00FF00',
   orange: '#FFA500',
   pink: '#FF00FF',
+  primary: "rgba(40, 49, 67, 1.00)",
   purple: '#6366F1',
   red: '#FF0000',
   redLight: '#FF4500',
@@ -57,7 +59,7 @@ export const borderStyle = StyleSheet.create({
   border: {
     borderColor: Colors.grayMedium,
     borderWidth: 1,
-    borderRadius: 32,
+    borderRadius: 12,
   },
 })
 
@@ -72,5 +74,7 @@ export const listStyles = StyleSheet.create({
   text: {
     flex: 1,
     alignItems: 'center',
+    fontSize: 20,
+    color: Colors.primary,
   },
 })

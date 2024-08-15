@@ -1,33 +1,33 @@
-import { SplashScreen, Stack } from 'expo-router';
-import React, { useEffect } from 'react';
+import { SplashScreen, Stack } from 'expo-router'
+import React, { useEffect } from 'react'
 
-import { LoadingFull } from '~/components/LoadingFull';
-import { Text } from '~/theme';
-import { useAppContext } from '~/utils/app-provider';
-import { useProfileQuery } from '~/utils/services/profiles/Profiles.query.generated';
+import { LoadingFull } from '~/components/LoadingFull'
+import { Text } from '~/theme'
+import { useAppContext } from '~/utils/app-provider'
+import { useProfileQuery } from '~/utils/services/profiles/Profiles.query.generated'
 
 const App = () => {
-  const { session, setProfile } = useAppContext();
-  const [profileQueryResponse, fetchProfile] = useProfileQuery({ pause: true });
+  const { session, setProfile } = useAppContext()
+  const [profileQueryResponse, fetchProfile] = useProfileQuery({ pause: true })
 
   useEffect(() => {
     if (session && !profileQueryResponse.data) {
-      fetchProfile();
+      fetchProfile()
     }
-  }, [session, fetchProfile, profileQueryResponse.data]);
+  }, [session, fetchProfile, profileQueryResponse.data])
 
   useEffect(() => {
     if (profileQueryResponse.data?.profile) {
-      setProfile(profileQueryResponse.data.profile);
+      setProfile(profileQueryResponse.data.profile)
     }
-  }, [profileQueryResponse.data, setProfile]);
+  }, [profileQueryResponse.data, setProfile])
 
   if (!session || profileQueryResponse.fetching) {
     return (
       <LoadingFull>
         <Text variant="title">Loading your account...</Text>
       </LoadingFull>
-    );
+    )
   }
 
   return (
@@ -37,7 +37,7 @@ const App = () => {
       <Stack.Screen name="(notebook)" options={{ headerShown: false }} />
       <Stack.Screen name="(account)" options={{ presentation: 'modal', gestureEnabled: true }} />
     </Stack>
-  );
-};
+  )
+}
 
-export default App;
+export default App

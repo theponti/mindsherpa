@@ -19,5 +19,8 @@
     "urql",
     "pressable",
     "autogrow"
-  ]
+  ],
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  }
 }

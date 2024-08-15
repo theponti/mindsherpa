@@ -1,16 +1,16 @@
-import { Redirect } from 'expo-router';
-import React from 'react';
+import { Redirect } from 'expo-router'
+import React from 'react'
 
-import LoginSheet from '~/components/authentication/login-sheet';
-import AnimatedIntro from '~/components/intro-animated';
-import { Box } from '~/theme';
-import { useAppContext } from '~/utils/app-provider';
+import LoginSheet from '~/components/authentication/login-sheet'
+import AnimatedIntro from '~/components/intro-animated'
+import { Box } from '~/theme'
+import { useAppContext } from '~/utils/app-provider'
 
 function Auth() {
-  const { session } = useAppContext();
+  const { session } = useAppContext()
 
   if (session) {
-    return <Redirect href="/(drawer)/focus" />;
+    return <Redirect href="/(drawer)/focus" />
   }
 
   return (
@@ -18,7 +18,7 @@ function Auth() {
       <AnimatedIntro />
       <LoginSheet />
     </Box>
-  );
+  )
 }
 
-export default Auth;
+export default Auth

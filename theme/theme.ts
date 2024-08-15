@@ -45,11 +45,11 @@ const theme = createTheme({
       fontWeight: 600,
     },
     title: {
-      fontFamily: 'Noto Serif',
+      fontFamily: 'Noto Sans',
       fontSize: 20,
     },
     label: {
-      fontFamily: 'Noto Serif',
+      fontFamily: 'Noto Sans',
       fontSize: 16,
     },
     body: {

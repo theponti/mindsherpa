@@ -1,19 +1,28 @@
-import * as AppleAuthentication from 'expo-apple-authentication';
-import { useRouter } from 'expo-router';
-import { Alert, View, StyleSheet, ActivityIndicator } from 'react-native';
-import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import * as AppleAuthentication from 'expo-apple-authentication'
+import { useRouter } from 'expo-router'
+import { useEffect } from 'react'
+import { Alert, View, StyleSheet, ActivityIndicator } from 'react-native'
+import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
 
-import { Text } from '~/theme';
-import { useCreateUserMutation } from '~/utils/services/profiles/CreateUser.mutation.generated';
-import { storage } from '~/utils/storage';
-import { supabase } from '~/utils/supabase';
+import { Text } from '~/theme'
+import { useCreateUserMutation } from '~/utils/services/profiles/CreateUser.mutation.generated'
+import { storage } from '~/utils/storage'
+import { supabase } from '~/utils/supabase'
+import { useAppContext } from '~/utils/app-provider'
 
 const LoginSheet = ({ isLoadingAuth }: { isLoadingAuth?: boolean }) => {
-  const router = useRouter();
-  const [, createUser] = useCreateUserMutation();
+  const { session } = useAppContext()
+  const router = useRouter()
+  const [, createUser] = useCreateUserMutation()
   const textStyle = useAnimatedStyle(() => ({
     opacity: withTiming(1, { duration: 1000 }),
-  }));
+  }))
+
+  useEffect(() => {
+    if (session) {
+      router.push('/(drawer)/focus')
+    }
+  }, [session])
 
   if (isLoadingAuth) {
     return (
@@ -27,7 +36,7 @@ const LoginSheet = ({ isLoadingAuth }: { isLoadingAuth?: boolean }) => {
           </View>
         </View>
       </View>
-    );
+    )
   }
 
   return (
@@ -46,15 +55,15 @@ const LoginSheet = ({ isLoadingAuth }: { isLoadingAuth?: boolean }) => {
                   AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
                   AppleAuthentication.AppleAuthenticationScope.EMAIL,
                 ],
-              });
+              })
 
               if (!credential.identityToken) {
-                Alert.alert('Apple Sign-In failed', 'No identify token provided');
-                return null;
+                Alert.alert('Apple Sign-In failed', 'No identify token provided')
+                return null
               }
 
               // Save the user to storage
-              storage.set('user', JSON.stringify(credential));
+              storage.set('user', JSON.stringify(credential))
 
               const {
                 data: { user },
@@ -62,26 +71,26 @@ const LoginSheet = ({ isLoadingAuth }: { isLoadingAuth?: boolean }) => {
               } = await supabase.auth.signInWithIdToken({
                 provider: 'apple',
                 token: credential.identityToken,
-              });
+              })
 
               if (error) {
-                console.log({ user, error });
-                Alert.alert('Apple Sign-In failed', 'Could not sign in');
-                return null;
+                console.log({ user, error })
+                Alert.alert('Apple Sign-In failed', 'Could not sign in')
+                return null
               }
 
               if (user && user.email) {
                 const { data, error } = await createUser({
                   email: user.email,
-                });
+                })
 
-                console.log({ data, error });
+                console.log({ data, error })
                 if (data) {
-                  router.push('(drawer)');
+                  router.push('/(drawer)')
                 }
               }
             } catch (error: any) {
-              console.error(error);
+              console.error(error)
               if (error.code === 'ERR_REQUEST_CANCELED') {
                 //! TODO handle that the user canceled the sign-in flow
               } else {
@@ -92,8 +101,8 @@ const LoginSheet = ({ isLoadingAuth }: { isLoadingAuth?: boolean }) => {
         />
       </View>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -121,6 +130,6 @@ const styles = StyleSheet.create({
     color: 'black',
     marginTop: -22,
   },
-});
+})
 
-export default LoginSheet;
+export default LoginSheet

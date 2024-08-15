@@ -1,70 +1,69 @@
-import { useFocusEffect } from 'expo-router';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { View, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
-import { RefreshControl, ScrollView } from 'react-native-gesture-handler';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useFocusEffect } from 'expo-router'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { View, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native'
+import { RefreshControl, ScrollView } from 'react-native-gesture-handler'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { LoadingContainer } from '~/components/LoadingFull';
-import { ScreenContent } from '~/components/ScreenContent';
-import { PulsingCircle } from '~/components/animated/pulsing-circle';
-import { FeedbackBlock } from '~/components/feedback-block';
-import { FocusList } from '~/components/focus/focus-list';
-import { NoteForm } from '~/components/notes/note-form';
-import { NotebookStack } from '~/components/notes/notebook-stack';
-import { Text } from '~/theme';
-import { FocusOutput } from '~/utils/schema/schema-types';
-import { FocusQuery, useFocusQuery } from '~/utils/services/Focus.query.generated';
-import { useDeleteFocusItemMutation } from '~/utils/services/notes/DeleteFocusItem.mutation.generated';
+import { LoadingContainer } from '~/components/LoadingFull'
+import { ScreenContent } from '~/components/ScreenContent'
+import { PulsingCircle } from '~/components/animated/pulsing-circle'
+import { BottomSheet } from '~/components/bottom-sheet'
+import { FeedbackBlock } from '~/components/feedback-block'
+import { FocusList } from '~/components/focus/focus-list'
+import { NoteForm } from '~/components/notes/note-form'
+import { NotebookStack } from '~/components/notes/notebook-stack'
+import { Text } from '~/theme'
+import { FocusOutput } from '~/utils/schema/schema-types'
+import { FocusQuery, useFocusQuery } from '~/utils/services/Focus.query.generated'
+import { useDeleteFocusItemMutation } from '~/utils/services/notes/DeleteFocusItem.mutation.generated'
 
 const baseFocusItems = {
   tasks: [],
   events: [],
   reminders: [],
   notebooks: [],
-};
+}
 
-type FocusItem = FocusQuery['focus']['items'][0];
+type FocusItem = FocusQuery['focus']['items'][0]
 
 type FocusItemsMap = {
-  tasks: FocusItem[];
-  events: FocusItem[];
-  reminders: FocusItem[];
-  notebooks: FocusItem[];
-};
+  tasks: FocusItem[]
+  events: FocusItem[]
+  reminders: FocusItem[]
+  notebooks: FocusItem[]
+}
 export const FocusView = () => {
-  const [isDeleting, setIsDeleting] = React.useState(false);
-  const [refreshing, setRefreshing] = React.useState(false);
+  const [refreshing, setRefreshing] = React.useState(false)
   const [focusResponse, getFocus] = useFocusQuery({
     pause: true,
     requestPolicy: 'network-only',
-  });
-  const [deleteResponse, deleteFocusItem] = useDeleteFocusItemMutation();
-  const [focusItems, setFocusItems] = useState<FocusItemsMap>(baseFocusItems);
+  })
+  const [focusItems, setFocusItems] = useState<FocusItemsMap>(baseFocusItems)
 
   const setFocusItemsFromResponse = useCallback((items: FocusQuery['focus']['items']) => {
-    const tasks: FocusItem[] = [];
-    const events: FocusItem[] = [];
-    const reminders: FocusItem[] = [];
-    const notebooks: FocusItem[] = [];
+    const tasks: FocusItem[] = []
+    const events: FocusItem[] = []
+    const reminders: FocusItem[] = []
+    const notebooks: FocusItem[] = []
 
     if (!items.length) {
-      return baseFocusItems;
+      return baseFocusItems
     }
 
     for (const item of items) {
       switch (item.type) {
         case 'task':
-          tasks.push(item);
-          break;
+          tasks.push(item)
+          break
         case 'event':
-          events.push(item);
-          break;
+          events.push(item)
+          break
         case 'reminder':
-          reminders.push(item);
-          break;
+          reminders.push(item)
+          break
         default:
       }
-      notebooks.push(item);
+      notebooks.push(item)
     }
 
     return setFocusItems({
@@ -72,50 +71,58 @@ export const FocusView = () => {
       events,
       reminders,
       notebooks,
-    });
-  }, []);
+    })
+  }, [])
 
-  const isLoading = focusResponse.fetching;
-  const hasError = !isLoading && (focusResponse.error || !focusResponse.data);
-  const hasData = !isLoading && focusItems.notebooks.length > 0;
+  const isLoading = focusResponse.fetching
+  const hasError = !isLoading && (focusResponse.error || !focusResponse.data)
+  const hasData = !isLoading && focusItems.notebooks.length > 0
 
   const onFormSubmit = useCallback(() => {
-    getFocus();
-  }, [getFocus]);
+    getFocus()
+  }, [getFocus])
 
   const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    getFocus();
-    setFocusItemsFromResponse([]);
-  }, [getFocus]);
+    setRefreshing(true)
+    getFocus()
+    setFocusItemsFromResponse([])
+  }, [getFocus])
 
+  // 🗑️ Delete items
+  const [isDeleting, setIsDeleting] = React.useState(false)
+  const [deleteResponse, deleteFocusItem] = useDeleteFocusItemMutation()
   const onItemDelete = useCallback(
     async (id: number) => {
-      setIsDeleting(true);
-      await deleteFocusItem({ input: { id } });
-      setFocusItemsFromResponse(focusItems.notebooks.filter((item) => item.id !== id));
-      setIsDeleting(false);
+      setIsDeleting(true)
+      await deleteFocusItem({ input: { id } })
+      setFocusItemsFromResponse(focusItems.notebooks.filter((item) => item.id !== id))
+      setIsDeleting(false)
     },
     [focusItems.notebooks, deleteFocusItem]
-  );
+  )
+
+  const [isOpen, setIsOpen] = useState(true)
+  const toggleSheet = () => {
+    setIsOpen(!isOpen)
+  }
 
   useFocusEffect(
     useCallback(() => {
-      getFocus();
+      getFocus()
     }, [])
-  );
+  )
 
   useEffect(() => {
     if (refreshing && !isLoading) {
-      setRefreshing(false);
+      setRefreshing(false)
     }
-  }, [isLoading, refreshing]);
+  }, [isLoading, refreshing])
 
   useEffect(() => {
     if (focusResponse.data?.focus.items) {
-      setFocusItemsFromResponse(focusResponse.data?.focus.items);
+      setFocusItemsFromResponse(focusResponse.data?.focus.items)
     }
-  }, [focusResponse.data?.focus.items]);
+  }, [focusResponse.data?.focus.items])
 
   return (
     <ScreenContent>
@@ -123,7 +130,8 @@ export const FocusView = () => {
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 50 : 0}
-          style={styles.container}>
+          style={styles.container}
+        >
           <View style={[styles.focusContainer]}>
             <View style={styles.header}>
               <Text variant="cardHeader">Today</Text>
@@ -149,7 +157,8 @@ export const FocusView = () => {
             {hasData ? (
               <ScrollView
                 style={styles.scrollContainer}
-                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+              >
                 <View style={{ rowGap: 24 }}>
                   <FocusList data={focusItems.tasks} onItemDelete={onItemDelete} type="task" />
                   <FocusList data={focusItems.events} onItemDelete={onItemDelete} type="event" />
@@ -163,22 +172,21 @@ export const FocusView = () => {
               </ScrollView>
             ) : null}
           </View>
+          {/* <BottomSheet isOpen={isOpen} toggleSheet={toggleSheet} /> */}
           <NoteForm onSubmit={onFormSubmit} />
         </KeyboardAvoidingView>
       </SafeAreaView>
     </ScreenContent>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 25,
-    rowGap: 12,
   },
   focusContainer: {
     flex: 1,
-    paddingHorizontal: 12,
     rowGap: 12,
   },
   header: {
@@ -187,9 +195,8 @@ const styles = StyleSheet.create({
     rowGap: 4,
   },
   scrollContainer: {
-    flexGrow: 1,
     paddingTop: 12,
   },
-});
+})
 
-export default FocusView;
+export default FocusView
