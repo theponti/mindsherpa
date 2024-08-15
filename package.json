@@ -30,6 +30,7 @@
     "@shopify/restyle": "^2.4.2",
     "@supabase/supabase-js": "^2.44.3",
     "@tamagui/babel-plugin": "^1.102.1",
+    "@tanstack/react-query": "^5.51.23",
     "@urql/core": "^5.0.4",
     "@urql/exchange-auth": "^2.2.0",
     "@urql/exchange-graphcache": "^7.1.2",
@@ -93,6 +94,7 @@
     "@types/d3-scale": "^4.0.8",
     "@types/react": "~18.2.45",
     "prettier": "^3.2.5",
+    "reactotron-react-native": "^5.1.7",
     "typescript": "~5.3.3"
   },
   "expo": {
