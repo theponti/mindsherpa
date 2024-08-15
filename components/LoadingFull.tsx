@@ -18,8 +18,7 @@ export const LoadingContainer = ({ children }: PropsWithChildren) => {
 
 const styles = StyleSheet.create({
   loading: {
-    height: '100%',
-    backgroundColor: 'red',
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 24,
