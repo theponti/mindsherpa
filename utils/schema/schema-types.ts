@@ -13,7 +13,6 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
-  Upload: { input: any; output: any; }
 };
 
 export type AuthPayload = {
@@ -23,33 +22,22 @@ export type AuthPayload = {
   readonly userId: Scalars['Int']['output'];
 };
 
-export type Chat = {
-  readonly __typename?: 'Chat';
-  readonly createdAt: Scalars['String']['output'];
-  readonly id: Scalars['String']['output'];
-  readonly title: Scalars['String']['output'];
-};
-
 export type ChatMessagesResponse = {
   readonly __typename?: 'ChatMessagesResponse';
   readonly messages: ReadonlyArray<Message>;
   readonly summary: ReadonlyArray<ChatSummaryOutputItem>;
 };
 
+export type ChatOutput = {
+  readonly __typename?: 'ChatOutput';
+  readonly createdAt: Scalars['String']['output'];
+  readonly id: Scalars['String']['output'];
+  readonly title: Scalars['String']['output'];
+};
+
 export type ChatSummaryOutputItem = {
   readonly __typename?: 'ChatSummaryOutputItem';
   readonly text: Scalars['String']['output'];
-};
-
-export type CreateNoteInput = {
-  readonly content: Scalars['String']['input'];
-};
-
-export type CreateNoteOutput = {
-  readonly __typename?: 'CreateNoteOutput';
-  readonly content: Scalars['String']['output'];
-  readonly createdAt: Scalars['String']['output'];
-  readonly id: Scalars['String']['output'];
 };
 
 export type CreateUserInput = {
@@ -116,18 +104,11 @@ export enum MessageRole {
 
 export type Mutation = {
   readonly __typename?: 'Mutation';
-  readonly createNote: CreateNoteOutput;
   readonly createUser: CreateUserPayload;
   readonly deleteFocusItem: DeleteFocusItemOutput;
   readonly saveAppleUser: AuthPayload;
   readonly sendChatMessage: ReadonlyArray<Message>;
   readonly updateProfile: UpdateProfilePayload;
-  readonly uploadVoiceNote: UploadVoiceNoteResponse;
-};
-
-
-export type MutationCreateNoteArgs = {
-  input: CreateNoteInput;
 };
 
 
@@ -157,11 +138,6 @@ export type MutationUpdateProfileArgs = {
   input: UpdateProfileInput;
 };
 
-
-export type MutationUploadVoiceNoteArgs = {
-  audioFile: Scalars['Upload']['input'];
-};
-
 export type NoteOutput = {
   readonly __typename?: 'NoteOutput';
   readonly content: Scalars['String']['output'];
@@ -179,7 +155,7 @@ export type Profile = {
 export type Query = {
   readonly __typename?: 'Query';
   readonly chatMessages: ChatMessagesResponse;
-  readonly chats: ReadonlyArray<Chat>;
+  readonly chats: ReadonlyArray<ChatOutput>;
   readonly currentUser: User;
   readonly focus: FocusOutput;
   readonly notes: ReadonlyArray<NoteOutput>;
@@ -204,12 +180,6 @@ export type UpdateProfileInput = {
 export type UpdateProfilePayload = {
   readonly __typename?: 'UpdateProfilePayload';
   readonly profile: Profile;
-};
-
-export type UploadVoiceNoteResponse = {
-  readonly __typename?: 'UploadVoiceNoteResponse';
-  readonly error: Maybe<Scalars['String']['output']>;
-  readonly text: Maybe<Scalars['String']['output']>;
 };
 
 export type User = {

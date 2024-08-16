@@ -50,46 +50,6 @@
       },
       {
         "kind": "OBJECT",
-        "name": "Chat",
-        "fields": [
-          {
-            "name": "createdAt",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
-            },
-            "args": []
-          },
-          {
-            "name": "id",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
-            },
-            "args": []
-          },
-          {
-            "name": "title",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
-            },
-            "args": []
-          }
-        ],
-        "interfaces": []
-      },
-      {
-        "kind": "OBJECT",
         "name": "ChatMessagesResponse",
         "fields": [
           {
@@ -133,10 +93,32 @@
       },
       {
         "kind": "OBJECT",
-        "name": "ChatSummaryOutputItem",
+        "name": "ChatOutput",
         "fields": [
           {
-            "name": "text",
+            "name": "createdAt",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "id",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "title",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
@@ -151,32 +133,10 @@
       },
       {
         "kind": "OBJECT",
-        "name": "CreateNoteOutput",
+        "name": "ChatSummaryOutputItem",
         "fields": [
           {
-            "name": "content",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
-            },
-            "args": []
-          },
-          {
-            "name": "createdAt",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
-            },
-            "args": []
-          },
-          {
-            "name": "id",
+            "name": "text",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
@@ -473,29 +433,6 @@
         "name": "Mutation",
         "fields": [
           {
-            "name": "createNote",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "CreateNoteOutput",
-                "ofType": null
-              }
-            },
-            "args": [
-              {
-                "name": "input",
-                "type": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "Any"
-                  }
-                }
-              }
-            ]
-          },
-          {
             "name": "createUser",
             "type": {
               "kind": "NON_NULL",
@@ -635,29 +572,6 @@
                 }
               }
             ]
-          },
-          {
-            "name": "uploadVoiceNote",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "UploadVoiceNoteResponse",
-                "ofType": null
-              }
-            },
-            "args": [
-              {
-                "name": "audioFile",
-                "type": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "Any"
-                  }
-                }
-              }
-            ]
           }
         ],
         "interfaces": []
@@ -776,7 +690,7 @@
                   "kind": "NON_NULL",
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "Chat",
+                    "name": "ChatOutput",
                     "ofType": null
                   }
                 }
@@ -862,29 +776,6 @@
                 "name": "Profile",
                 "ofType": null
               }
-            },
-            "args": []
-          }
-        ],
-        "interfaces": []
-      },
-      {
-        "kind": "OBJECT",
-        "name": "UploadVoiceNoteResponse",
-        "fields": [
-          {
-            "name": "error",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
-            },
-            "args": []
-          },
-          {
-            "name": "text",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
             },
             "args": []
           }

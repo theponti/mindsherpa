@@ -1,5 +1,0 @@
-mutation UploadVoiceNote($audioFile: Upload!) {
-  uploadVoiceNote(audioFile: $audioFile) {
-    text
-  }
-}

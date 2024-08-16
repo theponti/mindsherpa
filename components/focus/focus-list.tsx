@@ -32,11 +32,12 @@ export const FocusList = ({
   type: string
 }) => {
   const renderItem = useCallback(
-    ({ item, index }: any) => {
+    ({ item, index }: { item: FocusOutputItem; index: number }) => {
       return (
         <FocusListItem
           icon={<FocusItemIcon item={item} />}
           label={item.text}
+          item={item}
           onDelete={() => onItemDelete(item.id)}
           showBorder={data.length == 1 || index < data.length - 1}
           headerRight={<CategoryBadge category={item.category} />}

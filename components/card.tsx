@@ -1,11 +1,6 @@
 import { useEffect } from 'react'
 import { StyleSheet } from 'react-native'
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withDelay,
-  withSpring,
-} from 'react-native-reanimated'
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
 
 import { Colors, borderStyle } from '~/utils/styles'
 
@@ -29,7 +24,7 @@ export const Card = ({ children }: { children: React.ReactNode }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'rgba(244, 244, 244, 1.00)',
+    backgroundColor: Colors.grayLight,
     flexDirection: 'column',
     justifyContent: 'space-between',
     paddingVertical: 6,

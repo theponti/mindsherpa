@@ -16,7 +16,6 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
-  Upload: { input: any; output: any; }
 };
 
 export type AuthPayload = {
@@ -26,33 +25,22 @@ export type AuthPayload = {
   readonly userId: Scalars['Int']['output'];
 };
 
-export type Chat = {
-  readonly __typename?: 'Chat';
-  readonly createdAt: Scalars['String']['output'];
-  readonly id: Scalars['String']['output'];
-  readonly title: Scalars['String']['output'];
-};
-
 export type ChatMessagesResponse = {
   readonly __typename?: 'ChatMessagesResponse';
   readonly messages: ReadonlyArray<Message>;
   readonly summary: ReadonlyArray<ChatSummaryOutputItem>;
 };
 
+export type ChatOutput = {
+  readonly __typename?: 'ChatOutput';
+  readonly createdAt: Scalars['String']['output'];
+  readonly id: Scalars['String']['output'];
+  readonly title: Scalars['String']['output'];
+};
+
 export type ChatSummaryOutputItem = {
   readonly __typename?: 'ChatSummaryOutputItem';
   readonly text: Scalars['String']['output'];
-};
-
-export type CreateNoteInput = {
-  readonly content: Scalars['String']['input'];
-};
-
-export type CreateNoteOutput = {
-  readonly __typename?: 'CreateNoteOutput';
-  readonly content: Scalars['String']['output'];
-  readonly createdAt: Scalars['String']['output'];
-  readonly id: Scalars['String']['output'];
 };
 
 export type CreateUserInput = {
@@ -119,18 +107,11 @@ export enum MessageRole {
 
 export type Mutation = {
   readonly __typename?: 'Mutation';
-  readonly createNote: CreateNoteOutput;
   readonly createUser: CreateUserPayload;
   readonly deleteFocusItem: DeleteFocusItemOutput;
   readonly saveAppleUser: AuthPayload;
   readonly sendChatMessage: ReadonlyArray<Message>;
   readonly updateProfile: UpdateProfilePayload;
-  readonly uploadVoiceNote: UploadVoiceNoteResponse;
-};
-
-
-export type MutationCreateNoteArgs = {
-  input: CreateNoteInput;
 };
 
 
@@ -160,11 +141,6 @@ export type MutationUpdateProfileArgs = {
   input: UpdateProfileInput;
 };
 
-
-export type MutationUploadVoiceNoteArgs = {
-  audioFile: Scalars['Upload']['input'];
-};
-
 export type NoteOutput = {
   readonly __typename?: 'NoteOutput';
   readonly content: Scalars['String']['output'];
@@ -182,7 +158,7 @@ export type Profile = {
 export type Query = {
   readonly __typename?: 'Query';
   readonly chatMessages: ChatMessagesResponse;
-  readonly chats: ReadonlyArray<Chat>;
+  readonly chats: ReadonlyArray<ChatOutput>;
   readonly currentUser: User;
   readonly focus: FocusOutput;
   readonly notes: ReadonlyArray<NoteOutput>;
@@ -209,12 +185,6 @@ export type UpdateProfilePayload = {
   readonly profile: Profile;
 };
 
-export type UploadVoiceNoteResponse = {
-  readonly __typename?: 'UploadVoiceNoteResponse';
-  readonly error: Maybe<Scalars['String']['output']>;
-  readonly text: Maybe<Scalars['String']['output']>;
-};
-
 export type User = {
   readonly __typename?: 'User';
   readonly email: Maybe<Scalars['String']['output']>;
@@ -225,10 +195,9 @@ export type WithTypename<T extends { __typename?: any }> = Partial<T> & { __type
 
 export type GraphCacheKeysConfig = {
   AuthPayload?: (data: WithTypename<AuthPayload>) => null | string,
-  Chat?: (data: WithTypename<Chat>) => null | string,
   ChatMessagesResponse?: (data: WithTypename<ChatMessagesResponse>) => null | string,
+  ChatOutput?: (data: WithTypename<ChatOutput>) => null | string,
   ChatSummaryOutputItem?: (data: WithTypename<ChatSummaryOutputItem>) => null | string,
-  CreateNoteOutput?: (data: WithTypename<CreateNoteOutput>) => null | string,
   CreateUserPayload?: (data: WithTypename<CreateUserPayload>) => null | string,
   DeleteFocusItemOutput?: (data: WithTypename<DeleteFocusItemOutput>) => null | string,
   FocusOutput?: (data: WithTypename<FocusOutput>) => null | string,
@@ -238,14 +207,13 @@ export type GraphCacheKeysConfig = {
   NoteOutput?: (data: WithTypename<NoteOutput>) => null | string,
   Profile?: (data: WithTypename<Profile>) => null | string,
   UpdateProfilePayload?: (data: WithTypename<UpdateProfilePayload>) => null | string,
-  UploadVoiceNoteResponse?: (data: WithTypename<UploadVoiceNoteResponse>) => null | string,
   User?: (data: WithTypename<User>) => null | string
 }
 
 export type GraphCacheResolvers = {
   Query?: {
     chatMessages?: GraphCacheResolver<WithTypename<Query>, QueryChatMessagesArgs, WithTypename<ChatMessagesResponse> | string>,
-    chats?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<Chat> | string>>,
+    chats?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<ChatOutput> | string>>,
     currentUser?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, WithTypename<User> | string>,
     focus?: GraphCacheResolver<WithTypename<Query>, QueryFocusArgs, WithTypename<FocusOutput> | string>,
     notes?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<NoteOutput> | string>>,
@@ -256,22 +224,17 @@ export type GraphCacheResolvers = {
     refreshToken?: GraphCacheResolver<WithTypename<AuthPayload>, Record<string, never>, Scalars['String'] | string>,
     userId?: GraphCacheResolver<WithTypename<AuthPayload>, Record<string, never>, Scalars['Int'] | string>
   },
-  Chat?: {
-    createdAt?: GraphCacheResolver<WithTypename<Chat>, Record<string, never>, Scalars['String'] | string>,
-    id?: GraphCacheResolver<WithTypename<Chat>, Record<string, never>, Scalars['String'] | string>,
-    title?: GraphCacheResolver<WithTypename<Chat>, Record<string, never>, Scalars['String'] | string>
-  },
   ChatMessagesResponse?: {
     messages?: GraphCacheResolver<WithTypename<ChatMessagesResponse>, Record<string, never>, Array<WithTypename<Message> | string>>,
     summary?: GraphCacheResolver<WithTypename<ChatMessagesResponse>, Record<string, never>, Array<WithTypename<ChatSummaryOutputItem> | string>>
   },
+  ChatOutput?: {
+    createdAt?: GraphCacheResolver<WithTypename<ChatOutput>, Record<string, never>, Scalars['String'] | string>,
+    id?: GraphCacheResolver<WithTypename<ChatOutput>, Record<string, never>, Scalars['String'] | string>,
+    title?: GraphCacheResolver<WithTypename<ChatOutput>, Record<string, never>, Scalars['String'] | string>
+  },
   ChatSummaryOutputItem?: {
     text?: GraphCacheResolver<WithTypename<ChatSummaryOutputItem>, Record<string, never>, Scalars['String'] | string>
-  },
-  CreateNoteOutput?: {
-    content?: GraphCacheResolver<WithTypename<CreateNoteOutput>, Record<string, never>, Scalars['String'] | string>,
-    createdAt?: GraphCacheResolver<WithTypename<CreateNoteOutput>, Record<string, never>, Scalars['String'] | string>,
-    id?: GraphCacheResolver<WithTypename<CreateNoteOutput>, Record<string, never>, Scalars['String'] | string>
   },
   CreateUserPayload?: {
     profile?: GraphCacheResolver<WithTypename<CreateUserPayload>, Record<string, never>, WithTypename<Profile> | string>,
@@ -319,10 +282,6 @@ export type GraphCacheResolvers = {
   UpdateProfilePayload?: {
     profile?: GraphCacheResolver<WithTypename<UpdateProfilePayload>, Record<string, never>, WithTypename<Profile> | string>
   },
-  UploadVoiceNoteResponse?: {
-    error?: GraphCacheResolver<WithTypename<UploadVoiceNoteResponse>, Record<string, never>, Scalars['String'] | string>,
-    text?: GraphCacheResolver<WithTypename<UploadVoiceNoteResponse>, Record<string, never>, Scalars['String'] | string>
-  },
   User?: {
     email?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
     id?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>
@@ -330,32 +289,28 @@ export type GraphCacheResolvers = {
 };
 
 export type GraphCacheOptimisticUpdaters = {
-  createNote?: GraphCacheOptimisticMutationResolver<MutationCreateNoteArgs, WithTypename<CreateNoteOutput>>,
   createUser?: GraphCacheOptimisticMutationResolver<MutationCreateUserArgs, WithTypename<CreateUserPayload>>,
   deleteFocusItem?: GraphCacheOptimisticMutationResolver<MutationDeleteFocusItemArgs, WithTypename<DeleteFocusItemOutput>>,
   saveAppleUser?: GraphCacheOptimisticMutationResolver<MutationSaveAppleUserArgs, WithTypename<AuthPayload>>,
   sendChatMessage?: GraphCacheOptimisticMutationResolver<MutationSendChatMessageArgs, Array<WithTypename<Message>>>,
-  updateProfile?: GraphCacheOptimisticMutationResolver<MutationUpdateProfileArgs, WithTypename<UpdateProfilePayload>>,
-  uploadVoiceNote?: GraphCacheOptimisticMutationResolver<MutationUploadVoiceNoteArgs, WithTypename<UploadVoiceNoteResponse>>
+  updateProfile?: GraphCacheOptimisticMutationResolver<MutationUpdateProfileArgs, WithTypename<UpdateProfilePayload>>
 };
 
 export type GraphCacheUpdaters = {
   Query?: {
     chatMessages?: GraphCacheUpdateResolver<{ chatMessages: WithTypename<ChatMessagesResponse> }, QueryChatMessagesArgs>,
-    chats?: GraphCacheUpdateResolver<{ chats: Array<WithTypename<Chat>> }, Record<string, never>>,
+    chats?: GraphCacheUpdateResolver<{ chats: Array<WithTypename<ChatOutput>> }, Record<string, never>>,
     currentUser?: GraphCacheUpdateResolver<{ currentUser: WithTypename<User> }, Record<string, never>>,
     focus?: GraphCacheUpdateResolver<{ focus: WithTypename<FocusOutput> }, QueryFocusArgs>,
     notes?: GraphCacheUpdateResolver<{ notes: Array<WithTypename<NoteOutput>> }, Record<string, never>>,
     profile?: GraphCacheUpdateResolver<{ profile: WithTypename<GetProfileOutput> }, Record<string, never>>
   },
   Mutation?: {
-    createNote?: GraphCacheUpdateResolver<{ createNote: WithTypename<CreateNoteOutput> }, MutationCreateNoteArgs>,
     createUser?: GraphCacheUpdateResolver<{ createUser: WithTypename<CreateUserPayload> }, MutationCreateUserArgs>,
     deleteFocusItem?: GraphCacheUpdateResolver<{ deleteFocusItem: WithTypename<DeleteFocusItemOutput> }, MutationDeleteFocusItemArgs>,
     saveAppleUser?: GraphCacheUpdateResolver<{ saveAppleUser: WithTypename<AuthPayload> }, MutationSaveAppleUserArgs>,
     sendChatMessage?: GraphCacheUpdateResolver<{ sendChatMessage: Array<WithTypename<Message>> }, MutationSendChatMessageArgs>,
-    updateProfile?: GraphCacheUpdateResolver<{ updateProfile: WithTypename<UpdateProfilePayload> }, MutationUpdateProfileArgs>,
-    uploadVoiceNote?: GraphCacheUpdateResolver<{ uploadVoiceNote: WithTypename<UploadVoiceNoteResponse> }, MutationUploadVoiceNoteArgs>
+    updateProfile?: GraphCacheUpdateResolver<{ updateProfile: WithTypename<UpdateProfilePayload> }, MutationUpdateProfileArgs>
   },
   Subscription?: {},
   AuthPayload?: {
@@ -363,22 +318,17 @@ export type GraphCacheUpdaters = {
     refreshToken?: GraphCacheUpdateResolver<Maybe<WithTypename<AuthPayload>>, Record<string, never>>,
     userId?: GraphCacheUpdateResolver<Maybe<WithTypename<AuthPayload>>, Record<string, never>>
   },
-  Chat?: {
-    createdAt?: GraphCacheUpdateResolver<Maybe<WithTypename<Chat>>, Record<string, never>>,
-    id?: GraphCacheUpdateResolver<Maybe<WithTypename<Chat>>, Record<string, never>>,
-    title?: GraphCacheUpdateResolver<Maybe<WithTypename<Chat>>, Record<string, never>>
-  },
   ChatMessagesResponse?: {
     messages?: GraphCacheUpdateResolver<Maybe<WithTypename<ChatMessagesResponse>>, Record<string, never>>,
     summary?: GraphCacheUpdateResolver<Maybe<WithTypename<ChatMessagesResponse>>, Record<string, never>>
   },
+  ChatOutput?: {
+    createdAt?: GraphCacheUpdateResolver<Maybe<WithTypename<ChatOutput>>, Record<string, never>>,
+    id?: GraphCacheUpdateResolver<Maybe<WithTypename<ChatOutput>>, Record<string, never>>,
+    title?: GraphCacheUpdateResolver<Maybe<WithTypename<ChatOutput>>, Record<string, never>>
+  },
   ChatSummaryOutputItem?: {
     text?: GraphCacheUpdateResolver<Maybe<WithTypename<ChatSummaryOutputItem>>, Record<string, never>>
-  },
-  CreateNoteOutput?: {
-    content?: GraphCacheUpdateResolver<Maybe<WithTypename<CreateNoteOutput>>, Record<string, never>>,
-    createdAt?: GraphCacheUpdateResolver<Maybe<WithTypename<CreateNoteOutput>>, Record<string, never>>,
-    id?: GraphCacheUpdateResolver<Maybe<WithTypename<CreateNoteOutput>>, Record<string, never>>
   },
   CreateUserPayload?: {
     profile?: GraphCacheUpdateResolver<Maybe<WithTypename<CreateUserPayload>>, Record<string, never>>,
@@ -425,10 +375,6 @@ export type GraphCacheUpdaters = {
   },
   UpdateProfilePayload?: {
     profile?: GraphCacheUpdateResolver<Maybe<WithTypename<UpdateProfilePayload>>, Record<string, never>>
-  },
-  UploadVoiceNoteResponse?: {
-    error?: GraphCacheUpdateResolver<Maybe<WithTypename<UploadVoiceNoteResponse>>, Record<string, never>>,
-    text?: GraphCacheUpdateResolver<Maybe<WithTypename<UploadVoiceNoteResponse>>, Record<string, never>>
   },
   User?: {
     email?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,

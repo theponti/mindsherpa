@@ -1,66 +1,59 @@
-import { useCallback, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { useCallback, useState } from 'react'
+import { StyleSheet, View } from 'react-native'
 
-import { FormContainer } from '../form-container';
-import AutoGrowingInput from '../text-input-autogrow';
-import { SpeakButton, UploadFileButton } from '../upload-file-button';
-import { FormSubmitButton } from '../voice-input-button';
-import { useVoiceRecorder } from '../voice-recorder';
+import { FormContainer } from '../form-container'
+import AutoGrowingInput from '../text-input-autogrow'
+import AudioRecorder from '../media/audio-recorder'
+import { UploadFileButton } from '../upload-file-button'
+import { FormSubmitButton } from './note-form-submit-button'
 
-import { useCreateNoteMutation } from '~/utils/services/notes/CreateNote.mutation.generated';
+import { type CreateVoiceNoteResponse, useCreateTextNote } from '../media/use-audio-upload'
 
 export const NoteForm = ({ onSubmit }: { onSubmit: (note: any) => void }) => {
-  const [content, setContent] = useState('');
-  const [createNoteResponse, createNote] = useCreateNoteMutation();
-  const { isRecording, startRecording, stopRecording } = useVoiceRecorder({
-    onRecordingComplete: () => {},
-  });
+  const [content, setContent] = useState('')
+  const { mutate, isError, isPending } = useCreateTextNote({
+    onSuccess: (data) => {
+      onSubmit(data)
+      setContent('')
+    },
+    onError: (error) => {
+      console.error('Note upload failed', error)
+    },
+  })
+  const [isRecording, setIsRecording] = useState(false)
 
-  const onMicrophonePress = useCallback(() => {
-    if (!isRecording) {
-      startRecording();
-    }
-  }, [isRecording]);
+  const onStartRecording = useCallback(() => {
+    setIsRecording(true)
+  }, [])
 
-  const onStopRecordingPress = useCallback(() => {
-    stopRecording();
-  }, [stopRecording]);
+  const onStopRecording = useCallback((note: any) => {
+    setIsRecording(false)
+    onSubmit(note)
+  }, [])
 
-  const handleSubmit = async () => {
-    const { data, error } = await createNote({ input: { content } });
-
-    if (error) {
-      console.error(error);
-    }
-
-    if (data?.createNote) {
-      onSubmit(data.createNote);
-      setContent('');
-    }
-  };
+  const handleSubmit = () => mutate(content)
 
   return (
     <FormContainer>
       <View style={[styles.inputContainer]}>
         <AutoGrowingInput placeholder="Drop a note..." value={content} onChangeText={setContent} />
       </View>
+
       <View style={[styles.actionButtons]}>
         <View style={[styles.mediaButtons]}>
           <UploadFileButton />
-          {!isRecording && <SpeakButton onPress={onMicrophonePress} />}
+          <AudioRecorder onStartRecording={onStartRecording} onStopRecording={onStopRecording} />
         </View>
         <FormSubmitButton
           buttonType={isRecording ? 'voice' : 'text'}
-          disabled={createNoteResponse.fetching}
-          isLoading={createNoteResponse.fetching}
-          isRecording={isRecording}
-          onStopRecording={onStopRecordingPress}
+          disabled={isPending || isRecording}
+          isLoading={isPending}
           onSubmitButtonClick={handleSubmit}
         />
       </View>
     </FormContainer>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   inputContainer: {},
@@ -77,4 +70,4 @@ const styles = StyleSheet.create({
     columnGap: 4,
     alignSelf: 'flex-start',
   },
-});
+})

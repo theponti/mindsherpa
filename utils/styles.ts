@@ -10,7 +10,7 @@ export const Colors = {
   gray: '#808080',
   grayMedium: '#edeef1',
   grayDark: "rgba(83, 93, 115, 1.00)",
-  grayLight: '#F8FBFF',
+  grayLight: 'rgba(239, 241, 245, 1.00)',
   green: '#008000',
   greenLight: '#00FF00',
   lime: '#00FF00',

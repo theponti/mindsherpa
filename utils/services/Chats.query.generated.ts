@@ -7,7 +7,7 @@ export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type ChatsQueryVariables = Types.Exact<{ [key: string]: never; }>;
 
 
-export type ChatsQuery = { readonly __typename?: 'Query', readonly chats: ReadonlyArray<{ readonly __typename?: 'Chat', readonly id: string, readonly title: string, readonly createdAt: string }> };
+export type ChatsQuery = { readonly __typename?: 'Query', readonly chats: ReadonlyArray<{ readonly __typename?: 'ChatOutput', readonly id: string, readonly title: string, readonly createdAt: string }> };
 
 
 export const ChatsDocument = gql`

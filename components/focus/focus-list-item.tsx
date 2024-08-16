@@ -3,10 +3,12 @@ import { Pressable, View, type PressableProps, type ViewStyle, StyleSheet } from
 import * as ContextMenu from 'zeego/context-menu'
 
 import { Text } from '~/theme'
-import { Colors, borderStyle, listStyles } from '~/utils/styles'
+import { FocusOutputItem } from '~/utils/schema/graphcache'
+import { borderStyle, listStyles } from '~/utils/styles'
 
 export const FocusListItem = ({
   icon,
+  item,
   headerRight,
   label,
   onDelete,
@@ -15,6 +17,7 @@ export const FocusListItem = ({
   ...props
 }: PressableProps & {
   icon?: React.ReactNode
+  item?: FocusOutputItem
   headerRight: React.ReactNode
   label: string
   onDelete: () => void
@@ -39,24 +42,23 @@ export const FocusListItem = ({
               {label}
             </Text>
           </View>
+          <View style={{ alignSelf: 'flex-end' }}>
+            <Text variant="small" color="gray">
+              {item?.dueDate}
+            </Text>
+          </View>
         </Pressable>
       </ContextMenu.Trigger>
       <ContextMenu.Content
+        alignOffset={10}
         loop={false}
-        alignOffset={0}
         avoidCollisions={true}
         collisionPadding={12}
       >
         <ContextMenu.Label>Actions</ContextMenu.Label>
         <ContextMenu.Item key="delete" onSelect={onDelete}>
-          <ContextMenu.ItemIcon
-            ios={{
-              name: 'trash',
-              size: 20,
-              color: Colors.red,
-            }}
-          />
-          <ContextMenu.ItemTitle style={{ color: Colors.red }}>Delete</ContextMenu.ItemTitle>
+          <ContextMenu.ItemIcon ios={{ name: 'trash', size: 20 }} />
+          <ContextMenu.ItemTitle>Delete</ContextMenu.ItemTitle>
         </ContextMenu.Item>
       </ContextMenu.Content>
     </ContextMenu.Root>
