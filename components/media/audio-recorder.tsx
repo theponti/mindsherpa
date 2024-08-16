@@ -1,23 +1,21 @@
 import { MaterialIcons } from '@expo/vector-icons'
 import { Audio } from 'expo-av'
-import { View, Button, Text, StyleSheet, Pressable, PressableProps } from 'react-native'
-import React, { useState } from 'react'
+import { View, StyleSheet, Pressable, PressableProps, Alert } from 'react-native'
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
+import React, { useEffect, useState } from 'react'
 
 import { useAudioUpload } from '~/components/media/use-audio-upload'
-
-type Recording = {
-  sound: Audio.Sound
-  duration: number | undefined
-  file: string | null
-}
-type Recordings = Recording[]
+import { Colors } from '~/utils/styles'
+import { Recordings } from './recordings-list'
 
 export default function AudioRecorder({
+  multi,
   onStartRecording,
   onStopRecording,
   style,
   ...props
 }: PressableProps & {
+  multi?: boolean
   onStartRecording: () => void
   onStopRecording: (note: any) => void
 }) {
@@ -28,9 +26,17 @@ export default function AudioRecorder({
   const { mutate } = useAudioUpload({
     onSuccess: (data: any) => {
       onStopRecording(data)
+      setRecording(undefined) // Clear recording
+      setRecordingStatus(undefined) // Clear recording status
+      setMeterings([]) // Clear meterings
     },
     onError: () => {
-      console.log('Audio upload failed')
+      Alert.alert('Your voice note failed to upload. Try again later.')
+      /**
+       * The product should retain the recording so the user can attempt to upload
+       * it again. If the user choses not to retry, they can clear the input.
+       */
+      setRecordingStatus(undefined) // Clear recording status
     },
   })
 
@@ -67,20 +73,19 @@ export default function AudioRecorder({
   async function stopRecording() {
     if (!recording) return
 
-    setRecording(undefined) // Clear recording
-    setRecordingStatus(undefined) // Clear recording status
-    setMeterings([]) // Clear meterings
-
     await recording.stopAndUnloadAsync()
     const file = recording.getURI()
-    let updatedRecordings = [...recordings]
-    const { sound } = await recording.createNewLoadedSoundAsync()
-    updatedRecordings.push({
-      sound: sound,
-      duration: recordingStatus?.durationMillis,
-      file,
-    })
-    setRecordings(updatedRecordings)
+
+    if (multi) {
+      let updatedRecordings = [...recordings]
+      const { sound } = await recording.createNewLoadedSoundAsync()
+      updatedRecordings.push({
+        sound: sound,
+        duration: recordingStatus?.durationMillis,
+        file,
+      })
+      setRecordings(updatedRecordings)
+    }
     onStartRecording()
 
     if (file) {
@@ -88,45 +93,37 @@ export default function AudioRecorder({
     }
   }
 
+  const backgroundColor = useSharedValue(Colors.grayLight)
+  const speakButtonBackground = useAnimatedStyle(() => ({
+    backgroundColor: backgroundColor.value,
+  }))
+
+  useEffect(() => {
+    backgroundColor.value = withSpring(recording ? Colors.grayDark : Colors.grayLight, {
+      duration: 400,
+    })
+  }, [recording])
+
   return (
-    <Pressable
-      style={[styles.speakButton]}
-      {...props}
+    <AnimatedPressable
+      style={[pressableStyles.speakButton, speakButtonBackground]}
       onPress={recording ? stopRecording : startRecording}
+      {...props}
     >
       {recording ? (
-        <MaterialIcons name="stop" size={24} color="black" />
+        <MaterialIcons name="stop" size={24} color={Colors.grayLight} />
       ) : (
-        <MaterialIcons name="mic" size={24} color="black" />
+        <MaterialIcons name="mic" size={24} color={Colors.primary} />
       )}
-    </Pressable>
+    </AnimatedPressable>
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    // height: 100,
-    backgroundColor: 'red',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
+const pressableStyles = StyleSheet.create({
   speakButton: {
-    backgroundColor: 'rgba(239, 241, 245, 1.00)',
     padding: 8,
     borderRadius: 50,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  fill: {
-    flex: 1,
-    margin: 16,
-  },
-  button: {
-    margin: 16,
-    color: 'blue',
   },
 })
 
@@ -140,40 +137,6 @@ const Meterings = ({ meterings }: { meterings: number[] }) => {
       {meterings.map((meter, index) => (
         <View key={index} style={{ width: 3, height: meter, backgroundColor: 'black' }} />
       ))}
-    </View>
-  )
-}
-
-const RecordingLines = ({
-  recordings,
-  onRecordingLineSendClick,
-}: { recordings: any[]; onRecordingLineSendClick: (file: string | null) => void }) => {
-  if (recordings.length === 0) {
-    return null
-  }
-
-  function getDurationFormatted(milliseconds: number | undefined) {
-    if (!milliseconds) return '0:00'
-    const minutes = milliseconds / 1000 / 60
-    const minutesDisplay = Math.floor(minutes)
-    const seconds = Math.round((minutes - minutesDisplay) * 60)
-    const secondsDisplay = seconds < 10 ? `0${seconds}` : seconds
-    return `${minutesDisplay}:${secondsDisplay}`
-  }
-
-  return (
-    <View>
-      {recordings.map((recording, index) => {
-        return (
-          <View key={index} style={styles.row}>
-            <Text style={styles.fill}>
-              Recording {index + 1} - {recording.duration}
-            </Text>
-            <Button onPress={() => recording.sound.replayAsync()} title="Play" />
-            <Button onPress={() => onRecordingLineSendClick(recording.file)} title="Send" />
-          </View>
-        )
-      })}
     </View>
   )
 }

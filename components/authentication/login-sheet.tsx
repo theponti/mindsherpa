@@ -6,7 +6,6 @@ import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
 
 import { Text } from '~/theme'
 import { useCreateUserMutation } from '~/utils/services/profiles/CreateUser.mutation.generated'
-import { storage } from '~/utils/storage'
 import { supabase } from '~/utils/supabase'
 import { useAppContext } from '~/utils/app-provider'
 
@@ -17,6 +16,65 @@ const LoginSheet = ({ isLoadingAuth }: { isLoadingAuth?: boolean }) => {
   const textStyle = useAnimatedStyle(() => ({
     opacity: withTiming(1, { duration: 1000 }),
   }))
+
+  const onSignInClick = async () => {
+    try {
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      })
+
+      if (!credential.identityToken) {
+        Alert.alert('Apple Sign-In failed', 'No identify token provided')
+        return null
+      }
+
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.signInWithIdToken({
+        provider: 'apple',
+        token: credential.identityToken,
+      })
+
+      if (error) {
+        Alert.alert('Apple Sign-In failed', 'Could not sign in')
+        return null
+      }
+
+      if (user && user.email) {
+        const { data, error } = await createUser({
+          email: user.email,
+        })
+
+        if (data) {
+          router.push('/(drawer)')
+        }
+      }
+    } catch (error: any) {
+      handleSignInError(error)
+    }
+  }
+
+  const handleSignInError = (error: any) => {
+    console.error(error)
+    if (error.code === 'ERR_REQUEST_CANCELED') {
+      // User canceled, no need for an alert
+      return
+    }
+
+    Alert.alert('Sign-In Issue', 'There was a problem signing in. Please try again.', [
+      { text: 'OK' },
+      {
+        text: 'Try Again',
+        onPress: () => {
+          onSignInClick()
+        },
+      },
+    ])
+  }
 
   useEffect(() => {
     if (session) {
@@ -48,56 +106,7 @@ const LoginSheet = ({ isLoadingAuth }: { isLoadingAuth?: boolean }) => {
           buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
           cornerRadius={5}
           style={styles.button}
-          onPress={async () => {
-            try {
-              const credential = await AppleAuthentication.signInAsync({
-                requestedScopes: [
-                  AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-                  AppleAuthentication.AppleAuthenticationScope.EMAIL,
-                ],
-              })
-
-              if (!credential.identityToken) {
-                Alert.alert('Apple Sign-In failed', 'No identify token provided')
-                return null
-              }
-
-              // Save the user to storage
-              storage.set('user', JSON.stringify(credential))
-
-              const {
-                data: { user },
-                error,
-              } = await supabase.auth.signInWithIdToken({
-                provider: 'apple',
-                token: credential.identityToken,
-              })
-
-              if (error) {
-                console.log({ user, error })
-                Alert.alert('Apple Sign-In failed', 'Could not sign in')
-                return null
-              }
-
-              if (user && user.email) {
-                const { data, error } = await createUser({
-                  email: user.email,
-                })
-
-                console.log({ data, error })
-                if (data) {
-                  router.push('/(drawer)')
-                }
-              }
-            } catch (error: any) {
-              console.error(error)
-              if (error.code === 'ERR_REQUEST_CANCELED') {
-                //! TODO handle that the user canceled the sign-in flow
-              } else {
-                //! TODO handle other errors
-              }
-            }
-          }}
+          onPress={onSignInClick}
         />
       </View>
     </View>

@@ -52,7 +52,7 @@ export const FocusList = ({
   }
 
   return (
-    <View>
+    <View style={[styles.container]}>
       <View style={[styles.header]}>
         <FocusListIcon type={type} />
         <Text style={[styles.headerText]}>To Dos</Text>
@@ -70,13 +70,16 @@ export const FocusList = ({
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingBottom: 32,
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     columnGap: 6,
     paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 20,
+    paddingVertical: 4,
   },
   headerText: {
     fontSize: 16,

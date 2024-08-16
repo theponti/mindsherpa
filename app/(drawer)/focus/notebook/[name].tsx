@@ -4,7 +4,7 @@ import { FlatList, RefreshControl, SafeAreaView, ScrollView, View } from 'react-
 import { LoadingContainer } from '~/components/LoadingFull'
 import { PulsingCircle } from '~/components/animated/pulsing-circle'
 import { CategoryBadge } from '~/components/badges'
-import { Card } from '~/components/card'
+import { Card } from '~/components/ui/card'
 import { CATEGORIES } from '~/components/focus/focus-category'
 import { FocusListItem } from '~/components/focus/focus-list-item'
 import { FocusItemIcon } from '~/components/focus/focus-type-icon'

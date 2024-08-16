@@ -1,18 +1,18 @@
-import 'react-native-url-polyfill/auto';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createClient } from '@supabase/supabase-js';
-import { makeRedirectUri } from 'expo-auth-session';
-import { AppState } from 'react-native';
+import 'react-native-url-polyfill/auto'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { createClient } from '@supabase/supabase-js'
+import { makeRedirectUri } from 'expo-auth-session'
+import { AppState } from 'react-native'
 
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY
 
 if (!supabaseUrl) {
-  throw new Error('Missing env.EXPO_PUBLIC_SUPABASE_URL');
+  throw new Error('Missing env.EXPO_PUBLIC_SUPABASE_URL')
 }
 
 if (!supabaseAnonKey) {
-  throw new Error('Missing env.EXPO_PUBLIC_SUPABASE_ANON_KEY');
+  throw new Error('Missing env.EXPO_PUBLIC_SUPABASE_ANON_KEY')
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
@@ -22,7 +22,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     persistSession: true,
     detectSessionInUrl: false,
   },
-});
+})
 
 // Tells Supabase Auth to continuously refresh the session automatically
 // if the app is in the foreground. When this is added, you will continue
@@ -31,14 +31,14 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 // only be registered once.
 AppState.addEventListener('change', (state) => {
   if (state === 'active') {
-    supabase.auth.startAutoRefresh();
+    supabase.auth.startAutoRefresh()
   } else {
-    supabase.auth.stopAutoRefresh();
+    supabase.auth.stopAutoRefresh()
   }
-});
+})
 
 export const useMagicLink = () => {
-  const redirectTo = makeRedirectUri();
+  const redirectTo = makeRedirectUri()
 
   const signInWithOtp = async (email: string) => {
     return supabase.auth.signInWithOtp({
@@ -46,8 +46,8 @@ export const useMagicLink = () => {
       options: {
         emailRedirectTo: redirectTo,
       },
-    });
-  };
+    })
+  }
 
-  return { signInWithOtp };
-};
+  return { signInWithOtp }
+}

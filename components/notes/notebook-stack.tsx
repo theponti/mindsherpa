@@ -6,7 +6,7 @@ import { FlatList, ListRenderItem, Pressable, StyleSheet, View } from 'react-nat
 import { Text } from '~/theme'
 import { FocusQuery } from '~/utils/services/Focus.query.generated'
 import { borderStyle, listStyles } from '~/utils/styles'
-import { Card } from '../card'
+import { Card } from '../ui/card'
 import { CATEGORIES } from '../focus/focus-category'
 
 type List = { label: string; count: number }

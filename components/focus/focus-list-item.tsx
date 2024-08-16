@@ -41,11 +41,11 @@ export const FocusListItem = ({
             <Text variant="body" style={[listStyles.text]}>
               {label}
             </Text>
-          </View>
-          <View style={{ alignSelf: 'flex-end' }}>
-            <Text variant="small" color="gray">
-              {item?.dueDate}
-            </Text>
+            <View>
+              <Text variant="small" color="gray">
+                {item?.dueDate}
+              </Text>
+            </View>
           </View>
         </Pressable>
       </ContextMenu.Trigger>

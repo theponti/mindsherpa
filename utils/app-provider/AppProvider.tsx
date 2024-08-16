@@ -66,6 +66,10 @@ export function AppProvider({ children }: PropsWithChildren) {
   )
 
   useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsLoadingAuth(false)
+      setSession(session)
+    })
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
       setIsLoadingAuth(false)
       setSession(session)

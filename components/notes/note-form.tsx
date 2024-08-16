@@ -36,7 +36,12 @@ export const NoteForm = ({ onSubmit }: { onSubmit: (note: any) => void }) => {
   return (
     <FormContainer>
       <View style={[styles.inputContainer]}>
-        <AutoGrowingInput placeholder="Drop a note..." value={content} onChangeText={setContent} />
+        <AutoGrowingInput
+          editable={!isRecording && !isPending}
+          placeholder="Drop a note..."
+          value={content}
+          onChangeText={setContent}
+        />
       </View>
 
       <View style={[styles.actionButtons]}>
@@ -45,8 +50,7 @@ export const NoteForm = ({ onSubmit }: { onSubmit: (note: any) => void }) => {
           <AudioRecorder onStartRecording={onStartRecording} onStopRecording={onStopRecording} />
         </View>
         <FormSubmitButton
-          buttonType={isRecording ? 'voice' : 'text'}
-          disabled={isPending || isRecording}
+          isRecording={isRecording}
           isLoading={isPending}
           onSubmitButtonClick={handleSubmit}
         />
@@ -67,7 +71,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    columnGap: 4,
+    columnGap: 16,
     alignSelf: 'flex-start',
   },
 })

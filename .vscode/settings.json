@@ -23,11 +23,7 @@
   "[typescriptreact]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
-  "cSpell.words": [
-    "meterings",
-    "Millis",
-    "tanstack"
-  ],
+  "cSpell.words": ["dripsy", "meterings", "Millis", "pontistudios", "tanstack", "zeego"],
   "[typescript]": {
     "editor.defaultFormatter": "biomejs.biome"
   }

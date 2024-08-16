@@ -1,46 +1,22 @@
-import { MaterialIcons } from '@expo/vector-icons';
-import { Link, Redirect, Stack } from 'expo-router';
-import { useState } from 'react';
-import { View } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons'
+import { Link, Redirect, Stack } from 'expo-router'
+import { View } from 'react-native'
 
-import { Button } from '~/components/Button';
-// import Avatar from '~/components/avatar';
-import TextInput from '~/components/text-input';
-import { Text } from '~/theme';
-import { useAppContext } from '~/utils/app-provider';
-// import { useUpdateProfileMutation } from '~/utils/services/profiles/UpdateProfile.mutation.generated';
-import { storage } from '~/utils/storage';
-import { Colors } from '~/utils/styles';
-import { supabase } from '~/utils/supabase';
+import { Button } from '~/components/Button'
+import TextInput from '~/components/text-input'
+import { Text } from '~/theme'
+import { useAppContext } from '~/utils/app-provider'
+import { Colors } from '~/utils/styles'
+import { supabase } from '~/utils/supabase'
 
 function Account() {
-  const { session } = useAppContext();
-  const [aiKey, setAiKey] = useState(storage.getString('aiKey') || '');
-  // const [, updateProfile] = useUpdateProfileMutation();
+  const { session } = useAppContext()
   const onLogoutPress = () => {
-    supabase.auth.signOut();
-  };
-
-  const onAIKeyInputChange = (text: string) => {
-    setAiKey(text);
-    storage.set('aiKey', text);
-  };
-
-  // const onAvatarUpload = useCallback(async (url: string) => {
-  //   const { error } = await updateProfile({ fullName, avatar_url: url });
-
-  //   if (error) {
-  //     // ! TODO Replace with a proper error handling (toast notification, etc.)
-  //     console.error('Error updating profile:', error);
-  //   }
-
-  //   // ! TODO Replace with a proper success handling (toast notification, etc.)
-  //   // ! TODO Replace with a proper updateProfile function that will reload the profile within the AuthContext
-  //   // updateProfile(data);
-  // }, []);
+    supabase.auth.signOut()
+  }
 
   if (!session) {
-    return <Redirect href="(auth)" />;
+    return <Redirect href="/(auth)" />
   }
 
   // const { name, avatar_url } = profile || {};
@@ -58,10 +34,12 @@ function Account() {
             alignSelf: 'flex-start',
             paddingVertical: 12,
             paddingHorizontal: 12,
-          }}>
+          }}
+        >
           <Link
             href="/(drawer)/focus"
-            style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+          >
             <MaterialIcons name="arrow-back" size={24} color={Colors.black} />
             <Text variant="body" color="black" style={{ alignSelf: 'center' }}>
               Back
@@ -82,14 +60,6 @@ function Account() {
               // onChangeText={(text) => setName(text)}
             />
           </View>
-          <View style={{ rowGap: 8 }}>
-            <Text variant="label">AI Key</Text>
-            <TextInput
-              placeholder="Enter your name"
-              value={aiKey}
-              onChangeText={onAIKeyInputChange}
-            />
-          </View>
         </View>
         <View
           style={{
@@ -98,12 +68,13 @@ function Account() {
             left: 12,
             alignItems: 'center',
             width: '100%',
-          }}>
+          }}
+        >
           <Button title="Sign out" onPress={onLogoutPress} />
         </View>
       </View>
     </>
-  );
+  )
 }
 
-export default Account;
+export default Account
