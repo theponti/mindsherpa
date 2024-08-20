@@ -32,32 +32,35 @@ export const NotebookStack = ({ items }: { items: FocusQuery['focus']['items'] }
   )
 
   const renderItem = useCallback<ListRenderItem<List>>(
-    ({ item, index }) => (
-      <Pressable
-        onPress={() => onCategoryPress(item.label)}
-        style={[
-          listStyles.container,
-          index !== notebooks.length - 1 ? borderStyle.borderBottom : borderStyle.noBorder,
-          styles.listItem,
-        ]}
-      >
-        <View
-          style={{
-            flexDirection: 'row',
-            columnGap: 8,
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
+    ({ item, index }) => {
+      const category = CATEGORIES[item.label]
+      return (
+        <Pressable
+          onPress={() => onCategoryPress(item.label)}
+          style={[
+            listStyles.container,
+            index !== notebooks.length - 1 ? borderStyle.borderBottom : borderStyle.noBorder,
+            styles.listItem,
+          ]}
         >
-          <Text variant="body" style={listStyles.text}>
-            {`${CATEGORIES[item.label].emoji}   ${CATEGORIES[item.label].label}`}
-          </Text>
-          <Text variant="body" color="gray">
-            {item.count}
-          </Text>
-        </View>
-      </Pressable>
-    ),
+          <View
+            style={{
+              flexDirection: 'row',
+              columnGap: 8,
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <Text variant="body" style={listStyles.text}>
+              {category ? `${category.emoji}   ${category.label}` : item.label}
+            </Text>
+            <Text variant="body" color="gray">
+              {item.count}
+            </Text>
+          </View>
+        </Pressable>
+      )
+    },
     [onCategoryPress]
   )
 

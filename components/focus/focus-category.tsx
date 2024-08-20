@@ -1,25 +1,24 @@
-import { Text } from '~/theme';
-import { Colors } from '~/utils/styles';
+import { Text } from '~/theme'
+import { Colors } from '~/utils/styles'
 
 export const FocusCategory = ({ category }: { category: keyof CategoryMap }) => {
-  const foundCategory = CATEGORIES[category];
+  const foundCategory = CATEGORIES[category]
 
   if (!foundCategory) {
     return (
       <Text variant="small" style={{ color: '#BDBDBD' }}>
         {`🤷 ${category}`}
       </Text>
-    );
+    )
   }
 
   return (
     <Text variant="small" style={{ color: Colors.black }}>
       {`${foundCategory.emoji} ${foundCategory.label}`}
     </Text>
-  );
-};
+  )
+}
 
-type CategoryMap = typeof CATEGORIES;
 export const CATEGORIES: Record<string, { emoji: string; label: string }> = {
   career: {
     emoji: '💼',
@@ -93,4 +92,6 @@ export const CATEGORIES: Record<string, { emoji: string; label: string }> = {
     emoji: '🧩',
     label: 'Projects',
   },
-};
+}
+
+type CategoryMap = typeof CATEGORIES

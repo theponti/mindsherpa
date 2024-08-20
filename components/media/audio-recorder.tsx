@@ -1,4 +1,5 @@
 import { MaterialIcons } from '@expo/vector-icons'
+import { captureException } from '@sentry/react-native'
 import { Audio } from 'expo-av'
 import { View, StyleSheet, Pressable, PressableProps, Alert } from 'react-native'
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
@@ -73,7 +74,14 @@ export default function AudioRecorder({
   async function stopRecording() {
     if (!recording) return
 
-    await recording.stopAndUnloadAsync()
+    /**
+     * This function error is caught because the user may possibly quick-click
+     * the stop button, causing the following to occuring after the recording has already stopped.
+     */
+    await recording.stopAndUnloadAsync().catch((reason) => {
+      captureException(reason)
+    })
+
     const file = recording.getURI()
 
     if (multi) {
@@ -86,7 +94,6 @@ export default function AudioRecorder({
       })
       setRecordings(updatedRecordings)
     }
-    onStartRecording()
 
     if (file) {
       mutate(file)

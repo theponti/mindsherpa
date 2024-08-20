@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react-native'
 import { Stack } from 'expo-router'
 import React, { useEffect } from 'react'
 
@@ -5,6 +6,9 @@ import { LoadingFull } from '~/components/LoadingFull'
 import { Text } from '~/theme'
 import { useAppContext } from '~/utils/app-provider'
 import { useProfileQuery } from '~/utils/services/profiles/Profiles.query.generated'
+
+// Register the Sentry SDK to capture performance data.
+import '~/utils/observability'
 
 const App = () => {
   const { session, setProfile } = useAppContext()
@@ -40,4 +44,4 @@ const App = () => {
   )
 }
 
-export default App
+export default Sentry.wrap(App)

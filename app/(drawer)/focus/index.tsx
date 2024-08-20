@@ -1,9 +1,9 @@
 import { MaterialIcons } from '@expo/vector-icons'
 import { useFocusEffect } from 'expo-router'
 import React, { useCallback, useEffect, useState } from 'react'
-import { View, StyleSheet, KeyboardAvoidingView, Platform, Pressable } from 'react-native'
+import { View, StyleSheet, KeyboardAvoidingView, Platform, Pressable, Button } from 'react-native'
 import { RefreshControl, ScrollView } from 'react-native-gesture-handler'
-
+import * as Sentry from '@sentry/react-native'
 import { LoadingContainer } from '~/components/LoadingFull'
 import { PulsingCircle } from '~/components/animated/pulsing-circle'
 import { FeedbackBlock } from '~/components/feedback-block'
@@ -163,7 +163,7 @@ export const FocusView = () => {
             </FeedbackBlock>
           ) : null}
 
-          {focusItems.notebooks ? (
+          {!isLoading && focusItems.notebooks.length > 0 ? (
             <View style={[styles.focuses]}>
               <FocusList data={focusItems.tasks} onItemDelete={onItemDelete} type="task" />
               <FocusList data={focusItems.events} onItemDelete={onItemDelete} type="event" />
