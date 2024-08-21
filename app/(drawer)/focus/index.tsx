@@ -1,18 +1,19 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView, Platform, Pressable } from 'react-native';
 import { RefreshControl, ScrollView } from 'react-native-gesture-handler';
+
 import { LoadingContainer } from '~/components/LoadingFull';
 import { PulsingCircle } from '~/components/animated/pulsing-circle';
 import { FeedbackBlock } from '~/components/feedback-block';
-import { FocusList } from '~/components/focus/focus-list';
+import { TaskList } from '~/components/focus/task-list';
 import { NoteForm } from '~/components/notes/note-form';
 import { NotebookStack } from '~/components/notes/notebook-stack';
 import { Text } from '~/theme';
 import { FocusQuery, useFocusQuery } from '~/utils/services/Focus.query.generated';
 import { useDeleteFocusItemMutation } from '~/utils/services/notes/DeleteFocusItem.mutation.generated';
-import { Colors } from '~/utils/styles';
+import { theme } from '~/theme';
 
 const baseFocusItems = {
   tasks: [],
@@ -30,6 +31,10 @@ type FocusItemsMap = {
   notebooks: FocusItem[];
 };
 export const FocusView = () => {
+  const todaysDate = useMemo(
+    () => new Date().toLocaleString('default', { month: 'long', day: 'numeric' }),
+    []
+  );
   const [refreshing, setRefreshing] = React.useState(false);
   const [focusResponse, getFocus] = useFocusQuery({
     pause: true,
@@ -37,6 +42,8 @@ export const FocusView = () => {
   });
   const [hasError, setHasError] = useState<boolean>(false);
   const [focusItems, setFocusItems] = useState<FocusItemsMap>(baseFocusItems);
+  const isLoading = focusResponse.fetching;
+  const hasData = focusItems.notebooks.length > 0;
 
   const setFocusItemsFromResponse = useCallback((items: FocusQuery['focus']['items']) => {
     const tasks: FocusItem[] = [];
@@ -71,9 +78,6 @@ export const FocusView = () => {
       notebooks,
     });
   }, []);
-
-  const isLoading = focusResponse.fetching;
-  const hasData = !isLoading && focusItems.notebooks.length > 0;
 
   const onFormSubmit = useCallback(() => {
     getFocus();
@@ -134,9 +138,11 @@ export const FocusView = () => {
       style={styles.container}>
       <View style={[styles.focusContainer]}>
         <View style={styles.header}>
-          <Text variant="cardHeader">Today</Text>
+          <Text fontSize={30} fontWeight={600}>
+            Today
+          </Text>
           <Text variant="body" color="gray">
-            {new Date().toLocaleString('default', { month: 'long', day: 'numeric' })}
+            {todaysDate}
           </Text>
         </View>
 
@@ -154,21 +160,19 @@ export const FocusView = () => {
               <Text variant="body" color="white">
                 Your focus could not be loaded.
               </Text>
-              <Pressable style={{ backgroundColor: Colors.primary }} onPress={onErrorRetry}>
-                <MaterialIcons name="restart-alt" size={24} color={Colors.white} />
+              <Pressable style={{ backgroundColor: theme.colors.primary }} onPress={onErrorRetry}>
+                <MaterialIcons name="restart-alt" size={24} color={theme.colors.white} />
               </Pressable>
             </FeedbackBlock>
           ) : null}
 
-          {!isLoading && focusItems.notebooks.length > 0 ? (
+          {!isLoading && hasData ? (
             <View style={[styles.focuses]}>
-              <FocusList data={focusItems.tasks} onItemDelete={onItemDelete} type="task" />
-              <FocusList data={focusItems.events} onItemDelete={onItemDelete} type="event" />
-              <FocusList data={focusItems.reminders} onItemDelete={onItemDelete} type="reminder" />
+              <TaskList data={focusItems.tasks} onItemDelete={onItemDelete} />
               <NotebookStack items={focusItems.notebooks} />
             </View>
           ) : null}
-          {!isLoading && focusItems.notebooks.length === 0 ? (
+          {!isLoading && !hasData ? (
             <View style={[styles.empty]}>
               <Text variant="bodyLarge" color="primary">
                 You have no focus items yet.
@@ -185,7 +189,7 @@ export const FocusView = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 125,
+    paddingTop: 91,
   },
   focusContainer: {
     flex: 1,
@@ -199,7 +203,7 @@ const styles = StyleSheet.create({
     paddingVertical: 75,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.white,
+    backgroundColor: theme.colors.white,
     borderRadius: 12,
   },
   header: {

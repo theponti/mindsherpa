@@ -3,8 +3,8 @@ import { Pressable, View, type PressableProps, type ViewStyle, StyleSheet } from
 import * as ContextMenu from 'zeego/context-menu';
 
 import { Text } from '~/theme';
+import { borderStyle, listStyles } from '~/theme/styles';
 import { FocusOutputItem } from '~/utils/schema/graphcache';
-import { borderStyle, listStyles } from '~/utils/styles';
 
 export const FocusListItem = ({
   icon,

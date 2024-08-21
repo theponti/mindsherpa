@@ -1,35 +1,37 @@
-import { useEffect } from 'react'
-import { Pressable, StyleSheet, View } from 'react-native'
-import { Gesture, GestureDetector } from 'react-native-gesture-handler'
+import { useEffect } from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   FadeIn,
   FadeOut,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
-} from 'react-native-reanimated'
-import { Text } from '~/theme'
-import { Colors } from '~/utils/styles'
+} from 'react-native-reanimated';
+import { Text, theme } from '~/theme';
 
-const OVERDRAG = 15
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
+const OVERDRAG = 15;
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export const BottomSheet = ({
   isOpen,
   toggleSheet,
-}: { isOpen: boolean; toggleSheet: () => void }) => {
-  const offset = useSharedValue(-10)
+}: {
+  isOpen: boolean;
+  toggleSheet: () => void;
+}) => {
+  const offset = useSharedValue(-10);
 
   const pan = Gesture.Pan()
     .onChange((event) => {
-      const offsetDelta = event.changeY + offset.value
-      const clamp = Math.max(-OVERDRAG, offsetDelta)
+      const offsetDelta = event.changeY + offset.value;
+      const clamp = Math.max(-OVERDRAG, offsetDelta);
 
-      offset.value = offsetDelta > 0 ? offsetDelta : withSpring(clamp)
+      offset.value = offsetDelta > 0 ? offsetDelta : withSpring(clamp);
     })
     .onFinalize(() => {
-      offset.value = withSpring(-10)
-    })
+      offset.value = withSpring(-10);
+    });
 
   const translateY = useAnimatedStyle(() => ({
     transform: [
@@ -37,13 +39,13 @@ export const BottomSheet = ({
         translateY: offset.value,
       },
     ],
-  }))
+  }));
 
   useEffect(() => {
     if (isOpen) {
-      offset.value = withSpring(0)
+      offset.value = withSpring(0);
     }
-  })
+  });
 
   return (
     <View>
@@ -61,8 +63,8 @@ export const BottomSheet = ({
         </Animated.View>
       </GestureDetector>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   backdrop: {
@@ -77,6 +79,6 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     paddingTop: 30,
     paddingHorizontal: 12,
-    backgroundColor: Colors.red,
+    backgroundColor: theme.colors.red,
   },
-})
+});

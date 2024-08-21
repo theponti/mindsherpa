@@ -1,22 +1,21 @@
-import { MaterialIcons } from '@expo/vector-icons'
-import { Link, Redirect, Stack } from 'expo-router'
-import { View } from 'react-native'
+import { MaterialIcons } from '@expo/vector-icons';
+import { Link, Redirect, Stack } from 'expo-router';
+import { View } from 'react-native';
 
-import { Button } from '~/components/Button'
-import TextInput from '~/components/text-input'
-import { Text } from '~/theme'
-import { useAppContext } from '~/utils/app-provider'
-import { Colors } from '~/utils/styles'
-import { supabase } from '~/utils/supabase'
+import { Button } from '~/components/Button';
+import TextInput from '~/components/text-input';
+import { Text, theme } from '~/theme';
+import { useAppContext } from '~/utils/app-provider';
+import { supabase } from '~/utils/supabase';
 
 function Account() {
-  const { session } = useAppContext()
+  const { session } = useAppContext();
   const onLogoutPress = () => {
-    supabase.auth.signOut()
-  }
+    supabase.auth.signOut();
+  };
 
   if (!session) {
-    return <Redirect href="/(auth)" />
+    return <Redirect href="/(auth)" />;
   }
 
   // const { name, avatar_url } = profile || {};
@@ -30,17 +29,15 @@ function Account() {
             marginBottom: 15,
             borderWidth: 1,
             borderRadius: 12,
-            borderColor: Colors.black,
+            borderColor: theme.colors.black,
             alignSelf: 'flex-start',
             paddingVertical: 12,
             paddingHorizontal: 12,
-          }}
-        >
+          }}>
           <Link
             href="/(drawer)/focus"
-            style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-          >
-            <MaterialIcons name="arrow-back" size={24} color={Colors.black} />
+            style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <MaterialIcons name="arrow-back" size={24} color={theme.colors.black} />
             <Text variant="body" color="black" style={{ alignSelf: 'center' }}>
               Back
             </Text>
@@ -68,13 +65,12 @@ function Account() {
             left: 12,
             alignItems: 'center',
             width: '100%',
-          }}
-        >
+          }}>
           <Button title="Sign out" onPress={onLogoutPress} />
         </View>
       </View>
     </>
-  )
+  );
 }
 
-export default Account
+export default Account;

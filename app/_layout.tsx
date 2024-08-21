@@ -22,10 +22,7 @@ SplashScreen.preventAutoHideAsync()
 function InnerRootLayout() {
   const { isLoadingAuth, session } = useAppContext()
   const [loaded, error] = useFonts({
-    'Noto Serif': require('../assets/fonts/Noto_Serif/NotoSerif.ttf'),
-    'Noto Serif Italic': require('../assets/fonts/Noto_Serif/NotoSerif-Italic.ttf'),
-    'Noto Sans': require('../assets/fonts/Noto_Sans/NotoSans.ttf'),
-    'Noto Sans Italic': require('../assets/fonts/Noto_Sans/NotoSans-Italic.ttf'),
+    'Plus Jakarta Sans': require('../assets/fonts/Plus_Jakarta_Sans.ttf'),
   })
 
   useEffect(() => {

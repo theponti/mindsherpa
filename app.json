@@ -22,12 +22,7 @@
       [
         "expo-font",
         {
-          "fonts": [
-            "./assets/fonts/Noto_Sans/NotoSans.ttf",
-            "./assets/fonts/Noto_Sans/NotoSans-Italic.ttf",
-            "./assets/fonts/Noto_Serif/NotoSerif.ttf",
-            "./assets/fonts/Noto_Serif/NotoSerif-Italic.ttf"
-          ]
+          "fonts": ["./assets/fonts/Plus_Jakarta_Sans.ttf"]
         }
       ],
       [
@@ -57,9 +52,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.pontistudios.mindsherpa",

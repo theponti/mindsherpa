@@ -7,7 +7,7 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 
-import { Colors } from '~/utils/styles';
+import { theme } from '~/theme';
 
 export const FormContainer = ({ children }: { children: React.ReactNode }) => {
   const translateY = useSharedValue(200);
@@ -36,11 +36,11 @@ const formContainerStyles = StyleSheet.create({
   container: {
     flexDirection: 'column',
     justifyContent: 'space-between',
-    backgroundColor: Colors.white,
+    backgroundColor: theme.colors.white,
     paddingHorizontal: 16,
     paddingBottom: 24,
     gap: 8,
-    borderColor: Colors.grayMedium,
+    borderColor: theme.colors.grayMedium,
     borderWidth: 1,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,

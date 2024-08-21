@@ -1,8 +1,8 @@
 import { StyleSheet, View } from 'react-native';
 
-import { Text } from '~/theme';
+import { Text, theme } from '~/theme';
+import { borderStyle } from '~/theme/styles';
 import { Message } from '~/utils/schema/graphcache';
-import { Colors, borderStyle } from '~/utils/styles';
 
 const ChatMessage = ({ message }: { message: Message }) => {
   const { role, message: content } = message;
@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
   botMessage: {
     ...baseMessageStyle,
     alignSelf: 'flex-start',
-    backgroundColor: Colors.blue,
+    backgroundColor: theme.colors.blue,
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: borderRadiusSize,
     borderTopLeftRadius: borderRadiusSize,
@@ -46,16 +46,16 @@ const styles = StyleSheet.create({
   userMessage: {
     ...baseMessageStyle,
     alignSelf: 'flex-end',
-    backgroundColor: Colors.white,
+    backgroundColor: theme.colors.white,
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 0,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },
   userMessageText: {
-    color: Colors.black,
+    color: theme.colors.black,
   },
   botMessageText: {
-    color: Colors.black,
+    color: theme.colors.black,
   },
 });

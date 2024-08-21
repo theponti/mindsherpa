@@ -1,15 +1,37 @@
-import { createTheme, useTheme as useRestyleTheme } from '@shopify/restyle'
-import { type ImageStyle, type TextStyle, type ViewStyle } from 'react-native'
-
-import { Colors } from '~/utils/styles'
+import { createTheme, useTheme as useRestyleTheme } from '@shopify/restyle';
+import { StyleSheet, type ImageStyle, type TextStyle, type ViewStyle } from 'react-native';
 
 type NamedStyles<T> = {
-  [P in keyof T]: ViewStyle | TextStyle | ImageStyle
-}
+  [P in keyof T]: ViewStyle | TextStyle | ImageStyle;
+};
+
+const SANS_SERIF_FONT = 'Plus Jakarta Sans';
 
 const theme = createTheme({
   colors: {
-    ...Colors,
+    backgroundColor: '#f8f9fa',
+    black: 'rgba(0, 0, 0, 1.00)',
+    blue: 'rgba(217, 231, 255, 1.00)',
+    blueDark: '#344054',
+    brown: '#A52A2A',
+    darkGray: '#38434D',
+    gray: '#808080',
+    grayMedium: '#edeef1',
+    grayDark: 'rgba(83, 93, 115, 1.00)',
+    grayLight: 'rgba(239, 241, 245, 1.00)',
+    green: '#008000',
+    greenLight: '#00FF00',
+    lime: '#00FF00',
+    orange: '#FFA500',
+    pink: '#FF00FF',
+    primary: 'rgba(40, 49, 67, 1.00)',
+    purple: '#6366F1',
+    red: 'rgba(255, 99, 132, 1.00)',
+    redLight: '#FF4500',
+    sky: '#87CEEB',
+    tomato: 'rgba(245, 99, 69, 1.00)',
+    white: '#fff',
+    quaternary: '#9097a6',
   },
   spacing: {
     xs_4: 4,
@@ -28,46 +50,46 @@ const theme = createTheme({
   },
   textVariants: {
     extra_large: {
-      fontFamily: 'Noto Serif',
+      fontFamily: SANS_SERIF_FONT,
       fontSize: 64,
     },
     header: {
-      fontFamily: 'Noto Serif',
+      fontFamily: SANS_SERIF_FONT,
       fontSize: 42,
     },
     large: {
-      fontFamily: 'Noto Sans',
+      fontFamily: SANS_SERIF_FONT,
       fontSize: 32,
     },
     cardHeader: {
-      fontFamily: 'Noto Sans',
+      fontFamily: SANS_SERIF_FONT,
       fontSize: 28,
       fontWeight: 600,
     },
     title: {
-      fontFamily: 'Noto Sans',
+      fontFamily: SANS_SERIF_FONT,
       fontSize: 20,
     },
     label: {
-      fontFamily: 'Noto Sans',
+      fontFamily: SANS_SERIF_FONT,
       fontSize: 16,
     },
     body: {
-      fontFamily: 'Noto Sans',
+      fontFamily: SANS_SERIF_FONT,
       fontSize: 16,
       color: 'quaternary',
     },
     bodyLarge: {
-      fontFamily: 'Noto Sans',
+      fontFamily: SANS_SERIF_FONT,
       fontSize: 18,
       fontWeight: 'semibold',
     },
     small: {
-      fontFamily: 'Noto Sans',
+      fontFamily: SANS_SERIF_FONT,
       fontSize: 12,
     },
     defaults: {
-      fontFamily: 'Noto Sans',
+      fontFamily: SANS_SERIF_FONT,
     },
     shadow: {
       shadowColor: 'black',
@@ -76,28 +98,27 @@ const theme = createTheme({
       shadowRadius: 2,
     },
   },
-})
+});
 
 export const Shadows = {
   dark: {
-    shadowColor: Colors.black,
+    shadowColor: theme.colors.black,
     shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 0.5,
     shadowRadius: 1,
   },
-}
+};
 
 export const useTheme = () => {
-  return useRestyleTheme<Theme>()
-}
+  return useRestyleTheme<Theme>();
+};
 
 export const makeStyles = <T extends NamedStyles<T> | NamedStyles<unknown>>(
   styles: (theme: Theme) => T
 ) => {
   return () => {
-    return styles(theme)
-  }
-}
+    return styles(theme);
+  };
+};
 
-export type Theme = typeof theme
-export default theme
+export type Theme = typeof theme;
+export default theme;

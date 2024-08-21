@@ -1,8 +1,8 @@
-import { FontAwesome } from '@expo/vector-icons'
-import { Link } from 'expo-router'
-import React, { PropsWithChildren } from 'react'
-import { Image, StyleSheet, View } from 'react-native'
-import { Colors } from '~/utils/styles'
+import { FontAwesome } from '@expo/vector-icons';
+import { Link } from 'expo-router';
+import React, { PropsWithChildren } from 'react';
+import { Image, StyleSheet, View } from 'react-native';
+import { theme } from '~/theme';
 
 export const ViewHeader = ({ children }: PropsWithChildren) => {
   return (
@@ -11,7 +11,7 @@ export const ViewHeader = ({ children }: PropsWithChildren) => {
         <View style={{ width: 32 }} />
         <Image source={require('../assets/header-logo.png')} height={20} width={35} />
         <Link href="/(drawer)/(account)">
-          <FontAwesome name="user-circle" size={32} color={Colors.gray} />
+          <FontAwesome name="user-circle" size={32} color={theme.colors.gray} />
         </Link>
       </View>
       {children ? (
@@ -20,8 +20,8 @@ export const ViewHeader = ({ children }: PropsWithChildren) => {
         </View>
       ) : null}
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -44,4 +44,4 @@ const styles = StyleSheet.create({
     padding: 16,
     marginTop: 24,
   },
-})
+});

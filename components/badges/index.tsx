@@ -1,7 +1,7 @@
 import type { PropsWithChildren } from 'react';
 
 import Text from '~/theme/Text';
-import { Colors } from '~/utils/styles';
+import { theme } from '~/theme';
 import { FocusCategory } from '../focus/focus-category';
 
 export const Badge = ({
@@ -11,9 +11,9 @@ export const Badge = ({
   <Text
     variant="body"
     style={{
-      backgroundColor: color.color ?? Colors.greenLight,
+      backgroundColor: color.color ?? theme.colors.greenLight,
       borderRadius: 20,
-      color: color.textColor ?? Colors.black,
+      color: color.textColor ?? theme.colors.black,
       fontSize: 10,
       paddingVertical: 4,
       paddingHorizontal: 8,

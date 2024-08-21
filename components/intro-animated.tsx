@@ -12,28 +12,28 @@ import Animated, {
 } from 'react-native-reanimated';
 import { ReText } from 'react-native-redash';
 
-import { Colors } from '~/utils/styles';
+import { theme } from '~/theme';
 
 const content = [
   {
     title: 'Mindsherpa.',
-    bg: Colors.lime,
-    fontColor: Colors.pink,
+    bg: theme.colors.lime,
+    fontColor: theme.colors.pink,
   },
   {
     title: "Let's get organized.",
-    bg: Colors.brown,
-    fontColor: Colors.sky,
+    bg: theme.colors.brown,
+    fontColor: theme.colors.sky,
   },
   {
     title: "Let's get prioritized.",
-    bg: Colors.orange,
-    fontColor: Colors.blue,
+    bg: theme.colors.orange,
+    fontColor: theme.colors.blue,
   },
   {
     title: "Let's get started.",
-    bg: Colors.black,
-    fontColor: Colors.white,
+    bg: theme.colors.black,
+    fontColor: theme.colors.white,
   },
 ];
 

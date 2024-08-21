@@ -1,18 +1,18 @@
-import { PropsWithChildren, useEffect } from 'react'
-import { StyleSheet, View } from 'react-native'
-import Animated, { useSharedValue, withTiming } from 'react-native-reanimated'
+import { PropsWithChildren, useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
+import Animated, { useSharedValue, withTiming } from 'react-native-reanimated';
 
-import { Colors } from '~/utils/styles'
+import { theme } from '~/theme';
 
 export const FeedbackBlock = ({ children }: PropsWithChildren) => {
-  const opacity = useSharedValue(0)
+  const opacity = useSharedValue(0);
 
   useEffect(() => {
-    opacity.value = withTiming(1, { duration: 600 })
-  }, [])
+    opacity.value = withTiming(1, { duration: 600 });
+  }, []);
 
-  return <Animated.View style={[styles.error, { opacity }]}>{children}</Animated.View>
-}
+  return <Animated.View style={[styles.error, { opacity }]}>{children}</Animated.View>;
+};
 
 const styles = StyleSheet.create({
   error: {
@@ -20,8 +20,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 32,
-    backgroundColor: Colors.tomato,
+    backgroundColor: theme.colors.tomato,
     borderRadius: 5,
     marginVertical: 8,
   },
-})
+});

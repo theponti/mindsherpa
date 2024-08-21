@@ -7,8 +7,8 @@ import {
 } from 'react-native';
 import { TouchableOpacity, TouchableOpacityProps } from 'react-native-gesture-handler';
 import { Text } from '~/theme';
+import { borderStyle, listStyles } from '~/theme/styles';
 import { NoteOutput } from '~/utils/schema/graphcache';
-import { borderStyle, listStyles } from '~/utils/styles';
 
 export const NoteListItem = ({
   icon,
