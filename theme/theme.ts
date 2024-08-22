@@ -31,6 +31,7 @@ const theme = createTheme({
     sky: '#87CEEB',
     tomato: 'rgba(245, 99, 69, 1.00)',
     white: '#fff',
+    yellow: 'rgba(255, 206, 84, 1.00)',
     quaternary: '#9097a6',
   },
   spacing: {

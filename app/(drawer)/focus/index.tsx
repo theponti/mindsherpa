@@ -31,10 +31,6 @@ type FocusItemsMap = {
   notebooks: FocusItem[];
 };
 export const FocusView = () => {
-  const todaysDate = useMemo(
-    () => new Date().toLocaleString('default', { month: 'long', day: 'numeric' }),
-    []
-  );
   const [refreshing, setRefreshing] = React.useState(false);
   const [focusResponse, getFocus] = useFocusQuery({
     pause: true,
@@ -102,6 +98,7 @@ export const FocusView = () => {
     [focusItems.notebooks, deleteFocusItem, setFocusItemsFromResponse]
   );
 
+  const [isRecording, setIsRecording] = useState(false);
   const [isOpen, setIsOpen] = useState(true);
   const toggleSheet = () => {
     setIsOpen(!isOpen);
@@ -134,14 +131,7 @@ export const FocusView = () => {
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
       style={styles.container}>
       <View style={[styles.focusContainer]}>
-        <View style={styles.header}>
-          <Text fontSize={30} fontWeight={600}>
-            Today
-          </Text>
-          <Text variant="body" color="gray">
-            {todaysDate}
-          </Text>
-        </View>
+        <FocusHeader />
 
         <ScrollView
           style={styles.scrollContainer}
@@ -178,7 +168,7 @@ export const FocusView = () => {
           ) : null}
         </ScrollView>
       </View>
-      <NoteForm onSubmit={onFormSubmit} />
+      <NoteForm onSubmit={onFormSubmit} isRecording={isRecording} setIsRecording={setIsRecording} />
     </KeyboardAvoidingView>
   );
 };
@@ -186,7 +176,7 @@ export const FocusView = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 91,
+    position: 'relative',
   },
   focusContainer: {
     flex: 1,
@@ -203,15 +193,37 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.white,
     borderRadius: 12,
   },
-  header: {
-    justifyContent: 'center',
-    paddingLeft: 12,
-    paddingBottom: 24,
-    rowGap: 4,
-  },
   scrollContainer: {
     paddingTop: 12,
   },
 });
 
 export default FocusView;
+
+const FocusHeader = React.memo(() => {
+  const todaysDate = useMemo(
+    () => new Date().toLocaleString('default', { month: 'long', day: 'numeric' }),
+    []
+  );
+
+  return (
+    <View style={headerStyles.header}>
+      <Text fontSize={30} fontWeight={600}>
+        Today
+      </Text>
+      <Text variant="body" color="gray">
+        {todaysDate}
+      </Text>
+    </View>
+  );
+});
+
+const headerStyles = StyleSheet.create({
+  header: {
+    justifyContent: 'center',
+    paddingLeft: 12,
+    paddingBottom: 24,
+    marginTop: 91,
+    rowGap: 4,
+  },
+});

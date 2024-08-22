@@ -28,11 +28,11 @@ export const TaskList = ({
           item={item}
           onComplete={() => onItemComplete(item.id)}
           onDelete={() => onItemDelete(item.id)}
-          showBorder={data.length == 1 || index < data.length - 1}
+          showBorder={data.length === 1 || index < data.length - 1}
         />
       );
     },
-    [onItemComplete, onItemDelete]
+    [onItemComplete, onItemDelete, data.length]
   );
 
   if (!data.length) {
