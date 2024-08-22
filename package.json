@@ -6,7 +6,7 @@
     "start": "expo start --dev-client",
     "ios": "expo run:ios",
     "android": "expo run:android",
-    "build:development-simulator": "eas build --profile development-simulator",
+    "build:simulator": "eas build --profile simulator",
     "build:development": "eas build --profile development",
     "build:preview": "eas build --profile preview",
     "build:prod": "eas build --profile production",

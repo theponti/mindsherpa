@@ -1,37 +1,40 @@
-import { useCallback, useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { useCallback, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 
-import { FormContainer } from '../form-container'
-import AutoGrowingInput from '../text-input-autogrow'
-import AudioRecorder from '../media/audio-recorder'
-import { UploadFileButton } from '../upload-file-button'
-import { FormSubmitButton } from './note-form-submit-button'
+import AutoGrowingInput from '../text-input-autogrow';
+import AudioRecorder from '../media/audio-recorder';
+import { UploadFileButton } from '../upload-file-button';
+import { FormContainer } from './note-form.container';
+import { FormSubmitButton } from './note-form-submit-button';
 
-import { type CreateVoiceNoteResponse, useCreateTextNote } from '../media/use-audio-upload'
+import { type CreateNoteOutput, useCreateTextNote } from '../media/use-audio-upload';
 
-export const NoteForm = ({ onSubmit }: { onSubmit: (note: any) => void }) => {
-  const [content, setContent] = useState('')
+export const NoteForm = ({ onSubmit }: { onSubmit: (note: CreateNoteOutput | null) => void }) => {
+  const [content, setContent] = useState('');
   const { mutate, isError, isPending } = useCreateTextNote({
     onSuccess: (data) => {
-      onSubmit(data)
-      setContent('')
+      onSubmit(data);
+      setContent('');
     },
     onError: (error) => {
-      console.error('Note upload failed', error)
+      console.error('Note upload failed', error);
     },
-  })
-  const [isRecording, setIsRecording] = useState(false)
+  });
+  const [isRecording, setIsRecording] = useState(false);
 
   const onStartRecording = useCallback(() => {
-    setIsRecording(true)
-  }, [])
+    setIsRecording(true);
+  }, []);
 
-  const onStopRecording = useCallback((note: any) => {
-    setIsRecording(false)
-    onSubmit(note)
-  }, [])
+  const onStopRecording = useCallback(
+    (note: CreateNoteOutput | null) => {
+      setIsRecording(false);
+      onSubmit(note);
+    },
+    [onSubmit]
+  );
 
-  const handleSubmit = () => mutate(content)
+  const handleSubmit = () => mutate(content);
 
   return (
     <FormContainer>
@@ -43,7 +46,6 @@ export const NoteForm = ({ onSubmit }: { onSubmit: (note: any) => void }) => {
           onChangeText={setContent}
         />
       </View>
-
       <View style={[styles.actionButtons]}>
         <View style={[styles.mediaButtons]}>
           <UploadFileButton />
@@ -56,8 +58,8 @@ export const NoteForm = ({ onSubmit }: { onSubmit: (note: any) => void }) => {
         />
       </View>
     </FormContainer>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   inputContainer: {},
@@ -74,4 +76,4 @@ const styles = StyleSheet.create({
     columnGap: 16,
     alignSelf: 'flex-start',
   },
-})
+});

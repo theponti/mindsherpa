@@ -11,7 +11,7 @@ import { TaskList } from '~/components/focus/task-list';
 import { NoteForm } from '~/components/notes/note-form';
 import { NotebookStack } from '~/components/notes/notebook-stack';
 import { Text } from '~/theme';
-import { FocusQuery, useFocusQuery } from '~/utils/services/Focus.query.generated';
+import { type FocusQuery, useFocusQuery } from '~/utils/services/Focus.query.generated';
 import { useDeleteFocusItemMutation } from '~/utils/services/notes/DeleteFocusItem.mutation.generated';
 import { theme } from '~/theme';
 
@@ -87,10 +87,10 @@ export const FocusView = () => {
     setRefreshing(true);
     getFocus();
     setFocusItemsFromResponse([]);
-  }, [getFocus]);
+  }, [getFocus, setFocusItemsFromResponse]);
 
   // 🗑️ Delete items
-  const [isDeleting, setIsDeleting] = React.useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [deleteResponse, deleteFocusItem] = useDeleteFocusItemMutation();
   const onItemDelete = useCallback(
     async (id: number) => {
@@ -99,7 +99,7 @@ export const FocusView = () => {
       setFocusItemsFromResponse(focusItems.notebooks.filter((item) => item.id !== id));
       setIsDeleting(false);
     },
-    [focusItems.notebooks, deleteFocusItem]
+    [focusItems.notebooks, deleteFocusItem, setFocusItemsFromResponse]
   );
 
   const [isOpen, setIsOpen] = useState(true);
@@ -107,11 +107,8 @@ export const FocusView = () => {
     setIsOpen(!isOpen);
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      getFocus();
-    }, [])
-  );
+  // 🛰️ Reload focus items when the screen is focused
+  useFocusEffect(useCallback(() => getFocus(), [getFocus]));
 
   useEffect(() => {
     if (focusResponse.error) {
@@ -124,12 +121,12 @@ export const FocusView = () => {
       setRefreshing(false);
       setFocusItemsFromResponse(focusResponse.data?.focus.items);
     }
-  }, [focusResponse.data?.focus.items]);
+  }, [focusResponse.data?.focus.items, focusResponse.error, setFocusItemsFromResponse]);
 
   const onErrorRetry = useCallback(() => {
     setHasError(false);
     onRefresh();
-  }, []);
+  }, [onRefresh]);
 
   return (
     <KeyboardAvoidingView

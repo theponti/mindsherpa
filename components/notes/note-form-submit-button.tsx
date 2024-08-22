@@ -22,8 +22,8 @@ export const FormSubmitButton = ({
   }));
 
   useEffect(() => {
-    opacity.value = withSpring(isRecording ? 0 : 1, { duration: 400 });
-  }, [isRecording]);
+    opacity.value = withSpring(isRecording ? 0 : 1, { duration: 500 });
+  }, [isRecording, opacity]);
 
   if (isLoading) {
     return (

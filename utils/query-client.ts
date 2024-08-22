@@ -1,5 +1,5 @@
 import { QueryClient } from '@tanstack/react-query';
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios';
 import { HOST_URI } from './constants';
 
 const queryClient = new QueryClient({
@@ -17,9 +17,9 @@ const client = axios.create({
   },
 });
 
-export const request = async (options: AxiosRequestConfig) => {
-  const onSuccess = (response: AxiosResponse) => response;
-  return client(options).then(onSuccess);
+export const request = async <T>(options: AxiosRequestConfig) => {
+  const onSuccess = (response: AxiosResponse<T>) => response;
+  return client<T>(options).then(onSuccess);
 };
 
 export default queryClient;

@@ -1,14 +1,27 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { captureException } from '@sentry/react-native';
 import { Audio } from 'expo-av';
-import { View, StyleSheet, Pressable, PressableProps, Alert } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import {
+  ActivityIndicator,
+  View,
+  StyleSheet,
+  Pressable,
+  type PressableProps,
+  Alert,
+} from 'react-native';
 import React, { useEffect, useState } from 'react';
+import Animated, {
+  interpolateColor,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
 
-import { useAudioUpload } from '~/components/media/use-audio-upload';
+import { type CreateNoteOutput, useAudioUpload } from '~/components/media/use-audio-upload';
 import { theme } from '~/theme';
-import { Recordings } from './recordings-list';
+import type { Recordings } from './recordings-list';
 
+type RecordingSuccessResponse = CreateNoteOutput | null;
 export default function AudioRecorder({
   multi,
   onStartRecording,
@@ -18,17 +31,16 @@ export default function AudioRecorder({
 }: PressableProps & {
   multi?: boolean;
   onStartRecording: () => void;
-  onStopRecording: (note: any) => void;
+  onStopRecording: (note: CreateNoteOutput | null) => void;
 }) {
   const [recording, setRecording] = useState<Audio.Recording>();
   const [meterings, setMeterings] = useState<number[]>([]);
   const [recordingStatus, setRecordingStatus] = useState<Audio.RecordingStatus>();
   const [recordings, setRecordings] = useState<Recordings>([]);
-  const { mutate } = useAudioUpload({
-    onSuccess: (data: any) => {
+  const { mutate, isPending } = useAudioUpload({
+    onSuccess: (data: CreateNoteOutput | null) => {
       onStopRecording(data);
       setRecording(undefined); // Clear recording
-      setRecordingStatus(undefined); // Clear recording status
       setMeterings([]); // Clear meterings
     },
     onError: () => {
@@ -58,7 +70,7 @@ export default function AudioRecorder({
           allowsRecordingIOS: true,
           playsInSilentModeIOS: true,
         });
-        const { recording, status } = await Audio.Recording.createAsync(
+        const { recording } = await Audio.Recording.createAsync(
           Audio.RecordingOptionsPresets.HIGH_QUALITY
         );
 
@@ -85,7 +97,7 @@ export default function AudioRecorder({
     const file = recording.getURI();
 
     if (multi) {
-      let updatedRecordings = [...recordings];
+      const updatedRecordings = [...recordings];
       const { sound } = await recording.createNewLoadedSoundAsync();
       updatedRecordings.push({
         sound: sound,
@@ -100,27 +112,32 @@ export default function AudioRecorder({
     }
   }
 
-  const backgroundColor = useSharedValue(theme.colors.grayLight);
+  const backgroundColor = useSharedValue(0);
   const speakButtonBackground = useAnimatedStyle(() => ({
-    backgroundColor: backgroundColor.value,
+    backgroundColor: interpolateColor(
+      backgroundColor.value,
+      [0, 1],
+      [theme.colors.grayLight, theme.colors.red]
+    ),
   }));
 
   useEffect(() => {
-    backgroundColor.value = withSpring(recording ? theme.colors.grayDark : theme.colors.grayLight, {
-      duration: 400,
-    });
-  }, [recording]);
+    backgroundColor.value = recordingStatus?.isRecording ? withSpring(1) : withSpring(0);
+  }, [recordingStatus?.isRecording]);
 
   return (
     <AnimatedPressable
+      disabled={isPending}
       style={[pressableStyles.speakButton, speakButtonBackground]}
       onPress={recording ? stopRecording : startRecording}
       {...props}>
-      {recording ? (
+      {isPending ? <ActivityIndicator size="small" color={theme.colors.primary} /> : null}
+      {!isPending && recordingStatus?.isRecording ? (
         <MaterialIcons name="stop" size={24} color={theme.colors.grayLight} />
-      ) : (
+      ) : null}
+      {!isPending && !recordingStatus?.isRecording ? (
         <MaterialIcons name="mic" size={24} color={theme.colors.primary} />
-      )}
+      ) : null}
     </AnimatedPressable>
   );
 }
@@ -141,7 +158,7 @@ const Meterings = ({ meterings }: { meterings: number[] }) => {
   return (
     <View style={{ flexDirection: 'row', height: 50, backgroundColor: 'gray' }}>
       {meterings.map((meter, index) => (
-        <View key={index} style={{ width: 3, height: meter, backgroundColor: 'black' }} />
+        <View key={meter} style={{ width: 3, height: meter, backgroundColor: 'black' }} />
       ))}
     </View>
   );

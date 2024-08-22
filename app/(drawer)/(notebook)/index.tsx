@@ -12,7 +12,7 @@ import { NoteForm } from '~/components/notes/note-form';
 import { NoteListItem } from '~/components/notes/note-list-item';
 import { ViewHeader } from '~/components/view-header';
 import { Text } from '~/theme';
-import { NoteOutput } from '~/utils/schema/graphcache';
+import type { NoteOutput } from '~/utils/schema/graphcache';
 import { useNotesQuery } from '~/utils/services/notes/Notes.query.generated';
 import { theme } from '~/theme';
 
@@ -28,7 +28,7 @@ const NotebookScreen = () => {
 
   useEffect(() => {
     getNotes();
-  }, []);
+  }, [getNotes]);
 
   return (
     <ScreenContent>
