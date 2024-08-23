@@ -23,7 +23,6 @@ import { theme } from '~/theme';
 import type { Recordings } from './recordings-list';
 import { AudioLevelVisualizer } from './audio-meterings';
 
-export type RecordingSuccessResponse = CreateNoteOutput | null;
 export default function AudioRecorder({
   multi,
   onStartRecording,
@@ -33,14 +32,14 @@ export default function AudioRecorder({
 }: PressableProps & {
   multi?: boolean;
   onStartRecording: () => void;
-  onStopRecording: (note: RecordingSuccessResponse) => void;
+  onStopRecording: (note: CreateNoteOutput) => void;
 }) {
   const [recording, setRecording] = useState<Audio.Recording>();
   const [meterings, setMeterings] = useState<number[]>([]);
   const [recordingStatus, setRecordingStatus] = useState<Audio.RecordingStatus>();
   const [recordings, setRecordings] = useState<Recordings>([]);
   const { mutate, isPending } = useAudioUpload({
-    onSuccess: (data: RecordingSuccessResponse) => {
+    onSuccess: (data: CreateNoteOutput) => {
       onStopRecording(data);
       setRecording(undefined); // Clear recording
       setMeterings([]); // Clear meterings

@@ -19,7 +19,7 @@ import { AnimatedText } from '~/theme/Text';
 import { borderStyle, listStyles } from '~/theme/styles';
 import { useAppContext } from '~/utils/app-provider';
 import { request } from '~/utils/query-client';
-import { FocusOutputItem } from '~/utils/schema/graphcache';
+import type { FocusOutputItem } from '~/utils/schema/graphcache';
 
 export const TaskListItem = ({
   item,
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     columnGap: 12,
-    ...borderStyle,
+    ...borderStyle.borderBottom,
   },
   text: {
     flex: 1,

@@ -13,7 +13,7 @@ export type CreateNoteOutput = {
   focus_items: FocusItem[];
 };
 
-type FocusItem = {
+export type FocusItem = {
   id: number;
   text: string;
   type: string;
@@ -65,33 +65,67 @@ export const useAudioUpload = ({
   return mutation;
 };
 
-export const useCreateTextNote = ({
+export const useFocusItemsTextGenerate = ({
   onSuccess,
   onError,
 }: {
-  onSuccess?: (data: CreateNoteOutput | null) => void;
+  onSuccess?: (data: CreateNoteOutput) => void;
   onError?: (error: AxiosError) => void;
 }) => {
   const { session } = useAppContext();
   const token = session?.access_token;
 
-  const mutation = useMutation<CreateNoteOutput | null, AxiosError, string>({
+  const mutation = useMutation<CreateNoteOutput, AxiosError, string>({
     mutationFn: async (content: string) => {
+      const { data } = await request<CreateNoteOutput>({
+        url: '/notes/text',
+        method: 'POST',
+        data: { content },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      return data;
+    },
+    onSuccess,
+    onError: (error) => {
+      captureException(error);
+      onError?.(error);
+    },
+  });
+
+  return mutation;
+};
+
+export const useFocusItemsCreate = ({
+  onSuccess,
+  onError,
+}: {
+  onSuccess?: (data: FocusItem[]) => void;
+  onError?: (error: AxiosError) => void;
+}) => {
+  const { session } = useAppContext();
+  const token = session?.access_token;
+
+  const mutation = useMutation<FocusItem[], AxiosError, CreateNoteOutput['focus_items']>({
+    mutationFn: async (items) => {
       try {
-        const { data } = await request<CreateNoteOutput>({
-          url: '/notes/text',
+        const response = await request<FocusItem[]>({
+          url: '/notes/focus',
           method: 'POST',
-          data: { content },
+          data: { items },
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
         });
 
-        return data;
+        return response.data;
       } catch (error) {
         captureException(error);
-        return null;
+        throw error;
       }
     },
     onSuccess,

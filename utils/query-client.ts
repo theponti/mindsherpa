@@ -19,7 +19,11 @@ const client = axios.create({
 
 export const request = async <T>(options: AxiosRequestConfig) => {
   const onSuccess = (response: AxiosResponse<T>) => response;
-  return client<T>(options).then(onSuccess);
+  return client<T>(options)
+    .then(onSuccess)
+    .catch((error) => {
+      throw error;
+    });
 };
 
 export default queryClient;

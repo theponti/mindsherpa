@@ -22,7 +22,10 @@ export default {
       [
         'expo-font',
         {
-          fonts: ['./assets/fonts/Plus_Jakarta_Sans.ttf'],
+          fonts: [
+            './assets/fonts/Plus_Jakarta_Sans.ttf',
+            './assets/fonts/icons/fa-regular-400.ttf',
+          ],
         },
       ],
       [

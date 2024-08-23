@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
     columnGap: 5,
   },
   bar: {
-    width: 5,
+    width: 3,
+    borderRadius: 25,
   },
 });

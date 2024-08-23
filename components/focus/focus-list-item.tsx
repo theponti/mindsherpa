@@ -1,10 +1,10 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import { Pressable, View, type PressableProps, type ViewStyle, StyleSheet } from 'react-native';
 import * as ContextMenu from 'zeego/context-menu';
 
 import { Text } from '~/theme';
 import { borderStyle, listStyles } from '~/theme/styles';
-import { FocusOutputItem } from '~/utils/schema/graphcache';
+import type { FocusOutputItem } from '~/utils/schema/graphcache';
 
 export const FocusListItem = ({
   icon,
@@ -16,9 +16,9 @@ export const FocusListItem = ({
   style,
   ...props
 }: PressableProps & {
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   item?: FocusOutputItem;
-  headerRight: React.ReactNode;
+  headerRight: ReactNode;
   label: string;
   onDelete: () => void;
   showBorder?: boolean;

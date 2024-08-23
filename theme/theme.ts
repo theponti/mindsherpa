@@ -12,6 +12,7 @@ const theme = createTheme({
     backgroundColor: '#f8f9fa',
     black: 'rgba(0, 0, 0, 1.00)',
     blue: 'rgba(217, 231, 255, 1.00)',
+    blueLight: 'rgba(240, 248, 255, 1.00)',
     blueDark: '#344054',
     brown: '#A52A2A',
     darkGray: '#38434D',
@@ -61,6 +62,11 @@ const theme = createTheme({
     large: {
       fontFamily: SANS_SERIF_FONT,
       fontSize: 32,
+    },
+    caption: {
+      fontSize: 12,
+      fontWeight: 500,
+      color: 'quaternary',
     },
     cardHeader: {
       fontFamily: SANS_SERIF_FONT,
