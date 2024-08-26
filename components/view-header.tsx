@@ -1,24 +1,22 @@
-import { FontAwesome } from '@expo/vector-icons';
 import { Link } from 'expo-router';
-import React, { PropsWithChildren } from 'react';
-import { Image, StyleSheet, View } from 'react-native';
-import { theme } from '~/theme';
+import React, { type PropsWithChildren } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { Text, theme } from '~/theme';
+import { borderStyle } from '~/theme/styles';
+import MindsherpaIcon from './ui/icon';
 
 export const ViewHeader = ({ children }: PropsWithChildren) => {
   return (
-    <View>
+    <View style={styles.container}>
       <View style={styles.navbar}>
-        <View style={{ width: 32 }} />
-        <Image source={require('../assets/header-logo.png')} height={20} width={35} />
-        <Link href="/(drawer)/(account)">
-          <FontAwesome name="user-circle" size={32} color={theme.colors.gray} />
+        <Link href="/(drawer)/focus">
+          <View style={{ flexDirection: 'row', alignItems: 'center', columnGap: 12 }}>
+            <MindsherpaIcon name="arrow-left" size={26} color={theme.colors.black} />
+            <Text variant="bodyLarge">Today</Text>
+          </View>
         </Link>
       </View>
-      {children ? (
-        <View style={styles.container}>
-          <View style={styles.header}>{children}</View>
-        </View>
-      ) : null}
+      {children}
     </View>
   );
 };
@@ -26,13 +24,15 @@ export const ViewHeader = ({ children }: PropsWithChildren) => {
 const styles = StyleSheet.create({
   container: {
     overflow: 'hidden',
+    marginTop: 50,
   },
   navbar: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 16,
     opacity: 0.8,
+    backgroundColor: theme.colors.grayLight,
   },
   gradient: {
     height: '100%',

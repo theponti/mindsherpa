@@ -1,4 +1,3 @@
-import * as Speech from 'expo-speech';
 import React, { useState, useRef } from 'react';
 import { View, Button, Text, StyleSheet, Animated } from 'react-native';
 import { GestureHandlerRootView, PanGestureHandler, State } from 'react-native-gesture-handler';
@@ -6,7 +5,6 @@ import { GestureHandlerRootView, PanGestureHandler, State } from 'react-native-g
 const SWIPE_THRESHOLD = 50;
 
 const App = () => {
-  const [transcribedText, setTranscribedText] = useState('');
   const [isCardVisible, setIsCardVisible] = useState(true);
   const translateY = useRef(new Animated.Value(0)).current;
 
@@ -35,15 +33,6 @@ const App = () => {
     }
   };
 
-  const startSpeechToText = async () => {
-    // try {
-    //   const result = await Speech.recognizeAsync();
-    //   setTranscribedText(result.transcription);
-    // } catch (error) {
-    //   console.error('Error transcribing speech:', error);
-    // }
-  };
-
   const resetCard = () => {
     setIsCardVisible(true);
     translateY.setValue(0);
@@ -69,10 +58,9 @@ const App = () => {
               transform: [{ translateY }],
             },
           ]}>
-          <Text>{transcribedText || 'Swipe down to dismiss'}</Text>
+          <Text>Swipe down to dismiss</Text>
         </Animated.View>
       </PanGestureHandler>
-      <Button title="Start Speech to Text" onPress={startSpeechToText} />
     </GestureHandlerRootView>
   );
 };

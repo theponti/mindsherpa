@@ -13,19 +13,21 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+  Date: { input: any; output: any; }
+  DateTime: { input: string; output: string; }
+  UUID: { input: string; output: string; }
 };
 
 export type AuthPayload = {
   readonly __typename?: 'AuthPayload';
   readonly accessToken: Scalars['String']['output'];
   readonly refreshToken: Scalars['String']['output'];
-  readonly userId: Scalars['Int']['output'];
+  readonly userId: Scalars['String']['output'];
 };
 
 export type ChatMessagesResponse = {
   readonly __typename?: 'ChatMessagesResponse';
-  readonly messages: ReadonlyArray<Message>;
-  readonly summary: ReadonlyArray<ChatSummaryOutputItem>;
+  readonly messages: ReadonlyArray<MessageOutput>;
 };
 
 export type ChatOutput = {
@@ -33,11 +35,6 @@ export type ChatOutput = {
   readonly createdAt: Scalars['String']['output'];
   readonly id: Scalars['String']['output'];
   readonly title: Scalars['String']['output'];
-};
-
-export type ChatSummaryOutputItem = {
-  readonly __typename?: 'ChatSummaryOutputItem';
-  readonly text: Scalars['String']['output'];
 };
 
 export type CreateUserInput = {
@@ -67,14 +64,25 @@ export type FocusOutput = {
 export type FocusOutputItem = {
   readonly __typename?: 'FocusOutputItem';
   readonly category: Scalars['String']['output'];
-  readonly dueDate: Maybe<Scalars['String']['output']>;
+  readonly createdAt: Scalars['DateTime']['output'];
+  readonly dueDate: Maybe<Scalars['Date']['output']>;
   readonly id: Scalars['Int']['output'];
-  readonly priority: Scalars['String']['output'];
+  readonly priority: Scalars['Int']['output'];
+  readonly profileId: Scalars['UUID']['output'];
   readonly sentiment: Scalars['String']['output'];
+  readonly state: FocusState;
   readonly taskSize: Scalars['String']['output'];
   readonly text: Scalars['String']['output'];
   readonly type: Scalars['String']['output'];
+  readonly updatedAt: Scalars['DateTime']['output'];
 };
+
+export enum FocusState {
+  Active = 'active',
+  Backlog = 'backlog',
+  Completed = 'completed',
+  Deleted = 'deleted'
+}
 
 export type GetFocusFilter = {
   readonly category: Scalars['String']['input'];
@@ -87,8 +95,8 @@ export type GetProfileOutput = {
   readonly userId: Scalars['String']['output'];
 };
 
-export type Message = {
-  readonly __typename?: 'Message';
+export type MessageOutput = {
+  readonly __typename?: 'MessageOutput';
   readonly chatId: Scalars['String']['output'];
   readonly createdAt: Scalars['String']['output'];
   readonly id: Scalars['String']['output'];
@@ -107,7 +115,7 @@ export type Mutation = {
   readonly createUser: CreateUserPayload;
   readonly deleteFocusItem: DeleteFocusItemOutput;
   readonly saveAppleUser: AuthPayload;
-  readonly sendChatMessage: ReadonlyArray<Message>;
+  readonly sendChatMessage: ReadonlyArray<MessageOutput>;
   readonly updateProfile: UpdateProfilePayload;
 };
 

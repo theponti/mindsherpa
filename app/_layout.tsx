@@ -1,9 +1,5 @@
-import {
-  useFonts,
-  Inter_400Regular,
-  Inter_600SemiBold,
-  Inter_700Bold,
-} from '@expo-google-fonts/inter';
+import * as Sentry from '@sentry/react-native';
+import { useFonts } from '@expo-google-fonts/inter';
 import { ThemeProvider } from '@shopify/restyle';
 import { SplashScreen, Stack } from 'expo-router';
 import { useEffect } from 'react';
@@ -12,6 +8,9 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import LoginSheet from '~/components/authentication/login-sheet';
 import { theme } from '~/theme';
 import { AppProvider, useAppContext } from '~/utils/app-provider';
+
+// Register the Sentry SDK to capture performance data.
+import '~/utils/observability';
 
 export const unstable_settings = {
   initialRouteName: '(drawer)',
@@ -51,25 +50,7 @@ function InnerRootLayout() {
   );
 }
 
-export default function RootLayout() {
-  const [fontsLoaded, fontError] = useFonts({
-    Inter_400Regular,
-    Inter_600SemiBold,
-    Inter_700Bold,
-  });
-
-  useEffect(() => {
-    if (fontsLoaded || fontError) {
-      // Hide the splash screen after the fonts have loaded (or an error was returned) and the UI is ready.
-      SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded, fontError]);
-
-  // Prevent rendering until the font has loaded or an error was returned
-  if (!fontsLoaded && !fontError) {
-    return null;
-  }
-
+function RootLayout() {
   return (
     <ThemeProvider theme={theme}>
       <GestureHandlerRootView style={{ flex: 1 }}>
@@ -80,3 +61,5 @@ export default function RootLayout() {
     </ThemeProvider>
   );
 }
+
+export default Sentry.wrap(RootLayout);

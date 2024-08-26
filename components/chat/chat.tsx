@@ -9,24 +9,16 @@ import {
   View,
 } from 'react-native';
 
+import { Text } from '~/theme';
+import { useChatMessages } from '~/utils/services/use-chat-messages';
+import type { MessageOutput } from '~/utils/schema/graphcache';
+import { FeedbackBlock } from '../feedback-block';
+import { ChatForm } from './chat-form';
 import ChatLoading from './chat-loading';
 import { renderMessage } from './chat-message';
-import { FeedbackBlock } from '../feedback-block';
-
-import { Text } from '~/theme';
-import { useChatMessages } from '~/utils/services/messages-service';
-import { ChatSummary } from './chat-summary';
-import { NoteForm } from '../notes/note-form';
 
 export const Chat = ({ chatId }: { chatId: string }) => {
-  const {
-    chatError,
-    isChatSending,
-    loading: isMessagesLoading,
-    messages,
-    sendChatMessage,
-    summary,
-  } = useChatMessages({ chatId });
+  const { addMessages, loading: isMessagesLoading, messages } = useChatMessages({ chatId });
   const flatListRef = useRef<FlatList>(null);
 
   const scrollToBottom = useCallback(() => {
@@ -39,19 +31,17 @@ export const Chat = ({ chatId }: { chatId: string }) => {
     setTimeout(() => {
       scrollToBottom();
     }, 500);
-  }, [scrollToBottom, messages]);
+  }, [messages, scrollToBottom]);
 
   return (
-    <View style={styles.container}>
-      {summary ? <ChatSummary summary={summary} /> : null}
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
-        style={styles.container}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={StyleSheet.absoluteFillObject} />
-        </TouchableWithoutFeedback>
-
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+      style={styles.container}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={StyleSheet.absoluteFillObject} />
+      </TouchableWithoutFeedback>
+      <View style={styles.container}>
         {isMessagesLoading ? (
           <ChatLoading />
         ) : (
@@ -67,21 +57,27 @@ export const Chat = ({ chatId }: { chatId: string }) => {
             onStartShouldSetResponder={() => true}
           />
         )}
-        {chatError ? (
-          <FeedbackBlock>
-            <Text>{chatError}</Text>
+
+        {!isMessagesLoading && messages && messages.length === 0 ? (
+          <FeedbackBlock error={false}>
+            <Text variant="body" color="quaternary">
+              How can Sherpa help?
+            </Text>
           </FeedbackBlock>
         ) : null}
-        <NoteForm onSubmit={(message: string) => sendChatMessage({ message })} />
-      </KeyboardAvoidingView>
-    </View>
+
+        <ChatForm
+          chatId={chatId}
+          onSuccess={(messages: readonly MessageOutput[]) => addMessages(messages)}
+        />
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 12,
   },
   messagesContainer: {
     flexGrow: 1,

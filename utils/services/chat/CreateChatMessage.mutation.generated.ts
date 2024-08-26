@@ -10,7 +10,7 @@ export type CreateChatMessageMutationVariables = Types.Exact<{
 }>;
 
 
-export type CreateChatMessageMutation = { readonly __typename?: 'Mutation', readonly sendChatMessage: ReadonlyArray<{ readonly __typename?: 'Message', readonly id: string, readonly message: string, readonly role: Types.MessageRole, readonly chatId: string, readonly profileId: string, readonly createdAt: string }> };
+export type CreateChatMessageMutation = { readonly __typename?: 'Mutation', readonly sendChatMessage: ReadonlyArray<{ readonly __typename?: 'MessageOutput', readonly id: string, readonly message: string, readonly role: Types.MessageRole, readonly chatId: string, readonly profileId: string, readonly createdAt: string }> };
 
 
 export const CreateChatMessageDocument = gql`

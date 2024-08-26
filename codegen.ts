@@ -1,8 +1,8 @@
-import { CodegenConfig } from '@graphql-codegen/cli';
+import type { CodegenConfig } from '@graphql-codegen/cli';
 require('dotenv').config();
 
 const config: CodegenConfig = {
-  schema: process.env.EXPO_PUBLIC_GRAPHQL_ENDPOINT,
+  schema: `${process.env.EXPO_PUBLIC_GRAPHQL_ENDPOINT}?dev=true`,
   documents: [
     'app/**/*.tsx', // this is for tagged documents eg gql`...` tags @REVIEW
     'utils/**/*.graphql', // this is for documents in .graphql files

@@ -1,5 +1,6 @@
 import { Redirect } from 'expo-router';
 import { useEffect } from 'react';
+import { View } from 'react-native';
 import { SafeAreaView } from 'react-native';
 
 import { LoadingFull } from '~/components/LoadingFull';
@@ -8,7 +9,7 @@ import { Chat } from '~/components/chat/chat';
 import { ViewHeader } from '~/components/view-header';
 import { Text } from '~/theme';
 import { useAppContext } from '~/utils/app-provider';
-import { useChatsQuery } from '~/utils/services/Chats.query.generated';
+import { useChatsQuery } from '~/utils/services/chat/Chats.query.generated';
 
 export default function Sherpa() {
   const { session, isLoadingAuth } = useAppContext();
@@ -21,25 +22,23 @@ export default function Sherpa() {
     if (session) {
       getChats();
     }
-  }, []);
+  }, [session, getChats]);
 
   const activeChat = getChatResponse.data?.chats[0];
 
   if (!isLoadingAuth && !session) {
-    return <Redirect href="(auth)" />;
+    return <Redirect href="/(auth)" />;
   }
 
   return (
-    <ScreenContent>
+    <View style={{ flex: 1 }}>
       <ViewHeader />
-      <SafeAreaView style={{ flex: 1, paddingTop: 60 }}>
-        {getChatResponse.fetching ? (
-          <LoadingFull>
-            <Text variant="title">Loading your chat...</Text>
-          </LoadingFull>
-        ) : null}
-        {activeChat ? <Chat chatId={activeChat.id} /> : null}
-      </SafeAreaView>
-    </ScreenContent>
+      {getChatResponse.fetching ? (
+        <LoadingFull>
+          <Text variant="title">Loading your chat...</Text>
+        </LoadingFull>
+      ) : null}
+      {activeChat ? <Chat chatId={activeChat.id} /> : null}
+    </View>
   );
 }

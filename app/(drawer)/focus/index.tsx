@@ -1,5 +1,5 @@
 import { MaterialIcons } from '@expo/vector-icons';
-import { useFocusEffect } from 'expo-router';
+import { Link, useFocusEffect } from 'expo-router';
 import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView, Platform, Pressable } from 'react-native';
 import { RefreshControl, ScrollView } from 'react-native-gesture-handler';
@@ -14,6 +14,7 @@ import { Text } from '~/theme';
 import { type FocusQuery, useFocusQuery } from '~/utils/services/Focus.query.generated';
 import { useDeleteFocusItemMutation } from '~/utils/services/notes/DeleteFocusItem.mutation.generated';
 import { theme } from '~/theme';
+import MindsherpaIcon from '~/components/ui/icon';
 
 const baseFocusItems = {
   tasks: [],
@@ -208,19 +209,35 @@ const FocusHeader = React.memo(() => {
 
   return (
     <View style={headerStyles.header}>
-      <Text fontSize={30} fontWeight={600}>
-        Today
-      </Text>
-      <Text variant="body" color="gray">
-        {todaysDate}
-      </Text>
+      <View>
+        <Text fontSize={30} fontWeight={600}>
+          Today
+        </Text>
+        <Text variant="body" color="gray">
+          {todaysDate}
+        </Text>
+      </View>
+      <View
+        style={{
+          borderRadius: 99,
+          padding: 8,
+          borderColor: theme.colors.black,
+          borderWidth: 2,
+          marginRight: 12,
+        }}>
+        <Link href="/(drawer)/(sherpa)">
+          <MindsherpaIcon name="hat-wizard" size={24} />
+        </Link>
+      </View>
     </View>
   );
 });
 
 const headerStyles = StyleSheet.create({
   header: {
-    justifyContent: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingLeft: 12,
     paddingBottom: 24,
     marginTop: 91,

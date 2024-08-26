@@ -1,16 +1,14 @@
 import { FontAwesome } from '@expo/vector-icons';
-import { useMutation } from '@tanstack/react-query';
 import React from 'react';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, Text } from 'react-native';
 import { Pressable } from 'react-native';
-import { Animated, type PressableProps, type ViewStyle, StyleSheet } from 'react-native';
-import { RectButton, Swipeable } from 'react-native-gesture-handler';
-import RNAnimated, {
+import { type PressableProps, type ViewStyle, StyleSheet } from 'react-native';
+import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+import Reanimated, {
+  type SharedValue,
   interpolateColor,
   useAnimatedStyle,
   useSharedValue,
-  withClamp,
-  withSpring,
 } from 'react-native-reanimated';
 import * as ContextMenu from 'zeego/context-menu';
 
@@ -18,8 +16,8 @@ import { theme } from '~/theme';
 import { AnimatedText } from '~/theme/Text';
 import { borderStyle, listStyles } from '~/theme/styles';
 import { useAppContext } from '~/utils/app-provider';
-import { request } from '~/utils/query-client';
 import type { FocusOutputItem } from '~/utils/schema/graphcache';
+import { useFocusItemComplete } from './use-focus-item-complete';
 
 export const TaskListItem = ({
   item,
@@ -38,19 +36,23 @@ export const TaskListItem = ({
   style?: ViewStyle[];
 }) => {
   const { session } = useAppContext();
+  if (!session) {
+    return null;
+  }
+
   const fontColor = useSharedValue(0);
   const opacity = useSharedValue(1);
-  const completeItem = useMutation({
-    mutationKey: ['completeItem'],
-    mutationFn: async () => {
-      const { data } = await request({
-        method: 'PUT',
-        url: `/tasks/complete/${item.id}`,
-        headers: {
-          Authorization: `Bearer ${session?.access_token}`,
-        },
-      });
+  const completeItem = useFocusItemComplete({
+    id: item.id,
+    token: session.access_token,
+    onSuccess: (data) => {
       onComplete(data);
+      opacity.value = 1;
+      fontColor.value = 1;
+      const interval = setInterval(() => {
+        fontColor.value -= 0.1;
+      }, 100);
+      setTimeout(() => clearInterval(interval), 1000);
     },
     onError: () => {
       opacity.value = 1;
@@ -62,27 +64,14 @@ export const TaskListItem = ({
     },
   });
 
-  const renderLeftActions = (
-    progressAnimatedValue: Animated.AnimatedInterpolation<string | number>,
-    dragAnimatedValue: Animated.AnimatedInterpolation<string | number>,
-    swipeable: Swipeable
-  ) => {
-    const trans = dragAnimatedValue.interpolate({
-      inputRange: [0, 50, 100, 101],
-      outputRange: [-20, 0, 0, 1],
-    });
-    return (
-      <RectButton style={{}} onPress={() => console.log({ progressAnimatedValue })}>
-        <Animated.Text
-          style={[
-            {
-              transform: [{ translateX: trans }],
-            },
-          ]}>
-          Archive
-        </Animated.Text>
-      </RectButton>
-    );
+  const onSwipeableOpen = (direction: 'left' | 'right', swipeable) => {
+    opacity.value = 0.4;
+
+    // if (direction === 'left') {
+    //   completeItem.mutate();
+    // } else {
+    //   onDelete();
+    // }
   };
 
   const onRadioButtonPress = () => {
@@ -95,19 +84,26 @@ export const TaskListItem = ({
     return {
       color,
     };
-  });
+  }, [fontColor]);
 
   const opacityStyle = useAnimatedStyle(() => {
     return {
       opacity: opacity.value,
     };
-  }, [opacity, fontColor]);
+  }, [opacity]);
 
   return (
     <ContextMenu.Root>
       <ContextMenu.Trigger action="longPress">
-        <Swipeable renderLeftActions={renderLeftActions}>
-          <RNAnimated.View style={[styles.container, opacityStyle]}>
+        <ReanimatedSwipeable
+          // leftThreshold={100}
+          // rightThreshold={100}
+          overshootLeft={false}
+          overshootRight={false}
+          onSwipeableOpen={onSwipeableOpen}
+          renderLeftActions={LeftAction}
+          renderRightActions={RightAction}>
+          <Reanimated.View style={[styles.container, opacityStyle]}>
             <Pressable
               style={[styles.iconWrap]}
               onPress={onRadioButtonPress}
@@ -126,8 +122,8 @@ export const TaskListItem = ({
             <AnimatedText variant="body" style={[listStyles.text, styles.text, textStyle]}>
               {label}
             </AnimatedText>
-          </RNAnimated.View>
-        </Swipeable>
+          </Reanimated.View>
+        </ReanimatedSwipeable>
       </ContextMenu.Trigger>
       <ContextMenu.Content
         alignOffset={10}
@@ -161,4 +157,64 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  deleteButton: {
+    backgroundColor: theme.colors.red,
+    color: theme.colors.white,
+    padding: 16,
+    paddingVertical: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
+
+function LeftAction(prog: SharedValue<number>, drag: SharedValue<number>) {
+  const styleAnimation = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          translateX: drag.value - 100,
+          ...(drag.value > 100 ? { width: 100 + drag.value } : {}),
+        },
+      ],
+    };
+  });
+
+  return (
+    <Reanimated.View style={[leftActionStyle.container, styleAnimation]}>
+      <Text style={leftActionStyle.completeButton}>Complete</Text>
+    </Reanimated.View>
+  );
+}
+
+const leftActionStyle = StyleSheet.create({
+  container: {
+    // flex: 1,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    backgroundColor: theme.colors.red,
+  },
+  completeButton: {
+    backgroundColor: theme.colors.green,
+    color: theme.colors.white,
+    padding: 16,
+    paddingVertical: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
+
+function RightAction(prog: SharedValue<number>, drag: SharedValue<number>) {
+  const styleAnimation = useAnimatedStyle(() => {
+    // console.log('[R] showRightProgress:', prog.value);
+    // console.log('[R] appliedTranslation:', drag.value);
+    return {
+      transform: [{ translateX: drag.value + 90 }],
+    };
+  });
+
+  return (
+    <Reanimated.View style={styleAnimation}>
+      <Text style={styles.deleteButton}>Delete</Text>
+    </Reanimated.View>
+  );
+}

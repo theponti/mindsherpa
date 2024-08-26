@@ -9,15 +9,12 @@ export type ChatMessagesQueryVariables = Types.Exact<{
 }>;
 
 
-export type ChatMessagesQuery = { readonly __typename?: 'Query', readonly chatMessages: { readonly __typename?: 'ChatMessagesResponse', readonly summary: ReadonlyArray<{ readonly __typename?: 'ChatSummaryOutputItem', readonly text: string }>, readonly messages: ReadonlyArray<{ readonly __typename?: 'Message', readonly id: string, readonly message: string, readonly role: Types.MessageRole, readonly chatId: string, readonly profileId: string, readonly createdAt: string }> } };
+export type ChatMessagesQuery = { readonly __typename?: 'Query', readonly chatMessages: { readonly __typename?: 'ChatMessagesResponse', readonly messages: ReadonlyArray<{ readonly __typename?: 'MessageOutput', readonly id: string, readonly message: string, readonly role: Types.MessageRole, readonly chatId: string, readonly profileId: string, readonly createdAt: string }> } };
 
 
 export const ChatMessagesDocument = gql`
     query ChatMessages($chatId: String!) {
   chatMessages(chatId: $chatId) {
-    summary {
-      text
-    }
     messages {
       id
       message

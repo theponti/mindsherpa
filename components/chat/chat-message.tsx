@@ -2,7 +2,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { Text, theme } from '~/theme';
 import { borderStyle } from '~/theme/styles';
-import { Message } from '~/utils/schema/graphcache';
+import type { Message } from '~/utils/schema/graphcache';
 
 const ChatMessage = ({ message }: { message: Message }) => {
   const { role, message: content } = message;

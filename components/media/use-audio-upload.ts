@@ -5,23 +5,13 @@ import * as FileSystem from 'expo-file-system';
 
 import { useAppContext } from '~/utils/app-provider';
 import { request } from '~/utils/query-client';
+import type { FocusOutputItem } from '~/utils/schema/graphcache';
 
 export type CreateNoteOutput = {
   id: string;
   content: string;
   created_at: string;
-  focus_items: FocusItem[];
-};
-
-export type FocusItem = {
-  id: number;
-  text: string;
-  type: string;
-  task_size: string;
-  category: string;
-  priority: number;
-  sentiment: string;
-  due_date: string;
+  focus_items: FocusOutputItem[];
 };
 
 export const useAudioUpload = ({
@@ -94,42 +84,6 @@ export const useFocusItemsTextGenerate = ({
       captureException(error);
       onError?.(error);
     },
-  });
-
-  return mutation;
-};
-
-export const useFocusItemsCreate = ({
-  onSuccess,
-  onError,
-}: {
-  onSuccess?: (data: FocusItem[]) => void;
-  onError?: (error: AxiosError) => void;
-}) => {
-  const { session } = useAppContext();
-  const token = session?.access_token;
-
-  const mutation = useMutation<FocusItem[], AxiosError, CreateNoteOutput['focus_items']>({
-    mutationFn: async (items) => {
-      try {
-        const response = await request<FocusItem[]>({
-          url: '/notes/focus',
-          method: 'POST',
-          data: { items },
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        return response.data;
-      } catch (error) {
-        captureException(error);
-        throw error;
-      }
-    },
-    onSuccess,
-    onError,
   });
 
   return mutation;

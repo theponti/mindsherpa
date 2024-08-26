@@ -2,7 +2,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
-import { ChatMessagesResponse } from '~/utils/schema/schema-types';
+import type { ChatMessagesResponse } from '~/utils/schema/schema-types';
 import { Text, theme } from '~/theme';
 
 import { Card } from '../ui/card';

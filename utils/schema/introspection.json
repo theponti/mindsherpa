@@ -62,25 +62,7 @@
                   "kind": "NON_NULL",
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "Message",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            "args": []
-          },
-          {
-            "name": "summary",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "LIST",
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "ChatSummaryOutputItem",
+                    "name": "MessageOutput",
                     "ofType": null
                   }
                 }
@@ -119,24 +101,6 @@
           },
           {
             "name": "title",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
-            },
-            "args": []
-          }
-        ],
-        "interfaces": []
-      },
-      {
-        "kind": "OBJECT",
-        "name": "ChatSummaryOutputItem",
-        "fields": [
-          {
-            "name": "text",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
@@ -239,6 +203,17 @@
             "args": []
           },
           {
+            "name": "createdAt",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
             "name": "dueDate",
             "type": {
               "kind": "SCALAR",
@@ -269,7 +244,29 @@
             "args": []
           },
           {
+            "name": "profileId",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
             "name": "sentiment",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "state",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
@@ -303,6 +300,17 @@
           },
           {
             "name": "type",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "updatedAt",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
@@ -357,7 +365,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "Message",
+        "name": "MessageOutput",
         "fields": [
           {
             "name": "chatId",
@@ -521,7 +529,7 @@
                   "kind": "NON_NULL",
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "Message",
+                    "name": "MessageOutput",
                     "ofType": null
                   }
                 }

@@ -2,87 +2,58 @@ import { type PropsWithChildren, useCallback, useState } from 'react';
 import { StyleSheet, View, type ViewProps } from 'react-native';
 import { Pressable } from 'react-native';
 import { Text, theme } from '~/theme';
-import type { FocusOutputItem } from '~/utils/schema/graphcache';
+import type { FocusOutputItem, MessageOutput } from '~/utils/schema/graphcache';
 import { FeedbackBlock } from '../feedback-block';
-import { useFocusItemsCreate } from '../focus/use-focus-item-create';
-import AudioRecorder from '../media/audio-recorder';
 import { type CreateNoteOutput, useFocusItemsTextGenerate } from '../media/use-audio-upload';
+import { useSendMessage } from '~/utils/services/use-chat-messages';
 import AutoGrowingInput from '../text-input-autogrow';
 import { UploadFileButton } from '../upload-file-button';
 import MindsherpaIcon from '../ui/icon';
-import { FormSubmitButton } from './note-form-submit-button';
+import { FormSubmitButton } from '../notes/note-form-submit-button';
+import AudioTranscriber from './audio-transcriber';
 
-type NoteFormProps = {
-  isRecording: boolean;
-  setIsRecording: (isRecording: boolean) => void;
-  onSubmit: (data: FocusOutputItem[]) => void;
+type ChatFormProps = {
+  chatId: string;
+  onSuccess: (messages: readonly MessageOutput[]) => void;
 };
-export const NoteForm = (props: NoteFormProps) => {
-  const { isRecording, setIsRecording, onSubmit } = props;
-  const [content, setContent] = useState('');
-  const [createError, setCreateError] = useState<boolean>(false);
-  const [generateError, setGenerateError] = useState<boolean>(false);
-  const [focusItems, setFocusItems] = useState<CreateNoteOutput['focus_items']>([]);
-  const { mutateAsync: createFocusItems, isPending: isCreating } = useFocusItemsCreate({
-    onSuccess: (data) => {
-      onSubmit(data);
-      setFocusItems((prev) => prev.filter((item) => data.find((f) => f.id === item.id)));
-    },
-    onError: () => {
-      setCreateError(true);
-    },
-  });
-  const { mutate: generateFocusItems, isPending: isGenerating } = useFocusItemsTextGenerate({
-    onSuccess: (data) => {
-      if (data) {
-        setFocusItems((prev) => [
-          ...prev,
-          ...data.focus_items.map((item) => ({
-            ...item,
-            id: Math.random(),
-          })),
-        ]);
-      }
-      setContent('');
-    },
-    onError: (error) => {
-      setGenerateError(true);
-    },
-  });
-  const isPending = isCreating || isGenerating;
+export const ChatForm = (props: ChatFormProps) => {
+  const { chatId, onSuccess } = props;
+  const [isRecording, setIsRecording] = useState(false);
+  const [transcribeError, setTranscribeError] = useState<boolean>(false);
+  const { isChatSending, message, setMessage, sendChatMessage, sendChatError, setSendChatError } =
+    useSendMessage({
+      chatId,
+      onSuccess,
+      onError: () => console.log('error sending chat'),
+    });
 
-  const onStartRecording = useCallback(() => {
-    setIsRecording(true);
-  }, [setIsRecording]);
+  const onRecordingStateChange = useCallback((isRecording: boolean) => {
+    setIsRecording(isRecording);
+  }, []);
 
-  const onStopRecording = useCallback(
-    (data: CreateNoteOutput) => {
-      setIsRecording(false);
-      setFocusItems(data.focus_items);
+  const onAudioTranscribed = useCallback(
+    (transcription: string) => {
+      setMessage(transcription);
     },
-    [setIsRecording]
+    [setMessage]
   );
 
-  const onFocusItemPreviewDeleteClick = (focusItem: FocusOutputItem) => {
-    setFocusItems((prev) => prev.filter((item) => item.id !== focusItem.id));
-  };
-
-  const onFocusItemPreviewClick = async (focusItem: CreateNoteOutput['focus_items'][0]) => {
-    createFocusItems([focusItem]);
-  };
-
   const handleSubmit = () => {
-    generateFocusItems(content);
+    sendChatMessage();
+  };
+
+  const handleTranscribeError = () => {
+    setTranscribeError(true);
   };
 
   return (
     <View style={[styles.container]}>
-      {createError ? (
+      {sendChatError ? (
         <NoteFormError>
           <Text variant="body" color="white">
-            There was an issue saving your focus items.
+            There was an issue sending your message to Sherpa.
           </Text>
-          <Pressable onPress={() => setCreateError(false)}>
+          <Pressable onPress={() => setSendChatError(false)}>
             <MindsherpaIcon
               name="circle-x"
               size={26}
@@ -92,12 +63,12 @@ export const NoteForm = (props: NoteFormProps) => {
           </Pressable>
         </NoteFormError>
       ) : null}
-      {generateError ? (
+      {transcribeError ? (
         <NoteFormError>
           <Text variant="body" color="white">
-            There was an issued generating focus items from your input.
+            There was an issue transcribing your input.
           </Text>
-          <Pressable onPress={() => setGenerateError(false)}>
+          <Pressable onPress={() => setTranscribeError(false)}>
             <MindsherpaIcon
               name="circle-x"
               size={26}
@@ -107,33 +78,28 @@ export const NoteForm = (props: NoteFormProps) => {
           </Pressable>
         </NoteFormError>
       ) : null}
-      {focusItems.map((item) => (
-        <FocusItemPreview
-          key={item.id}
-          disabled={isPending}
-          focusItem={item}
-          onDeleteClick={onFocusItemPreviewDeleteClick}
-          onCreateClick={onFocusItemPreviewClick}
-        />
-      ))}
       {!isRecording ? (
         <View style={[styles.inputContainer]}>
           <AutoGrowingInput
-            editable={!isRecording && !isPending}
+            editable={!isRecording && !isChatSending}
             placeholder="Drop a note..."
-            value={content}
-            onChangeText={setContent}
+            value={message}
+            onChangeText={setMessage}
           />
         </View>
       ) : null}
       <View style={[styles.actionButtons]}>
         <View style={[styles.mediaButtons]}>
           <UploadFileButton />
-          <AudioRecorder onStartRecording={onStartRecording} onStopRecording={onStopRecording} />
+          <AudioTranscriber
+            onError={handleTranscribeError}
+            onRecordingStateChange={onRecordingStateChange}
+            onAudioTranscribed={onAudioTranscribed}
+          />
         </View>
         <FormSubmitButton
           isRecording={isRecording}
-          isLoading={isPending}
+          isLoading={isChatSending}
           onSubmitButtonClick={handleSubmit}
         />
       </View>

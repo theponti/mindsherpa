@@ -5,7 +5,7 @@ import { FlatList, ListRenderItem, Pressable, StyleSheet, View } from 'react-nat
 
 import { Text } from '~/theme';
 import { borderStyle, listStyles } from '~/theme/styles';
-import { FocusQuery } from '~/utils/services/Focus.query.generated';
+import type { FocusQuery } from '~/utils/services/Focus.query.generated';
 import { Card } from '../ui/card';
 import { CATEGORIES } from '../focus/focus-category';
 
