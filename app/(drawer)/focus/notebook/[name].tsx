@@ -44,7 +44,7 @@ export default function Notebook() {
       return (
         <FocusListItem
           icon={<FocusItemIcon item={item} />}
-          label={item.text}
+          item={item}
           onDelete={() => onItemDelete(item.id)}
           showBorder={index < notebookItems.length - 1}
           headerRight={<CategoryBadge category={item.category} />}

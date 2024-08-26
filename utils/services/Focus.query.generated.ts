@@ -9,7 +9,7 @@ export type FocusQueryVariables = Types.Exact<{
 }>;
 
 
-export type FocusQuery = { readonly __typename?: 'Query', readonly focus: { readonly __typename?: 'FocusOutput', readonly items: ReadonlyArray<{ readonly __typename?: 'FocusOutputItem', readonly id: number, readonly type: string, readonly taskSize: string, readonly text: string, readonly category: string, readonly priority: number, readonly sentiment: string, readonly dueDate: any | null }> } };
+export type FocusQuery = { readonly __typename?: 'Query', readonly focus: { readonly __typename?: 'FocusOutput', readonly items: ReadonlyArray<{ readonly __typename?: 'FocusOutputItem', readonly id: number, readonly type: string, readonly taskSize: string, readonly text: string, readonly category: string, readonly priority: number, readonly sentiment: string, readonly state: Types.FocusState, readonly dueDate: any | null, readonly profileId: string, readonly createdAt: string, readonly updatedAt: string }> } };
 
 
 export const FocusDocument = gql`
@@ -23,7 +23,11 @@ export const FocusDocument = gql`
       category
       priority
       sentiment
+      state
       dueDate
+      profileId
+      createdAt
+      updatedAt
     }
   }
 }

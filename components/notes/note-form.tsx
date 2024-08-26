@@ -26,7 +26,11 @@ export const NoteForm = (props: NoteFormProps) => {
   const { mutateAsync: createFocusItems, isPending: isCreating } = useFocusItemsCreate({
     onSuccess: (data) => {
       onSubmit(data);
-      setFocusItems((prev) => prev.filter((item) => data.find((f) => f.id === item.id)));
+      setCreateError(false);
+      const newFocusItems = focusItems.filter(
+        (item) => !data.some((newItem) => newItem.text === item.text)
+      );
+      setFocusItems(newFocusItems);
     },
     onError: () => {
       setCreateError(true);
@@ -76,7 +80,7 @@ export const NoteForm = (props: NoteFormProps) => {
   };
 
   return (
-    <View style={[styles.container]}>
+    <View style={[styles.container, { paddingTop: focusItems.length > 0 ? 16 : 0 }]}>
       {createError ? (
         <NoteFormError>
           <Text variant="body" color="white">

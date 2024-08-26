@@ -37,6 +37,7 @@ export const useSendMessage = ({
       }
 
       setMessage('');
+      setSendChatError(false);
       onSuccess(response.data.sendChatMessage);
     } catch (error) {
       log('Error sending chat message:', error);

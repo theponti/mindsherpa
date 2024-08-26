@@ -10,16 +10,14 @@ export const FocusListItem = ({
   icon,
   item,
   headerRight,
-  label,
   onDelete,
   showBorder,
   style,
   ...props
 }: PressableProps & {
   icon?: ReactNode;
-  item?: FocusOutputItem;
+  item: FocusOutputItem;
   headerRight: ReactNode;
-  label: string;
   onDelete: () => void;
   showBorder?: boolean;
   style?: ViewStyle[];
@@ -38,7 +36,7 @@ export const FocusListItem = ({
           <View style={[styles.textContainer]}>
             <View>{icon}</View>
             <Text variant="body" style={[listStyles.text]}>
-              {label}
+              {item.text}
             </Text>
           </View>
         </Pressable>

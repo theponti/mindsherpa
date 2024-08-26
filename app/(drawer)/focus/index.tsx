@@ -15,6 +15,7 @@ import { type FocusQuery, useFocusQuery } from '~/utils/services/Focus.query.gen
 import { useDeleteFocusItemMutation } from '~/utils/services/notes/DeleteFocusItem.mutation.generated';
 import { theme } from '~/theme';
 import MindsherpaIcon from '~/components/ui/icon';
+import { FocusOutputItem } from '~/utils/schema/graphcache';
 
 const baseFocusItems = {
   tasks: [],
@@ -76,15 +77,17 @@ export const FocusView = () => {
     });
   }, []);
 
-  const onFormSubmit = useCallback(() => {
-    getFocus();
-  }, [getFocus]);
+  const onFormSubmit = useCallback(
+    (data: FocusOutputItem[]) => {
+      setFocusItemsFromResponse([...focusItems.notebooks, ...data]);
+    },
+    [focusItems, setFocusItemsFromResponse]
+  );
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     getFocus();
-    setFocusItemsFromResponse([]);
-  }, [getFocus, setFocusItemsFromResponse]);
+  }, [getFocus]);
 
   // 🗑️ Delete items
   const [isDeleting, setIsDeleting] = useState(false);

@@ -64,16 +64,6 @@ export const TaskListItem = ({
     },
   });
 
-  const onSwipeableOpen = (direction: 'left' | 'right', swipeable) => {
-    opacity.value = 0.4;
-
-    // if (direction === 'left') {
-    //   completeItem.mutate();
-    // } else {
-    //   onDelete();
-    // }
-  };
-
   const onRadioButtonPress = () => {
     opacity.value = 0.4;
     completeItem.mutate();
@@ -95,35 +85,26 @@ export const TaskListItem = ({
   return (
     <ContextMenu.Root>
       <ContextMenu.Trigger action="longPress">
-        <ReanimatedSwipeable
-          // leftThreshold={100}
-          // rightThreshold={100}
-          overshootLeft={false}
-          overshootRight={false}
-          onSwipeableOpen={onSwipeableOpen}
-          renderLeftActions={LeftAction}
-          renderRightActions={RightAction}>
-          <Reanimated.View style={[styles.container, opacityStyle]}>
-            <Pressable
-              style={[styles.iconWrap]}
-              onPress={onRadioButtonPress}
-              disabled={completeItem.isPending}>
-              {completeItem.isPending ? (
-                <ActivityIndicator size={20} color={theme.colors.black} />
-              ) : (
-                <FontAwesome
-                  name="circle-o"
-                  size={20}
-                  color={theme.colors.quaternary}
-                  style={[styles.icon]}
-                />
-              )}
-            </Pressable>
-            <AnimatedText variant="body" style={[listStyles.text, styles.text, textStyle]}>
-              {label}
-            </AnimatedText>
-          </Reanimated.View>
-        </ReanimatedSwipeable>
+        <Reanimated.View style={[styles.container, opacityStyle]}>
+          <Pressable
+            style={[styles.iconWrap]}
+            onPress={onRadioButtonPress}
+            disabled={completeItem.isPending}>
+            {completeItem.isPending ? (
+              <ActivityIndicator size={20} color={theme.colors.black} />
+            ) : (
+              <FontAwesome
+                name="circle-o"
+                size={20}
+                color={theme.colors.quaternary}
+                style={[styles.icon]}
+              />
+            )}
+          </Pressable>
+          <AnimatedText variant="body" style={[listStyles.text, styles.text, textStyle]}>
+            {label}
+          </AnimatedText>
+        </Reanimated.View>
       </ContextMenu.Trigger>
       <ContextMenu.Content
         alignOffset={10}
@@ -208,7 +189,8 @@ function RightAction(prog: SharedValue<number>, drag: SharedValue<number>) {
     // console.log('[R] showRightProgress:', prog.value);
     // console.log('[R] appliedTranslation:', drag.value);
     return {
-      transform: [{ translateX: drag.value + 90 }],
+      transform: [{ translateX: drag.value + 80 }],
+      ...(drag.value > 100 ? { width: 100 + drag.value } : {}),
     };
   });
 
