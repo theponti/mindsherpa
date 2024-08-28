@@ -5,16 +5,16 @@ import gql from 'graphql-tag';
 import * as Urql from 'urql';
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type CreateChatMessageMutationVariables = Types.Exact<{
-  chatId: Types.Scalars['String']['input'];
+  chatId: Types.Scalars['UUID']['input'];
   message: Types.Scalars['String']['input'];
 }>;
 
 
-export type CreateChatMessageMutation = { readonly __typename?: 'Mutation', readonly sendChatMessage: ReadonlyArray<{ readonly __typename?: 'MessageOutput', readonly id: string, readonly message: string, readonly role: Types.MessageRole, readonly chatId: string, readonly profileId: string, readonly createdAt: string }> };
+export type CreateChatMessageMutation = { readonly __typename?: 'Mutation', readonly sendChatMessage: ReadonlyArray<{ readonly __typename?: 'MessageOutput', readonly id: string, readonly message: string, readonly role: string, readonly chatId: string, readonly profileId: string, readonly createdAt: string }> };
 
 
 export const CreateChatMessageDocument = gql`
-    mutation CreateChatMessage($chatId: String!, $message: String!) {
+    mutation CreateChatMessage($chatId: UUID!, $message: String!) {
   sendChatMessage(chatId: $chatId, message: $message) {
     id
     message

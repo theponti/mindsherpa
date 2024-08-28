@@ -1,30 +1,30 @@
 import { Redirect } from 'expo-router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { View } from 'react-native';
-import { SafeAreaView } from 'react-native';
 
 import { LoadingFull } from '~/components/LoadingFull';
-import { ScreenContent } from '~/components/ScreenContent';
 import { Chat } from '~/components/chat/chat';
 import { ViewHeader } from '~/components/view-header';
 import { Text } from '~/theme';
 import { useAppContext } from '~/utils/app-provider';
-import { useChatsQuery } from '~/utils/services/chat/Chats.query.generated';
+import type { ChatOutput } from '~/utils/schema/graphcache';
+import { useActiveChat } from '~/utils/services/use-chat-messages';
 
 export default function Sherpa() {
   const { session, isLoadingAuth } = useAppContext();
-  const [getChatResponse, getChats] = useChatsQuery({
-    pause: true,
-    requestPolicy: 'network-only',
-  });
+  const [activeChat, setActiveChat] = useState<ChatOutput | null>(null);
+  const { isPending: isLoadingActiveChat, refetch: getActiveChat } = useActiveChat();
 
   useEffect(() => {
-    if (session) {
-      getChats();
-    }
-  }, [session, getChats]);
+    async function initialLoad() {
+      const resposnse = await getActiveChat();
 
-  const activeChat = getChatResponse.data?.chats[0];
+      if (resposnse.data) {
+        setActiveChat(resposnse.data);
+      }
+    }
+    initialLoad();
+  }, [getActiveChat]);
 
   if (!isLoadingAuth && !session) {
     return <Redirect href="/(auth)" />;
@@ -33,12 +33,12 @@ export default function Sherpa() {
   return (
     <View style={{ flex: 1 }}>
       <ViewHeader />
-      {getChatResponse.fetching ? (
+      {isLoadingActiveChat ? (
         <LoadingFull>
           <Text variant="title">Loading your chat...</Text>
         </LoadingFull>
       ) : null}
-      {activeChat ? <Chat chatId={activeChat.id} /> : null}
+      {activeChat ? <Chat chatId={activeChat.id} onChatEnd={getActiveChat} /> : null}
     </View>
   );
 }

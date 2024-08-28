@@ -10,15 +10,32 @@ import {
 } from 'react-native';
 
 import { Text } from '~/theme';
-import { useChatMessages } from '~/utils/services/use-chat-messages';
+import { useChatMessages, useEndChat } from '~/utils/services/use-chat-messages';
 import type { MessageOutput } from '~/utils/schema/graphcache';
 import { FeedbackBlock } from '../feedback-block';
 import { ChatForm } from './chat-form';
 import ChatLoading from './chat-loading';
 import { renderMessage } from './chat-message';
 
-export const Chat = ({ chatId }: { chatId: string }) => {
-  const { addMessages, loading: isMessagesLoading, messages } = useChatMessages({ chatId });
+export type ChatProps = {
+  chatId: string;
+  onChatEnd: () => void;
+};
+export const Chat = (props: ChatProps) => {
+  const { chatId, onChatEnd } = props;
+  const {
+    addMessages,
+    isPending: isMessagesLoading,
+    messages,
+    setMessages,
+  } = useChatMessages({ chatId });
+  const { mutate: endChat, isPending: isEndingChat } = useEndChat({
+    chatId,
+    onSuccess: () => {
+      setMessages([]);
+      onChatEnd();
+    },
+  });
   const flatListRef = useRef<FlatList>(null);
 
   const scrollToBottom = useCallback(() => {
@@ -27,11 +44,11 @@ export const Chat = ({ chatId }: { chatId: string }) => {
     }
   }, []);
 
-  useEffect(() => {
-    setTimeout(() => {
-      scrollToBottom();
-    }, 500);
-  }, [messages, scrollToBottom]);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     scrollToBottom();
+  //   }, 500);
+  // }, [scrollToBottom]);
 
   return (
     <KeyboardAvoidingView
@@ -53,7 +70,7 @@ export const Chat = ({ chatId }: { chatId: string }) => {
             keyboardShouldPersistTaps="handled"
             renderItem={renderMessage}
             onContentSizeChange={scrollToBottom}
-            onLayout={scrollToBottom}
+            // onLayout={scrollToBottom}
             onStartShouldSetResponder={() => true}
           />
         )}
@@ -68,6 +85,8 @@ export const Chat = ({ chatId }: { chatId: string }) => {
 
         <ChatForm
           chatId={chatId}
+          isEndingChat={isEndingChat}
+          onEndChat={endChat}
           onSuccess={(messages: readonly MessageOutput[]) => addMessages(messages)}
         />
       </View>

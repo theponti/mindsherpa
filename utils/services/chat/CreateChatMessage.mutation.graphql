@@ -1,4 +1,4 @@
-mutation CreateChatMessage($chatId: String!, $message: String!) {
+mutation CreateChatMessage($chatId: UUID!, $message: String!) {
   sendChatMessage(chatId: $chatId, message: $message) {
     id
     message

@@ -35,8 +35,8 @@ export type ChatMessagesResponse = {
 
 export type ChatOutput = {
   readonly __typename?: 'ChatOutput';
-  readonly createdAt: Scalars['String']['output'];
-  readonly id: Scalars['String']['output'];
+  readonly createdAt: Scalars['DateTime']['output'];
+  readonly id: Scalars['UUID']['output'];
   readonly title: Scalars['String']['output'];
 };
 
@@ -100,18 +100,13 @@ export type GetProfileOutput = {
 
 export type MessageOutput = {
   readonly __typename?: 'MessageOutput';
-  readonly chatId: Scalars['String']['output'];
-  readonly createdAt: Scalars['String']['output'];
-  readonly id: Scalars['String']['output'];
+  readonly chatId: Scalars['UUID']['output'];
+  readonly createdAt: Scalars['DateTime']['output'];
+  readonly id: Scalars['UUID']['output'];
   readonly message: Scalars['String']['output'];
-  readonly profileId: Scalars['String']['output'];
-  readonly role: MessageRole;
+  readonly profileId: Scalars['UUID']['output'];
+  readonly role: Scalars['String']['output'];
 };
-
-export enum MessageRole {
-  Assistant = 'ASSISTANT',
-  User = 'USER'
-}
 
 export type Mutation = {
   readonly __typename?: 'Mutation';
@@ -140,7 +135,7 @@ export type MutationSaveAppleUserArgs = {
 
 
 export type MutationSendChatMessageArgs = {
-  chatId: Scalars['String']['input'];
+  chatId: Scalars['UUID']['input'];
   message: Scalars['String']['input'];
 };
 
@@ -235,8 +230,8 @@ export type GraphCacheResolvers = {
     messages?: GraphCacheResolver<WithTypename<ChatMessagesResponse>, Record<string, never>, Array<WithTypename<MessageOutput> | string>>
   },
   ChatOutput?: {
-    createdAt?: GraphCacheResolver<WithTypename<ChatOutput>, Record<string, never>, Scalars['String'] | string>,
-    id?: GraphCacheResolver<WithTypename<ChatOutput>, Record<string, never>, Scalars['String'] | string>,
+    createdAt?: GraphCacheResolver<WithTypename<ChatOutput>, Record<string, never>, Scalars['DateTime'] | string>,
+    id?: GraphCacheResolver<WithTypename<ChatOutput>, Record<string, never>, Scalars['UUID'] | string>,
     title?: GraphCacheResolver<WithTypename<ChatOutput>, Record<string, never>, Scalars['String'] | string>
   },
   CreateUserPayload?: {
@@ -269,12 +264,12 @@ export type GraphCacheResolvers = {
     userId?: GraphCacheResolver<WithTypename<GetProfileOutput>, Record<string, never>, Scalars['String'] | string>
   },
   MessageOutput?: {
-    chatId?: GraphCacheResolver<WithTypename<MessageOutput>, Record<string, never>, Scalars['String'] | string>,
-    createdAt?: GraphCacheResolver<WithTypename<MessageOutput>, Record<string, never>, Scalars['String'] | string>,
-    id?: GraphCacheResolver<WithTypename<MessageOutput>, Record<string, never>, Scalars['String'] | string>,
+    chatId?: GraphCacheResolver<WithTypename<MessageOutput>, Record<string, never>, Scalars['UUID'] | string>,
+    createdAt?: GraphCacheResolver<WithTypename<MessageOutput>, Record<string, never>, Scalars['DateTime'] | string>,
+    id?: GraphCacheResolver<WithTypename<MessageOutput>, Record<string, never>, Scalars['UUID'] | string>,
     message?: GraphCacheResolver<WithTypename<MessageOutput>, Record<string, never>, Scalars['String'] | string>,
-    profileId?: GraphCacheResolver<WithTypename<MessageOutput>, Record<string, never>, Scalars['String'] | string>,
-    role?: GraphCacheResolver<WithTypename<MessageOutput>, Record<string, never>, MessageRole | string>
+    profileId?: GraphCacheResolver<WithTypename<MessageOutput>, Record<string, never>, Scalars['UUID'] | string>,
+    role?: GraphCacheResolver<WithTypename<MessageOutput>, Record<string, never>, Scalars['String'] | string>
   },
   NoteOutput?: {
     content?: GraphCacheResolver<WithTypename<NoteOutput>, Record<string, never>, Scalars['String'] | string>,

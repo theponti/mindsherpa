@@ -32,8 +32,8 @@ export type ChatMessagesResponse = {
 
 export type ChatOutput = {
   readonly __typename?: 'ChatOutput';
-  readonly createdAt: Scalars['String']['output'];
-  readonly id: Scalars['String']['output'];
+  readonly createdAt: Scalars['DateTime']['output'];
+  readonly id: Scalars['UUID']['output'];
   readonly title: Scalars['String']['output'];
 };
 
@@ -97,18 +97,13 @@ export type GetProfileOutput = {
 
 export type MessageOutput = {
   readonly __typename?: 'MessageOutput';
-  readonly chatId: Scalars['String']['output'];
-  readonly createdAt: Scalars['String']['output'];
-  readonly id: Scalars['String']['output'];
+  readonly chatId: Scalars['UUID']['output'];
+  readonly createdAt: Scalars['DateTime']['output'];
+  readonly id: Scalars['UUID']['output'];
   readonly message: Scalars['String']['output'];
-  readonly profileId: Scalars['String']['output'];
-  readonly role: MessageRole;
+  readonly profileId: Scalars['UUID']['output'];
+  readonly role: Scalars['String']['output'];
 };
-
-export enum MessageRole {
-  Assistant = 'ASSISTANT',
-  User = 'USER'
-}
 
 export type Mutation = {
   readonly __typename?: 'Mutation';
@@ -137,7 +132,7 @@ export type MutationSaveAppleUserArgs = {
 
 
 export type MutationSendChatMessageArgs = {
-  chatId: Scalars['String']['input'];
+  chatId: Scalars['UUID']['input'];
   message: Scalars['String']['input'];
 };
 

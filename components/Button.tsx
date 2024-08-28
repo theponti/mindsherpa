@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { TouchableOpacity, TouchableOpacityProps } from 'react-native';
+import { TouchableOpacity, type TouchableOpacityProps } from 'react-native';
 import { Text, makeStyles } from 'theme';
 
 type ButtonProps = {

@@ -1,12 +1,12 @@
+import { type MutationOptions, useMutation, useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 
+import { useAppContext } from '~/utils/app-provider/AppProvider';
 import { log } from '../logger';
+import type { ChatOutput, MessageOutput } from '../schema/graphcache';
+import { request } from '../query-client';
 import { useChatMessagesQuery } from './chat/ChatMessages.query.generated';
-import {
-  type CreateChatMessageMutation,
-  useCreateChatMessageMutation,
-} from './chat/CreateChatMessage.mutation.generated';
-import type { MessageOutput } from '../schema/graphcache';
+import { useCreateChatMessageMutation } from './chat/CreateChatMessage.mutation.generated';
 
 export const useSendMessage = ({
   chatId,
@@ -60,31 +60,77 @@ export const useSendMessage = ({
 };
 
 export const useChatMessages = ({ chatId }: { chatId: string }) => {
+  const { session } = useAppContext();
   const [messages, setMessages] = useState<MessageOutput[]>([]);
-  const [messagesResponse, getMessages] = useChatMessagesQuery({
-    variables: { chatId },
-    pause: true,
-    requestPolicy: 'network-only',
+  const { refetch, isError, isPending } = useQuery<MessageOutput[]>({
+    queryKey: ['chatMessages', chatId],
+    queryFn: async () => {
+      const { data } = await request<MessageOutput[]>({
+        method: 'GET',
+        url: `/chat/${chatId}`,
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      });
+
+      setMessages(data);
+      return data;
+    },
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 
   const addMessages = (newMessages: readonly MessageOutput[]) => {
     setMessages((prevMessages) => [...prevMessages, ...newMessages]);
   };
 
-  useEffect(() => {
-    getMessages();
-  }, [getMessages]);
-
-  useEffect(() => {
-    if (messagesResponse.data?.chatMessages.messages) {
-      setMessages([...messagesResponse.data.chatMessages.messages]);
-    }
-  }, [messagesResponse.data]);
-
   return {
     addMessages,
-    loading: messagesResponse.fetching,
+    isPending,
+    isError,
     messages,
-    messagesError: messagesResponse.error,
+    refetch,
+    setMessages,
   };
+};
+
+export const useEndChat = ({
+  chatId,
+  ...props
+}: { chatId: string } & MutationOptions<ChatOutput>) => {
+  const { session } = useAppContext();
+  return useMutation<ChatOutput>({
+    mutationKey: ['endChat', chatId],
+    mutationFn: async () => {
+      const response = await request<ChatOutput>({
+        method: 'POST',
+        url: '/chat/end',
+        data: JSON.stringify({ chat_id: chatId }),
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      });
+
+      return response.data;
+    },
+    ...props,
+  });
+};
+
+export const useActiveChat = () => {
+  const { session } = useAppContext();
+  return useQuery<ChatOutput>({
+    queryKey: ['activeChat'],
+    queryFn: async () => {
+      const { data } = await request<ChatOutput>({
+        method: 'GET',
+        url: '/chat/active',
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      });
+
+      return data;
+    },
+  });
 };

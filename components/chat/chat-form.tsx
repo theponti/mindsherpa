@@ -1,11 +1,13 @@
 import { type PropsWithChildren, useCallback, useState } from 'react';
 import { StyleSheet, View, type ViewProps } from 'react-native';
 import { Pressable } from 'react-native';
+
 import { Text, theme } from '~/theme';
 import type { FocusOutputItem, MessageOutput } from '~/utils/schema/graphcache';
+import { useEndChat, useSendMessage } from '~/utils/services/use-chat-messages';
+
 import { FeedbackBlock } from '../feedback-block';
-import { type CreateNoteOutput, useFocusItemsTextGenerate } from '../media/use-audio-upload';
-import { useSendMessage } from '~/utils/services/use-chat-messages';
+import type { CreateNoteOutput } from '../media/use-audio-upload';
 import AutoGrowingInput from '../text-input-autogrow';
 import { UploadFileButton } from '../upload-file-button';
 import MindsherpaIcon from '../ui/icon';
@@ -14,10 +16,12 @@ import AudioTranscriber from './audio-transcriber';
 
 type ChatFormProps = {
   chatId: string;
+  isEndingChat: boolean;
+  onEndChat: () => void;
   onSuccess: (messages: readonly MessageOutput[]) => void;
 };
 export const ChatForm = (props: ChatFormProps) => {
-  const { chatId, onSuccess } = props;
+  const { chatId, isEndingChat, onSuccess } = props;
   const [isRecording, setIsRecording] = useState(false);
   const [transcribeError, setTranscribeError] = useState<boolean>(false);
   const { isChatSending, message, setMessage, sendChatMessage, sendChatError, setSendChatError } =
@@ -97,11 +101,31 @@ export const ChatForm = (props: ChatFormProps) => {
             onAudioTranscribed={onAudioTranscribed}
           />
         </View>
-        <FormSubmitButton
-          isRecording={isRecording}
-          isLoading={isChatSending}
-          onSubmitButtonClick={handleSubmit}
-        />
+        <View style={[{ flexDirection: 'row', columnGap: 12 }]}>
+          {!isRecording ? (
+            <Pressable
+              onPress={props.onEndChat}
+              style={{
+                backgroundColor: theme.colors.white,
+                borderWidth: 1,
+                borderColor: theme.colors.gray,
+                borderRadius: 90,
+                paddingHorizontal: 12,
+                paddingVertical: 12,
+              }}>
+              {isEndingChat ? (
+                <MindsherpaIcon name="spinner" size={20} color={theme.colors.grayDark} />
+              ) : (
+                <MindsherpaIcon name="broom-wide" size={20} color={theme.colors.grayDark} />
+              )}
+            </Pressable>
+          ) : null}
+          <FormSubmitButton
+            isRecording={isRecording}
+            isLoading={isChatSending}
+            onSubmitButtonClick={handleSubmit}
+          />
+        </View>
       </View>
     </View>
   );
