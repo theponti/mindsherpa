@@ -1,30 +1,26 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native'
+import Markdown from 'react-native-markdown-display'
+import { theme } from '~/theme'
+import { borderStyle } from '~/theme/styles'
+import type { MessageOutput } from '~/utils/schema/graphcache'
 
-import { Text, theme } from '~/theme';
-import { borderStyle } from '~/theme/styles';
-import type { Message } from '~/utils/schema/graphcache';
-
-const ChatMessage = ({ message }: { message: Message }) => {
-  const { role, message: content } = message;
-  const formattedRole = role.toLowerCase();
-  const chatBubbleStyle = formattedRole === 'user' ? styles.userMessage : styles.botMessage;
+const ChatMessage = ({ message }: { message: MessageOutput }) => {
+  const { role, message: content } = message
+  const formattedRole = role.toLowerCase()
+  const chatBubbleStyle = formattedRole === 'user' ? styles.userMessage : styles.botMessage
 
   return (
     <View style={[borderStyle.border, chatBubbleStyle, {}]}>
-      <Text
-        variant="body"
-        style={formattedRole === 'user' ? styles.userMessageText : styles.botMessageText}>
-        {content}
-      </Text>
+      <Markdown>{content}</Markdown>
     </View>
-  );
-};
+  )
+}
 
-export const renderMessage = ({ item }: { item: Message }) => {
-  return <ChatMessage message={item} />;
-};
+export const renderMessage = ({ item }: { item: MessageOutput }) => {
+  return <ChatMessage message={item} />
+}
 
-const borderRadiusSize = 8;
+const borderRadiusSize = 8
 
 const baseMessageStyle = {
   padding: 14,
@@ -32,7 +28,7 @@ const baseMessageStyle = {
   borderTopRightRadius: borderRadiusSize,
   borderBottomLeftRadius: borderRadiusSize,
   borderTopLeftRadius: borderRadiusSize,
-};
+}
 const styles = StyleSheet.create({
   botMessage: {
     ...baseMessageStyle,
@@ -58,4 +54,4 @@ const styles = StyleSheet.create({
   botMessageText: {
     color: theme.colors.black,
   },
-});
+})

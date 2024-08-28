@@ -22,19 +22,7 @@ export type AuthPayload = {
   readonly __typename?: 'AuthPayload';
   readonly accessToken: Scalars['String']['output'];
   readonly refreshToken: Scalars['String']['output'];
-  readonly userId: Scalars['String']['output'];
-};
-
-export type ChatMessagesResponse = {
-  readonly __typename?: 'ChatMessagesResponse';
-  readonly messages: ReadonlyArray<MessageOutput>;
-};
-
-export type ChatOutput = {
-  readonly __typename?: 'ChatOutput';
-  readonly createdAt: Scalars['DateTime']['output'];
-  readonly id: Scalars['UUID']['output'];
-  readonly title: Scalars['String']['output'];
+  readonly userId: Scalars['UUID']['output'];
 };
 
 export type CreateUserInput = {
@@ -157,17 +145,10 @@ export type Profile = {
 
 export type Query = {
   readonly __typename?: 'Query';
-  readonly chatMessages: ChatMessagesResponse;
-  readonly chats: ReadonlyArray<ChatOutput>;
   readonly currentUser: User;
   readonly focus: FocusOutput;
   readonly notes: ReadonlyArray<NoteOutput>;
   readonly profile: GetProfileOutput;
-};
-
-
-export type QueryChatMessagesArgs = {
-  chatId: Scalars['String']['input'];
 };
 
 

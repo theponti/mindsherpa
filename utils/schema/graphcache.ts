@@ -25,19 +25,7 @@ export type AuthPayload = {
   readonly __typename?: 'AuthPayload';
   readonly accessToken: Scalars['String']['output'];
   readonly refreshToken: Scalars['String']['output'];
-  readonly userId: Scalars['String']['output'];
-};
-
-export type ChatMessagesResponse = {
-  readonly __typename?: 'ChatMessagesResponse';
-  readonly messages: ReadonlyArray<MessageOutput>;
-};
-
-export type ChatOutput = {
-  readonly __typename?: 'ChatOutput';
-  readonly createdAt: Scalars['DateTime']['output'];
-  readonly id: Scalars['UUID']['output'];
-  readonly title: Scalars['String']['output'];
+  readonly userId: Scalars['UUID']['output'];
 };
 
 export type CreateUserInput = {
@@ -160,17 +148,10 @@ export type Profile = {
 
 export type Query = {
   readonly __typename?: 'Query';
-  readonly chatMessages: ChatMessagesResponse;
-  readonly chats: ReadonlyArray<ChatOutput>;
   readonly currentUser: User;
   readonly focus: FocusOutput;
   readonly notes: ReadonlyArray<NoteOutput>;
   readonly profile: GetProfileOutput;
-};
-
-
-export type QueryChatMessagesArgs = {
-  chatId: Scalars['String']['input'];
 };
 
 
@@ -198,8 +179,6 @@ export type WithTypename<T extends { __typename?: any }> = Partial<T> & { __type
 
 export type GraphCacheKeysConfig = {
   AuthPayload?: (data: WithTypename<AuthPayload>) => null | string,
-  ChatMessagesResponse?: (data: WithTypename<ChatMessagesResponse>) => null | string,
-  ChatOutput?: (data: WithTypename<ChatOutput>) => null | string,
   CreateUserPayload?: (data: WithTypename<CreateUserPayload>) => null | string,
   DeleteFocusItemOutput?: (data: WithTypename<DeleteFocusItemOutput>) => null | string,
   FocusOutput?: (data: WithTypename<FocusOutput>) => null | string,
@@ -214,8 +193,6 @@ export type GraphCacheKeysConfig = {
 
 export type GraphCacheResolvers = {
   Query?: {
-    chatMessages?: GraphCacheResolver<WithTypename<Query>, QueryChatMessagesArgs, WithTypename<ChatMessagesResponse> | string>,
-    chats?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<ChatOutput> | string>>,
     currentUser?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, WithTypename<User> | string>,
     focus?: GraphCacheResolver<WithTypename<Query>, QueryFocusArgs, WithTypename<FocusOutput> | string>,
     notes?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<NoteOutput> | string>>,
@@ -224,15 +201,7 @@ export type GraphCacheResolvers = {
   AuthPayload?: {
     accessToken?: GraphCacheResolver<WithTypename<AuthPayload>, Record<string, never>, Scalars['String'] | string>,
     refreshToken?: GraphCacheResolver<WithTypename<AuthPayload>, Record<string, never>, Scalars['String'] | string>,
-    userId?: GraphCacheResolver<WithTypename<AuthPayload>, Record<string, never>, Scalars['String'] | string>
-  },
-  ChatMessagesResponse?: {
-    messages?: GraphCacheResolver<WithTypename<ChatMessagesResponse>, Record<string, never>, Array<WithTypename<MessageOutput> | string>>
-  },
-  ChatOutput?: {
-    createdAt?: GraphCacheResolver<WithTypename<ChatOutput>, Record<string, never>, Scalars['DateTime'] | string>,
-    id?: GraphCacheResolver<WithTypename<ChatOutput>, Record<string, never>, Scalars['UUID'] | string>,
-    title?: GraphCacheResolver<WithTypename<ChatOutput>, Record<string, never>, Scalars['String'] | string>
+    userId?: GraphCacheResolver<WithTypename<AuthPayload>, Record<string, never>, Scalars['UUID'] | string>
   },
   CreateUserPayload?: {
     profile?: GraphCacheResolver<WithTypename<CreateUserPayload>, Record<string, never>, WithTypename<Profile> | string>,
@@ -300,8 +269,6 @@ export type GraphCacheOptimisticUpdaters = {
 
 export type GraphCacheUpdaters = {
   Query?: {
-    chatMessages?: GraphCacheUpdateResolver<{ chatMessages: WithTypename<ChatMessagesResponse> }, QueryChatMessagesArgs>,
-    chats?: GraphCacheUpdateResolver<{ chats: Array<WithTypename<ChatOutput>> }, Record<string, never>>,
     currentUser?: GraphCacheUpdateResolver<{ currentUser: WithTypename<User> }, Record<string, never>>,
     focus?: GraphCacheUpdateResolver<{ focus: WithTypename<FocusOutput> }, QueryFocusArgs>,
     notes?: GraphCacheUpdateResolver<{ notes: Array<WithTypename<NoteOutput>> }, Record<string, never>>,
@@ -319,14 +286,6 @@ export type GraphCacheUpdaters = {
     accessToken?: GraphCacheUpdateResolver<Maybe<WithTypename<AuthPayload>>, Record<string, never>>,
     refreshToken?: GraphCacheUpdateResolver<Maybe<WithTypename<AuthPayload>>, Record<string, never>>,
     userId?: GraphCacheUpdateResolver<Maybe<WithTypename<AuthPayload>>, Record<string, never>>
-  },
-  ChatMessagesResponse?: {
-    messages?: GraphCacheUpdateResolver<Maybe<WithTypename<ChatMessagesResponse>>, Record<string, never>>
-  },
-  ChatOutput?: {
-    createdAt?: GraphCacheUpdateResolver<Maybe<WithTypename<ChatOutput>>, Record<string, never>>,
-    id?: GraphCacheUpdateResolver<Maybe<WithTypename<ChatOutput>>, Record<string, never>>,
-    title?: GraphCacheUpdateResolver<Maybe<WithTypename<ChatOutput>>, Record<string, never>>
   },
   CreateUserPayload?: {
     profile?: GraphCacheUpdateResolver<Maybe<WithTypename<CreateUserPayload>>, Record<string, never>>,
