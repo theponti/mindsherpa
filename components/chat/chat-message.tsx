@@ -11,7 +11,13 @@ const ChatMessage = ({ message }: { message: MessageOutput }) => {
 
   return (
     <View style={[borderStyle.border, chatBubbleStyle, {}]}>
-      <Markdown>{content}</Markdown>
+      <Markdown
+        style={{
+          body: formattedRole === 'user' ? styles.userMessageText : styles.botMessageText,
+        }}
+      >
+        {content}
+      </Markdown>
     </View>
   )
 }
@@ -49,9 +55,13 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 10,
   },
   userMessageText: {
+    fontSize: 18,
+    lineHeight: 24,
     color: theme.colors.black,
   },
   botMessageText: {
+    fontSize: 18,
+    lineHeight: 24,
     color: theme.colors.black,
   },
 })
