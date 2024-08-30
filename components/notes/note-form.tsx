@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingBottom: 4,
+    paddingVertical: 4,
   },
   mediaButtons: {
     flex: 1,
