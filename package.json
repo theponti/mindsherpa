@@ -6,10 +6,14 @@
     "start": "expo start --dev-client",
     "ios": "expo run:ios",
     "android": "expo run:android",
-    "build:simulator": "eas build --profile simulator",
-    "build:development": "eas build --profile development",
-    "build:preview": "eas build --profile preview",
-    "build:prod": "eas build --profile production",
+    "build:simulator:ios": "eas build --profile simulator --platform ios --non-interactive",
+    "build:simulator:android": "eas build --profile simulator --platform android --non-interactive",
+    "build:development:ios": "eas build --profile development --platform ios --non-interactive",
+    "build:development:android": "eas build --profile development --platform android --non-interactive",
+    "build:preview:android": "eas build --profile preview --platform android --non-interactive",
+    "build:preview:ios": "eas build --profile preview --platform ios --non-interactive",
+    "build:production:ios": "eas build --profile production --platform ios --non-interactive",
+    "build:production:android": "eas build --profile production --platform android --non-interactive",
     "prebuild": "expo prebuild",
     "web": "expo start --web",
     "codegen": "graphql-codegen --config codegen.ts"
@@ -31,7 +35,6 @@
     "@sentry/react-native": "~5.22.0",
     "@shopify/restyle": "^2.4.2",
     "@supabase/supabase-js": "^2.44.3",
-    "@tamagui/babel-plugin": "^1.102.1",
     "@tanstack/react-query": "^5.51.23",
     "@urql/core": "^5.0.4",
     "@urql/exchange-auth": "^2.2.0",
@@ -79,6 +82,7 @@
     "react-native-url-polyfill": "^2.0.0",
     "react-native-web": "~0.19.10",
     "urql": "^4.1.0",
+    "uuid": "^10.0.0",
     "zeego": "^1.10.0"
   },
   "devDependencies": {
@@ -93,6 +97,7 @@
     "@parcel/watcher": "^2.4.1",
     "@types/d3-scale": "^4.0.8",
     "@types/react": "~18.2.45",
+    "@types/uuid": "^10.0.0",
     "prettier": "^3.2.5",
     "reactotron-react-native": "^5.1.7",
     "typescript": "~5.3.3"

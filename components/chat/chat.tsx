@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react'
 import {
   FlatList,
   Keyboard,
@@ -7,54 +7,58 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   View,
-} from 'react-native';
+} from 'react-native'
 
-import { Text } from '~/theme';
-import { useChatMessages, useEndChat } from '~/utils/services/use-chat-messages';
-import type { MessageOutput } from '~/utils/schema/graphcache';
-import { FeedbackBlock } from '../feedback-block';
-import { ChatForm } from './chat-form';
-import ChatLoading from './chat-loading';
-import { renderMessage } from './chat-message';
+import { Text } from '~/theme'
+import { useChatMessages, useEndChat } from '~/utils/services/use-chat-messages'
+import type { MessageOutput } from '~/utils/schema/graphcache'
+import { FeedbackBlock } from '../feedback-block'
+import { ChatForm } from './chat-form'
+import ChatLoading from './chat-loading'
+import { renderMessage } from './chat-message'
 
 export type ChatProps = {
-  chatId: string;
-  onChatEnd: () => void;
-};
+  chatId: string
+  onChatEnd: () => void
+}
 export const Chat = (props: ChatProps) => {
-  const { chatId, onChatEnd } = props;
+  const { chatId, onChatEnd } = props
   const {
     addMessages,
     isPending: isMessagesLoading,
     messages,
     setMessages,
-  } = useChatMessages({ chatId });
+  } = useChatMessages({ chatId })
   const { mutate: endChat, isPending: isEndingChat } = useEndChat({
     chatId,
     onSuccess: () => {
-      setMessages([]);
-      onChatEnd();
+      setMessages([])
+      onChatEnd()
     },
-  });
-  const flatListRef = useRef<FlatList>(null);
+  })
+  const flatListRef = useRef<FlatList>(null)
 
   const scrollToBottom = useCallback(() => {
-    if (flatListRef.current) {
-      flatListRef.current.scrollToEnd({ animated: true });
+    if (flatListRef.current && messages.length > 0) {
+      flatListRef.current.scrollToIndex({
+        index: messages.length > 2 ? messages.length - 1 : 1,
+        viewOffset: -100,
+      })
     }
-  }, []);
+  }, [messages])
 
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     scrollToBottom();
-  //   }, 500);
-  // }, [scrollToBottom]);
+  useEffect(() => {
+    setTimeout(() => {
+      scrollToBottom()
+    }, 500)
+  }, [scrollToBottom])
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
-      style={styles.container}>
+      style={styles.container}
+    >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={StyleSheet.absoluteFillObject} />
       </TouchableWithoutFeedback>
@@ -70,7 +74,11 @@ export const Chat = (props: ChatProps) => {
             keyboardShouldPersistTaps="handled"
             renderItem={renderMessage}
             onContentSizeChange={scrollToBottom}
-            // onLayout={scrollToBottom}
+            getItemLayout={(_, index) => ({
+              length: messages.length,
+              offset: 100 * index,
+              index,
+            })}
             onStartShouldSetResponder={() => true}
           />
         )}
@@ -91,8 +99,8 @@ export const Chat = (props: ChatProps) => {
         />
       </View>
     </KeyboardAvoidingView>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -104,4 +112,4 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     rowGap: 12,
   },
-});
+})

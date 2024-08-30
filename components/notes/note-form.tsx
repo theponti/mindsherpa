@@ -1,41 +1,42 @@
-import { type PropsWithChildren, useCallback, useState } from 'react';
-import { StyleSheet, View, type ViewProps } from 'react-native';
-import { Pressable } from 'react-native';
-import { Text, theme } from '~/theme';
-import type { FocusOutputItem } from '~/utils/schema/graphcache';
-import { FeedbackBlock } from '../feedback-block';
-import { useFocusItemsCreate } from '../focus/use-focus-item-create';
-import AudioRecorder from '../media/audio-recorder';
-import { type CreateNoteOutput, useFocusItemsTextGenerate } from '../media/use-audio-upload';
-import AutoGrowingInput from '../text-input-autogrow';
-import { UploadFileButton } from '../upload-file-button';
-import MindsherpaIcon from '../ui/icon';
-import { FormSubmitButton } from './note-form-submit-button';
+import { type PropsWithChildren, useCallback, useState } from 'react'
+import { StyleSheet, View, type ViewProps } from 'react-native'
+import { Pressable } from 'react-native'
+
+import { Text, theme } from '~/theme'
+import type { FocusOutputItem } from '~/utils/schema/graphcache'
+import { FeedbackBlock } from '../feedback-block'
+import { useFocusItemsCreate } from '../focus/use-focus-item-create'
+import AudioRecorder from '../media/audio-recorder'
+import { type CreateNoteOutput, useFocusItemsTextGenerate } from '../media/use-audio-upload'
+import AutoGrowingInput from '../text-input-autogrow'
+import { UploadFileButton } from '../upload-file-button'
+import MindsherpaIcon from '../ui/icon'
+import { FormSubmitButton } from './note-form-submit-button'
 
 type NoteFormProps = {
-  isRecording: boolean;
-  setIsRecording: (isRecording: boolean) => void;
-  onSubmit: (data: FocusOutputItem[]) => void;
-};
+  isRecording: boolean
+  setIsRecording: (isRecording: boolean) => void
+  onSubmit: (data: FocusOutputItem[]) => void
+}
 export const NoteForm = (props: NoteFormProps) => {
-  const { isRecording, setIsRecording, onSubmit } = props;
-  const [content, setContent] = useState('');
-  const [createError, setCreateError] = useState<boolean>(false);
-  const [generateError, setGenerateError] = useState<boolean>(false);
-  const [focusItems, setFocusItems] = useState<CreateNoteOutput['focus_items']>([]);
+  const { isRecording, setIsRecording, onSubmit } = props
+  const [content, setContent] = useState('')
+  const [createError, setCreateError] = useState<boolean>(false)
+  const [generateError, setGenerateError] = useState<boolean>(false)
+  const [focusItems, setFocusItems] = useState<CreateNoteOutput['focus_items']>([])
   const { mutateAsync: createFocusItems, isPending: isCreating } = useFocusItemsCreate({
     onSuccess: (data) => {
-      onSubmit(data);
-      setCreateError(false);
+      onSubmit(data)
+      setCreateError(false)
       const newFocusItems = focusItems.filter(
         (item) => !data.some((newItem) => newItem.text === item.text)
-      );
-      setFocusItems(newFocusItems);
+      )
+      setFocusItems(newFocusItems)
     },
     onError: () => {
-      setCreateError(true);
+      setCreateError(true)
     },
-  });
+  })
   const { mutate: generateFocusItems, isPending: isGenerating } = useFocusItemsTextGenerate({
     onSuccess: (data) => {
       if (data) {
@@ -43,41 +44,41 @@ export const NoteForm = (props: NoteFormProps) => {
           ...prev,
           ...data.focus_items.map((item) => ({
             ...item,
-            id: Math.random(),
+            id: Math.floor(Math.random() * 1000),
           })),
-        ]);
+        ])
       }
-      setContent('');
+      setContent('')
     },
     onError: (error) => {
-      setGenerateError(true);
+      setGenerateError(true)
     },
-  });
-  const isPending = isCreating || isGenerating;
+  })
+  const isPending = isCreating || isGenerating
 
   const onStartRecording = useCallback(() => {
-    setIsRecording(true);
-  }, [setIsRecording]);
+    setIsRecording(true)
+  }, [setIsRecording])
 
   const onStopRecording = useCallback(
     (data: CreateNoteOutput) => {
-      setIsRecording(false);
-      setFocusItems(data.focus_items);
+      setIsRecording(false)
+      setFocusItems(data.focus_items)
     },
     [setIsRecording]
-  );
+  )
 
   const onFocusItemPreviewDeleteClick = (focusItem: FocusOutputItem) => {
-    setFocusItems((prev) => prev.filter((item) => item.id !== focusItem.id));
-  };
+    setFocusItems((prev) => prev.filter((item) => item.id !== focusItem.id))
+  }
 
   const onFocusItemPreviewClick = async (focusItem: CreateNoteOutput['focus_items'][0]) => {
-    createFocusItems([focusItem]);
-  };
+    createFocusItems([focusItem])
+  }
 
   const handleSubmit = () => {
-    generateFocusItems(content);
-  };
+    generateFocusItems(content)
+  }
 
   return (
     <View style={[styles.container, { paddingTop: focusItems.length > 0 ? 16 : 0 }]}>
@@ -142,8 +143,8 @@ export const NoteForm = (props: NoteFormProps) => {
         />
       </View>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -174,14 +175,14 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     marginRight: 16,
   },
-});
+})
 
 type FocusItemPreviewProps = {
-  disabled: boolean;
-  focusItem: FocusOutputItem;
-  onDeleteClick: (focusItem: FocusOutputItem) => void;
-  onCreateClick: (focusItem: CreateNoteOutput['focus_items'][0]) => void;
-} & ViewProps;
+  disabled: boolean
+  focusItem: FocusOutputItem
+  onDeleteClick: (focusItem: FocusOutputItem) => void
+  onCreateClick: (focusItem: CreateNoteOutput['focus_items'][0]) => void
+} & ViewProps
 const FocusItemPreview = ({
   disabled,
   focusItem,
@@ -190,12 +191,12 @@ const FocusItemPreview = ({
   ...props
 }: FocusItemPreviewProps) => {
   const onDeleteIconPress = () => {
-    onDeleteClick(focusItem);
-  };
+    onDeleteClick(focusItem)
+  }
 
   const onIconPress = () => {
-    onCreateClick(focusItem);
-  };
+    onCreateClick(focusItem)
+  }
 
   return (
     <View style={[focusItemStyles.item]} {...props}>
@@ -212,8 +213,8 @@ const FocusItemPreview = ({
         <MindsherpaIcon name="list-tree" size={24} color={theme.colors.black} />
       </Pressable>
     </View>
-  );
-};
+  )
+}
 
 const focusItemStyles = StyleSheet.create({
   item: {
@@ -230,15 +231,15 @@ const focusItemStyles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: 20,
   },
-});
+})
 
 const NoteFormError = ({ children }: PropsWithChildren) => {
   return (
     <FeedbackBlock>
       <View style={[noteFormErrorStyles.container]}>{children}</View>
     </FeedbackBlock>
-  );
-};
+  )
+}
 
 const noteFormErrorStyles = StyleSheet.create({
   container: {
@@ -251,4 +252,4 @@ const noteFormErrorStyles = StyleSheet.create({
   closeButton: {
     paddingHorizontal: 8,
   },
-});
+})
