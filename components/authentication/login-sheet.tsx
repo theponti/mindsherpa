@@ -44,18 +44,20 @@ const LoginSheet = ({ isLoadingAuth }: { isLoadingAuth?: boolean }) => {
         throw new Error(error.message)
       }
 
-      if (user?.email) {
-        const { data, error } = await createUser({
-          email: user.email,
-        })
+      if (!user?.email) {
+        throw new Error('No email provided')
+      }
 
-        if (data) {
-          router.push('/(drawer)')
-        }
+      const createUserResponse = await createUser({
+        email: user.email,
+      })
 
-        if (error) {
-          throw new Error(error.message)
-        }
+      if (createUserResponse.data) {
+        router.push('/(drawer)')
+      }
+
+      if (createUserResponse.error) {
+        throw new Error(createUserResponse.error.message)
       }
     } catch (error: unknown) {
       if (error instanceof Error && error.name === 'ERR_REQUEST_CANCELED') {
