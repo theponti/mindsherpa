@@ -8,6 +8,7 @@ import { Text } from '~/theme'
 import { useCreateUserMutation } from '~/utils/services/profiles/CreateUser.mutation.generated'
 import { supabase } from '~/utils/supabase'
 import { useAppContext } from '~/utils/app-provider'
+import { captureException } from '@sentry/react-native'
 
 const LoginSheet = ({ isLoadingAuth }: { isLoadingAuth?: boolean }) => {
   const { session } = useAppContext()
@@ -40,11 +41,10 @@ const LoginSheet = ({ isLoadingAuth }: { isLoadingAuth?: boolean }) => {
       })
 
       if (error) {
-        Alert.alert('Apple Sign-In failed', 'Could not sign in')
-        return null
+        throw new Error(error.message)
       }
 
-      if (user && user.email) {
+      if (user?.email) {
         const { data, error } = await createUser({
           email: user.email,
         })
@@ -52,35 +52,35 @@ const LoginSheet = ({ isLoadingAuth }: { isLoadingAuth?: boolean }) => {
         if (data) {
           router.push('/(drawer)')
         }
+
+        if (error) {
+          throw new Error(error.message)
+        }
       }
-    } catch (error: any) {
-      handleSignInError(error)
-    }
-  }
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name === 'ERR_REQUEST_CANCELED') {
+        // User canceled, no need for an alert
+        return
+      }
 
-  const handleSignInError = (error: any) => {
-    console.error(error)
-    if (error.code === 'ERR_REQUEST_CANCELED') {
-      // User canceled, no need for an alert
-      return
-    }
+      captureException(error)
 
-    Alert.alert('Sign-In Issue', 'There was a problem signing in. Please try again.', [
-      { text: 'OK' },
-      {
-        text: 'Try Again',
-        onPress: () => {
-          onSignInClick()
+      Alert.alert('Sign-In Issue', 'There was a problem signing in. Please try again.', [
+        { text: 'OK' },
+        {
+          text: 'Try Again',
+          onPress: () => {
+            onSignInClick()
+          },
         },
-      },
-    ])
+      ])
+    }
   }
-
   useEffect(() => {
     if (session) {
       router.push('/(drawer)/focus')
     }
-  }, [session])
+  }, [router, session])
 
   if (isLoadingAuth) {
     return (

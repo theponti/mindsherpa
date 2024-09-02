@@ -1,7 +1,10 @@
 {
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true,
-  "editor.defaultFormatter": "biomejs.biome",
+  "[typescript]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
   "cSpell.ignoreWords": [
     "graphcache",
     "openai",
@@ -20,9 +23,6 @@
     "pressable",
     "autogrow"
   ],
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
   "cSpell.words": [
     "biomejs",
     "codegen",
@@ -36,7 +36,12 @@
     "tanstack",
     "zeego"
   ],
-  "[typescript]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  }
+  "deno.enablePaths": [
+    "supabase/functions"
+  ],
+  "deno.lint": true,
+  "deno.unstable": true,
+  "editor.defaultFormatter": "biomejs.biome",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

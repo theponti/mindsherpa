@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "main": "expo-router/entry",
   "scripts": {
-    "start": "expo start --dev-client",
-    "ios": "expo run:ios",
-    "android": "expo run:android",
+    "start": "ENV=development expo start --dev-client",
+    "ios": "ENV=development expo run:ios",
+    "android": "ENV=development expo run:android",
     "build:simulator:android": "ENV=development eas build --profile simulator --platform android",
     "build:simulator:ios": "ENV=development eas build --profile simulator --platform ios",
     "build:development:android": "ENV=development eas build --profile development --platform android",
