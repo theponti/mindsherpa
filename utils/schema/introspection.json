@@ -53,6 +53,17 @@
         "name": "CreateUserPayload",
         "fields": [
           {
+            "name": "accessToken",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
             "name": "profile",
             "type": {
               "kind": "NON_NULL",
@@ -60,6 +71,17 @@
                 "kind": "OBJECT",
                 "name": "Profile",
                 "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "refreshToken",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
               }
             },
             "args": []

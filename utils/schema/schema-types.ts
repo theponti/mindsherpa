@@ -31,7 +31,9 @@ export type CreateUserInput = {
 
 export type CreateUserPayload = {
   readonly __typename?: 'CreateUserPayload';
+  readonly accessToken: Scalars['String']['output'];
   readonly profile: Profile;
+  readonly refreshToken: Scalars['String']['output'];
   readonly user: User;
 };
 

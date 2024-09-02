@@ -101,7 +101,6 @@ const LoginSheet = ({ isLoadingAuth }: { isLoadingAuth?: boolean }) => {
 
   return (
     <View style={[styles.container]}>
-      <Animated.Text style={[styles.text, textStyle]}>Log in</Animated.Text>
       <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
         <AppleAuthentication.AppleAuthenticationButton
           buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
@@ -120,8 +119,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     width: '100%',
-    backgroundColor: 'white',
-    height: 250,
+    paddingVertical: 75,
     borderRadius: 40,
   },
   text: {

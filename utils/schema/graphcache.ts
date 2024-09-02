@@ -34,7 +34,9 @@ export type CreateUserInput = {
 
 export type CreateUserPayload = {
   readonly __typename?: 'CreateUserPayload';
+  readonly accessToken: Scalars['String']['output'];
   readonly profile: Profile;
+  readonly refreshToken: Scalars['String']['output'];
   readonly user: User;
 };
 
@@ -204,7 +206,9 @@ export type GraphCacheResolvers = {
     userId?: GraphCacheResolver<WithTypename<AuthPayload>, Record<string, never>, Scalars['UUID'] | string>
   },
   CreateUserPayload?: {
+    accessToken?: GraphCacheResolver<WithTypename<CreateUserPayload>, Record<string, never>, Scalars['String'] | string>,
     profile?: GraphCacheResolver<WithTypename<CreateUserPayload>, Record<string, never>, WithTypename<Profile> | string>,
+    refreshToken?: GraphCacheResolver<WithTypename<CreateUserPayload>, Record<string, never>, Scalars['String'] | string>,
     user?: GraphCacheResolver<WithTypename<CreateUserPayload>, Record<string, never>, WithTypename<User> | string>
   },
   DeleteFocusItemOutput?: {
@@ -288,7 +292,9 @@ export type GraphCacheUpdaters = {
     userId?: GraphCacheUpdateResolver<Maybe<WithTypename<AuthPayload>>, Record<string, never>>
   },
   CreateUserPayload?: {
+    accessToken?: GraphCacheUpdateResolver<Maybe<WithTypename<CreateUserPayload>>, Record<string, never>>,
     profile?: GraphCacheUpdateResolver<Maybe<WithTypename<CreateUserPayload>>, Record<string, never>>,
+    refreshToken?: GraphCacheUpdateResolver<Maybe<WithTypename<CreateUserPayload>>, Record<string, never>>,
     user?: GraphCacheUpdateResolver<Maybe<WithTypename<CreateUserPayload>>, Record<string, never>>
   },
   DeleteFocusItemOutput?: {

@@ -20,7 +20,6 @@ function Auth() {
           source={require('~/assets/icon.png')}
           style={{ height: 250, maxHeight: 250, maxWidth: 250, width: 250 }}
         />
-        <Text variant="bodyLarge">Mindsherpa</Text>
       </View>
       <LoginSheet />
     </Box>

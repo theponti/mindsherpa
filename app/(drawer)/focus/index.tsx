@@ -220,7 +220,7 @@ const FocusHeader = React.memo(() => {
     <View style={headerStyles.header}>
       <View>
         <Text fontSize={30} fontWeight={600}>
-          Today
+          Today Meow
         </Text>
         <Text variant="body" color="gray">
           {todaysDate}
