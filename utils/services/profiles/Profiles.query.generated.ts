@@ -7,15 +7,16 @@ export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type ProfileQueryVariables = Types.Exact<{ [key: string]: never; }>;
 
 
-export type ProfileQuery = { readonly __typename?: 'Query', readonly profile: { readonly __typename?: 'GetProfileOutput', readonly id: string, readonly fullName: string, readonly userId: string } };
+export type ProfileQuery = { readonly __typename?: 'Query', readonly profile: { readonly __typename?: 'GetProfileOutput', readonly email: string, readonly name: string | null, readonly userId: string, readonly profileId: string } };
 
 
 export const ProfileDocument = gql`
     query Profile {
   profile {
-    id
-    fullName
+    email
+    name
     userId
+    profileId
   }
 }
     `;

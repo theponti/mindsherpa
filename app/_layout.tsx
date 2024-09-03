@@ -1,30 +1,21 @@
-import * as Sentry from '@sentry/react-native'
 import { useFonts } from '@expo-google-fonts/inter'
+import * as Sentry from '@sentry/react-native'
 import { ThemeProvider } from '@shopify/restyle'
-import { SplashScreen, Stack, Redirect, router } from 'expo-router'
-import React, { useEffect, useCallback } from 'react'
+import { Slot, SplashScreen, Stack, useRouter, useSegments } from 'expo-router'
+import React, { useCallback, useEffect } from 'react'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
-
-import LoginSheet from '~/components/authentication/login-sheet'
-import { LoadingFull } from '~/components/LoadingFull'
-import { Text } from '~/theme'
 import { theme } from '~/theme'
 import { AppProvider, useAppContext } from '~/utils/app-provider'
+import '~/utils/observability'
 import { useProfileQuery } from '~/utils/services/profiles/Profiles.query.generated'
 import { supabase } from '~/utils/supabase'
-
-// Register the Sentry SDK to capture performance data.
-import '~/utils/observability'
-import { Image, View } from 'react-native'
-
-export const unstable_settings = {
-  initialRouteName: '(drawer)',
-}
 
 SplashScreen.preventAutoHideAsync()
 
 function InnerRootLayout() {
-  const { session, setProfile, setProfileLoading, isLoadingAuth } = useAppContext()
+  const router = useRouter()
+  const segments = useSegments()
+  const { isLoadingAuth, profile, session, setProfile, setProfileLoading } = useAppContext()
   const [profileQueryResponse, fetchProfile] = useProfileQuery({ pause: true })
 
   const [loaded, error] = useFonts({
@@ -34,7 +25,13 @@ function InnerRootLayout() {
 
   const handleProfileFetch = useCallback(() => {
     if (session && !profileQueryResponse.data) {
-      fetchProfile()
+      fetchProfile({
+        fetchOptions: {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        },
+      })
     }
   }, [session, profileQueryResponse.data, fetchProfile])
 
@@ -43,19 +40,25 @@ function InnerRootLayout() {
   }, [handleProfileFetch])
 
   useEffect(() => {
-    if (!isLoadingAuth && !session) {
-      router.replace('/(auth)')
-    }
-
     if (profileQueryResponse.data?.profile) {
-      setProfile(profileQueryResponse.data.profile)
+      const { profile } = profileQueryResponse.data
+      setProfile({
+        user_id: profile.userId,
+        profile_id: profile.profileId,
+        email: profile.email,
+        name: profile.name,
+      })
       setProfileLoading(false)
     }
 
     if (profileQueryResponse.error) {
-      supabase.auth.signOut()
+      Sentry.captureException(profileQueryResponse.error)
+
+      if (session) {
+        supabase.auth.signOut()
+      }
     }
-  }, [profileQueryResponse, isLoadingAuth, session, setProfile, setProfileLoading])
+  }, [profileQueryResponse, session, setProfile, setProfileLoading])
 
   useEffect(() => {
     if (loaded || error) {
@@ -63,18 +66,20 @@ function InnerRootLayout() {
     }
   }, [loaded, error])
 
-  if (isLoadingAuth) {
-    return (
-      <LoadingFull>
-        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-          <Image source={require('~/assets/icon.png')} style={{ maxHeight: 150, maxWidth: 150 }} />
-        </View>
-      </LoadingFull>
-    )
-  }
+  useEffect(() => {
+    if (!isLoadingAuth) return
 
-  if (profileQueryResponse.error) {
-    return <Text>Error loading profile. Please try again.</Text>
+    const inAuthGroup = segments[0] === '(drawer)'
+
+    if (session && profile && !inAuthGroup) {
+      router.replace('/(drawer)/focus')
+    } else if (!session) {
+      router.replace('/(auth)')
+    }
+  }, [isLoadingAuth, profile, segments, router, session])
+
+  if (isLoadingAuth) {
+    return <Slot />
   }
 
   return (

@@ -1,18 +1,17 @@
-import { type PropsWithChildren, useCallback, useState } from 'react'
-import { StyleSheet, View, type ViewProps } from 'react-native'
-import { Pressable } from 'react-native'
+import { useCallback, useState, type PropsWithChildren } from 'react'
+import { Pressable, StyleSheet, View, type ViewProps } from 'react-native'
 
+import { captureException } from '@sentry/react-native'
 import { Text, theme } from '~/theme'
 import type { FocusOutputItem } from '~/utils/schema/graphcache'
 import { FeedbackBlock } from '../feedback-block'
 import { useFocusItemsCreate } from '../focus/use-focus-item-create'
 import AudioRecorder from '../media/audio-recorder'
-import { type CreateNoteOutput, useFocusItemsTextGenerate } from '../media/use-audio-upload'
+import { useFocusItemsTextGenerate, type CreateNoteOutput } from '../media/use-audio-upload'
 import AutoGrowingInput from '../text-input-autogrow'
-import { UploadFileButton } from '../upload-file-button'
 import MindsherpaIcon from '../ui/icon'
+import { UploadFileButton } from '../upload-file-button'
 import { FormSubmitButton } from './note-form-submit-button'
-import { captureException } from '@sentry/react-native'
 
 type NoteFormProps = {
   isRecording: boolean
@@ -51,6 +50,7 @@ export const NoteForm = (props: NoteFormProps) => {
         ])
       }
       setContent('')
+      setGenerateError(false)
     },
     onError: (error) => {
       captureException(error)

@@ -50,59 +50,6 @@
       },
       {
         "kind": "OBJECT",
-        "name": "CreateUserPayload",
-        "fields": [
-          {
-            "name": "accessToken",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
-            },
-            "args": []
-          },
-          {
-            "name": "profile",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Profile",
-                "ofType": null
-              }
-            },
-            "args": []
-          },
-          {
-            "name": "refreshToken",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
-            },
-            "args": []
-          },
-          {
-            "name": "user",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "User",
-                "ofType": null
-              }
-            },
-            "args": []
-          }
-        ],
-        "interfaces": []
-      },
-      {
-        "kind": "OBJECT",
         "name": "DeleteFocusItemOutput",
         "fields": [
           {
@@ -285,7 +232,7 @@
         "name": "GetProfileOutput",
         "fields": [
           {
-            "name": "fullName",
+            "name": "email",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
@@ -296,7 +243,15 @@
             "args": []
           },
           {
-            "name": "id",
+            "name": "name",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Any"
+            },
+            "args": []
+          },
+          {
+            "name": "profileId",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
@@ -397,29 +352,6 @@
         "kind": "OBJECT",
         "name": "Mutation",
         "fields": [
-          {
-            "name": "createUser",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "CreateUserPayload",
-                "ofType": null
-              }
-            },
-            "args": [
-              {
-                "name": "input",
-                "type": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "Any"
-                  }
-                }
-              }
-            ]
-          },
           {
             "name": "deleteFocusItem",
             "type": {
@@ -583,7 +515,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "Profile",
+        "name": "ProfileOutput",
         "fields": [
           {
             "name": "fullName",
@@ -622,18 +554,6 @@
         "kind": "OBJECT",
         "name": "Query",
         "fields": [
-          {
-            "name": "currentUser",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "User",
-                "ofType": null
-              }
-            },
-            "args": []
-          },
           {
             "name": "focus",
             "type": {
@@ -697,34 +617,8 @@
               "kind": "NON_NULL",
               "ofType": {
                 "kind": "OBJECT",
-                "name": "Profile",
+                "name": "ProfileOutput",
                 "ofType": null
-              }
-            },
-            "args": []
-          }
-        ],
-        "interfaces": []
-      },
-      {
-        "kind": "OBJECT",
-        "name": "User",
-        "fields": [
-          {
-            "name": "email",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
-            },
-            "args": []
-          },
-          {
-            "name": "id",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
               }
             },
             "args": []

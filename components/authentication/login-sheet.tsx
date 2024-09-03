@@ -1,34 +1,39 @@
+import { captureException } from '@sentry/react-native'
+import { useMutation } from '@tanstack/react-query'
+import type { AxiosError } from 'axios'
 import * as AppleAuthentication from 'expo-apple-authentication'
 import { useRouter } from 'expo-router'
-import { useEffect } from 'react'
-import { Alert, View, StyleSheet, ActivityIndicator } from 'react-native'
-import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
+import { useCallback } from 'react'
+import { Alert, StyleSheet, View } from 'react-native'
 
-import { Text } from '~/theme'
-import { supabase } from '~/utils/supabase'
 import { useAppContext } from '~/utils/app-provider'
-import { useMutation } from '@tanstack/react-query'
 import { request } from '~/utils/query-client'
-import { captureException } from '@sentry/react-native'
+import { supabase } from '~/utils/supabase'
+
+type CreateUserResponse = {
+  user_id: string
+  profile_id: string
+  email: string
+  name: string
+}
 
 const LoginSheet = ({ isLoadingAuth }: { isLoadingAuth?: boolean }) => {
-  const { session } = useAppContext()
   const router = useRouter()
-  const textStyle = useAnimatedStyle(() => ({
-    opacity: withTiming(1, { duration: 1000 }),
-  }))
-  const createUser = useMutation({
+  const { setProfile } = useAppContext()
+
+  const createUser = useMutation<CreateUserResponse, AxiosError, { email: string }>({
     mutationKey: ['createUser'],
     mutationFn: async ({ email }: { email: string }) => {
-      const { data } = await request({
+      const { data } = await request<CreateUserResponse>({
         method: 'POST',
         url: '/user/create',
         data: { email },
       })
 
-      return { data }
+      return data
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      setProfile(data)
       router.push('/(drawer)')
     },
     onError: (error) => {
@@ -37,7 +42,8 @@ const LoginSheet = ({ isLoadingAuth }: { isLoadingAuth?: boolean }) => {
       supabase.auth.signOut()
     },
   })
-  const onSignInClick = async () => {
+
+  const onSignInClick = useCallback(async () => {
     try {
       const credential = await AppleAuthentication.signInAsync({
         requestedScopes: [
@@ -86,28 +92,7 @@ const LoginSheet = ({ isLoadingAuth }: { isLoadingAuth?: boolean }) => {
         },
       ])
     }
-  }
-
-  useEffect(() => {
-    if (session) {
-      router.push('/(drawer)/focus')
-    }
-  }, [router, session])
-
-  if (isLoadingAuth) {
-    return (
-      <View style={{ flex: 1, backgroundColor: 'black' }}>
-        <View style={[styles.container, { flex: 1, rowGap: 8, justifyContent: 'center' }]}>
-          <Animated.Text style={[styles.text, textStyle]}>
-            <Text>Loading your account</Text>
-          </Animated.Text>
-          <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-            <ActivityIndicator size="large" color="black" />
-          </View>
-        </View>
-      </View>
-    )
-  }
+  }, [createUser.mutate])
 
   return (
     <View style={[styles.container]}>

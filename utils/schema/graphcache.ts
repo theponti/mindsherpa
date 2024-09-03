@@ -28,18 +28,6 @@ export type AuthPayload = {
   readonly userId: Scalars['UUID']['output'];
 };
 
-export type CreateUserInput = {
-  readonly email: Scalars['String']['input'];
-};
-
-export type CreateUserPayload = {
-  readonly __typename?: 'CreateUserPayload';
-  readonly accessToken: Scalars['String']['output'];
-  readonly profile: Profile;
-  readonly refreshToken: Scalars['String']['output'];
-  readonly user: User;
-};
-
 export type DeleteFocusItemInput = {
   readonly id: Scalars['Int']['input'];
 };
@@ -83,9 +71,10 @@ export type GetFocusFilter = {
 
 export type GetProfileOutput = {
   readonly __typename?: 'GetProfileOutput';
-  readonly fullName: Scalars['String']['output'];
-  readonly id: Scalars['String']['output'];
-  readonly userId: Scalars['String']['output'];
+  readonly email: Scalars['String']['output'];
+  readonly name: Maybe<Scalars['String']['output']>;
+  readonly profileId: Scalars['UUID']['output'];
+  readonly userId: Scalars['UUID']['output'];
 };
 
 export type MessageOutput = {
@@ -100,16 +89,10 @@ export type MessageOutput = {
 
 export type Mutation = {
   readonly __typename?: 'Mutation';
-  readonly createUser: CreateUserPayload;
   readonly deleteFocusItem: DeleteFocusItemOutput;
   readonly saveAppleUser: AuthPayload;
   readonly sendChatMessage: ReadonlyArray<MessageOutput>;
   readonly updateProfile: UpdateProfilePayload;
-};
-
-
-export type MutationCreateUserArgs = {
-  input: CreateUserInput;
 };
 
 
@@ -141,8 +124,8 @@ export type NoteOutput = {
   readonly id: Scalars['String']['output'];
 };
 
-export type Profile = {
-  readonly __typename?: 'Profile';
+export type ProfileOutput = {
+  readonly __typename?: 'ProfileOutput';
   readonly fullName: Maybe<Scalars['String']['output']>;
   readonly id: Scalars['Int']['output'];
   readonly userId: Scalars['String']['output'];
@@ -150,7 +133,6 @@ export type Profile = {
 
 export type Query = {
   readonly __typename?: 'Query';
-  readonly currentUser: User;
   readonly focus: FocusOutput;
   readonly notes: ReadonlyArray<NoteOutput>;
   readonly profile: GetProfileOutput;
@@ -168,34 +150,25 @@ export type UpdateProfileInput = {
 
 export type UpdateProfilePayload = {
   readonly __typename?: 'UpdateProfilePayload';
-  readonly profile: Profile;
-};
-
-export type User = {
-  readonly __typename?: 'User';
-  readonly email: Maybe<Scalars['String']['output']>;
-  readonly id: Scalars['String']['output'];
+  readonly profile: ProfileOutput;
 };
 
 export type WithTypename<T extends { __typename?: any }> = Partial<T> & { __typename: NonNullable<T['__typename']> };
 
 export type GraphCacheKeysConfig = {
   AuthPayload?: (data: WithTypename<AuthPayload>) => null | string,
-  CreateUserPayload?: (data: WithTypename<CreateUserPayload>) => null | string,
   DeleteFocusItemOutput?: (data: WithTypename<DeleteFocusItemOutput>) => null | string,
   FocusOutput?: (data: WithTypename<FocusOutput>) => null | string,
   FocusOutputItem?: (data: WithTypename<FocusOutputItem>) => null | string,
   GetProfileOutput?: (data: WithTypename<GetProfileOutput>) => null | string,
   MessageOutput?: (data: WithTypename<MessageOutput>) => null | string,
   NoteOutput?: (data: WithTypename<NoteOutput>) => null | string,
-  Profile?: (data: WithTypename<Profile>) => null | string,
-  UpdateProfilePayload?: (data: WithTypename<UpdateProfilePayload>) => null | string,
-  User?: (data: WithTypename<User>) => null | string
+  ProfileOutput?: (data: WithTypename<ProfileOutput>) => null | string,
+  UpdateProfilePayload?: (data: WithTypename<UpdateProfilePayload>) => null | string
 }
 
 export type GraphCacheResolvers = {
   Query?: {
-    currentUser?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, WithTypename<User> | string>,
     focus?: GraphCacheResolver<WithTypename<Query>, QueryFocusArgs, WithTypename<FocusOutput> | string>,
     notes?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, Array<WithTypename<NoteOutput> | string>>,
     profile?: GraphCacheResolver<WithTypename<Query>, Record<string, never>, WithTypename<GetProfileOutput> | string>
@@ -204,12 +177,6 @@ export type GraphCacheResolvers = {
     accessToken?: GraphCacheResolver<WithTypename<AuthPayload>, Record<string, never>, Scalars['String'] | string>,
     refreshToken?: GraphCacheResolver<WithTypename<AuthPayload>, Record<string, never>, Scalars['String'] | string>,
     userId?: GraphCacheResolver<WithTypename<AuthPayload>, Record<string, never>, Scalars['UUID'] | string>
-  },
-  CreateUserPayload?: {
-    accessToken?: GraphCacheResolver<WithTypename<CreateUserPayload>, Record<string, never>, Scalars['String'] | string>,
-    profile?: GraphCacheResolver<WithTypename<CreateUserPayload>, Record<string, never>, WithTypename<Profile> | string>,
-    refreshToken?: GraphCacheResolver<WithTypename<CreateUserPayload>, Record<string, never>, Scalars['String'] | string>,
-    user?: GraphCacheResolver<WithTypename<CreateUserPayload>, Record<string, never>, WithTypename<User> | string>
   },
   DeleteFocusItemOutput?: {
     success?: GraphCacheResolver<WithTypename<DeleteFocusItemOutput>, Record<string, never>, Scalars['Boolean'] | string>
@@ -232,9 +199,10 @@ export type GraphCacheResolvers = {
     updatedAt?: GraphCacheResolver<WithTypename<FocusOutputItem>, Record<string, never>, Scalars['DateTime'] | string>
   },
   GetProfileOutput?: {
-    fullName?: GraphCacheResolver<WithTypename<GetProfileOutput>, Record<string, never>, Scalars['String'] | string>,
-    id?: GraphCacheResolver<WithTypename<GetProfileOutput>, Record<string, never>, Scalars['String'] | string>,
-    userId?: GraphCacheResolver<WithTypename<GetProfileOutput>, Record<string, never>, Scalars['String'] | string>
+    email?: GraphCacheResolver<WithTypename<GetProfileOutput>, Record<string, never>, Scalars['String'] | string>,
+    name?: GraphCacheResolver<WithTypename<GetProfileOutput>, Record<string, never>, Scalars['String'] | string>,
+    profileId?: GraphCacheResolver<WithTypename<GetProfileOutput>, Record<string, never>, Scalars['UUID'] | string>,
+    userId?: GraphCacheResolver<WithTypename<GetProfileOutput>, Record<string, never>, Scalars['UUID'] | string>
   },
   MessageOutput?: {
     chatId?: GraphCacheResolver<WithTypename<MessageOutput>, Record<string, never>, Scalars['UUID'] | string>,
@@ -249,22 +217,17 @@ export type GraphCacheResolvers = {
     createdAt?: GraphCacheResolver<WithTypename<NoteOutput>, Record<string, never>, Scalars['String'] | string>,
     id?: GraphCacheResolver<WithTypename<NoteOutput>, Record<string, never>, Scalars['String'] | string>
   },
-  Profile?: {
-    fullName?: GraphCacheResolver<WithTypename<Profile>, Record<string, never>, Scalars['String'] | string>,
-    id?: GraphCacheResolver<WithTypename<Profile>, Record<string, never>, Scalars['Int'] | string>,
-    userId?: GraphCacheResolver<WithTypename<Profile>, Record<string, never>, Scalars['String'] | string>
+  ProfileOutput?: {
+    fullName?: GraphCacheResolver<WithTypename<ProfileOutput>, Record<string, never>, Scalars['String'] | string>,
+    id?: GraphCacheResolver<WithTypename<ProfileOutput>, Record<string, never>, Scalars['Int'] | string>,
+    userId?: GraphCacheResolver<WithTypename<ProfileOutput>, Record<string, never>, Scalars['String'] | string>
   },
   UpdateProfilePayload?: {
-    profile?: GraphCacheResolver<WithTypename<UpdateProfilePayload>, Record<string, never>, WithTypename<Profile> | string>
-  },
-  User?: {
-    email?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>,
-    id?: GraphCacheResolver<WithTypename<User>, Record<string, never>, Scalars['String'] | string>
+    profile?: GraphCacheResolver<WithTypename<UpdateProfilePayload>, Record<string, never>, WithTypename<ProfileOutput> | string>
   }
 };
 
 export type GraphCacheOptimisticUpdaters = {
-  createUser?: GraphCacheOptimisticMutationResolver<MutationCreateUserArgs, WithTypename<CreateUserPayload>>,
   deleteFocusItem?: GraphCacheOptimisticMutationResolver<MutationDeleteFocusItemArgs, WithTypename<DeleteFocusItemOutput>>,
   saveAppleUser?: GraphCacheOptimisticMutationResolver<MutationSaveAppleUserArgs, WithTypename<AuthPayload>>,
   sendChatMessage?: GraphCacheOptimisticMutationResolver<MutationSendChatMessageArgs, Array<WithTypename<MessageOutput>>>,
@@ -273,13 +236,11 @@ export type GraphCacheOptimisticUpdaters = {
 
 export type GraphCacheUpdaters = {
   Query?: {
-    currentUser?: GraphCacheUpdateResolver<{ currentUser: WithTypename<User> }, Record<string, never>>,
     focus?: GraphCacheUpdateResolver<{ focus: WithTypename<FocusOutput> }, QueryFocusArgs>,
     notes?: GraphCacheUpdateResolver<{ notes: Array<WithTypename<NoteOutput>> }, Record<string, never>>,
     profile?: GraphCacheUpdateResolver<{ profile: WithTypename<GetProfileOutput> }, Record<string, never>>
   },
   Mutation?: {
-    createUser?: GraphCacheUpdateResolver<{ createUser: WithTypename<CreateUserPayload> }, MutationCreateUserArgs>,
     deleteFocusItem?: GraphCacheUpdateResolver<{ deleteFocusItem: WithTypename<DeleteFocusItemOutput> }, MutationDeleteFocusItemArgs>,
     saveAppleUser?: GraphCacheUpdateResolver<{ saveAppleUser: WithTypename<AuthPayload> }, MutationSaveAppleUserArgs>,
     sendChatMessage?: GraphCacheUpdateResolver<{ sendChatMessage: Array<WithTypename<MessageOutput>> }, MutationSendChatMessageArgs>,
@@ -290,12 +251,6 @@ export type GraphCacheUpdaters = {
     accessToken?: GraphCacheUpdateResolver<Maybe<WithTypename<AuthPayload>>, Record<string, never>>,
     refreshToken?: GraphCacheUpdateResolver<Maybe<WithTypename<AuthPayload>>, Record<string, never>>,
     userId?: GraphCacheUpdateResolver<Maybe<WithTypename<AuthPayload>>, Record<string, never>>
-  },
-  CreateUserPayload?: {
-    accessToken?: GraphCacheUpdateResolver<Maybe<WithTypename<CreateUserPayload>>, Record<string, never>>,
-    profile?: GraphCacheUpdateResolver<Maybe<WithTypename<CreateUserPayload>>, Record<string, never>>,
-    refreshToken?: GraphCacheUpdateResolver<Maybe<WithTypename<CreateUserPayload>>, Record<string, never>>,
-    user?: GraphCacheUpdateResolver<Maybe<WithTypename<CreateUserPayload>>, Record<string, never>>
   },
   DeleteFocusItemOutput?: {
     success?: GraphCacheUpdateResolver<Maybe<WithTypename<DeleteFocusItemOutput>>, Record<string, never>>
@@ -318,8 +273,9 @@ export type GraphCacheUpdaters = {
     updatedAt?: GraphCacheUpdateResolver<Maybe<WithTypename<FocusOutputItem>>, Record<string, never>>
   },
   GetProfileOutput?: {
-    fullName?: GraphCacheUpdateResolver<Maybe<WithTypename<GetProfileOutput>>, Record<string, never>>,
-    id?: GraphCacheUpdateResolver<Maybe<WithTypename<GetProfileOutput>>, Record<string, never>>,
+    email?: GraphCacheUpdateResolver<Maybe<WithTypename<GetProfileOutput>>, Record<string, never>>,
+    name?: GraphCacheUpdateResolver<Maybe<WithTypename<GetProfileOutput>>, Record<string, never>>,
+    profileId?: GraphCacheUpdateResolver<Maybe<WithTypename<GetProfileOutput>>, Record<string, never>>,
     userId?: GraphCacheUpdateResolver<Maybe<WithTypename<GetProfileOutput>>, Record<string, never>>
   },
   MessageOutput?: {
@@ -335,17 +291,13 @@ export type GraphCacheUpdaters = {
     createdAt?: GraphCacheUpdateResolver<Maybe<WithTypename<NoteOutput>>, Record<string, never>>,
     id?: GraphCacheUpdateResolver<Maybe<WithTypename<NoteOutput>>, Record<string, never>>
   },
-  Profile?: {
-    fullName?: GraphCacheUpdateResolver<Maybe<WithTypename<Profile>>, Record<string, never>>,
-    id?: GraphCacheUpdateResolver<Maybe<WithTypename<Profile>>, Record<string, never>>,
-    userId?: GraphCacheUpdateResolver<Maybe<WithTypename<Profile>>, Record<string, never>>
+  ProfileOutput?: {
+    fullName?: GraphCacheUpdateResolver<Maybe<WithTypename<ProfileOutput>>, Record<string, never>>,
+    id?: GraphCacheUpdateResolver<Maybe<WithTypename<ProfileOutput>>, Record<string, never>>,
+    userId?: GraphCacheUpdateResolver<Maybe<WithTypename<ProfileOutput>>, Record<string, never>>
   },
   UpdateProfilePayload?: {
     profile?: GraphCacheUpdateResolver<Maybe<WithTypename<UpdateProfilePayload>>, Record<string, never>>
-  },
-  User?: {
-    email?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>,
-    id?: GraphCacheUpdateResolver<Maybe<WithTypename<User>>, Record<string, never>>
   },
 };
 

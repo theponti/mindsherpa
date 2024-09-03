@@ -1,5 +1,3 @@
-import { Redirect } from 'expo-router'
-import { useEffect } from 'react'
 import { View } from 'react-native'
 
 import { Button } from '~/components/Button'
@@ -9,22 +7,14 @@ import { useAppContext } from '~/utils/app-provider'
 import { supabase } from '~/utils/supabase'
 
 function Account() {
-  const { session, profile } = useAppContext()
+  const { session } = useAppContext()
   const onLogoutPress = () => {
     supabase.auth.signOut()
   }
 
   if (!session) {
-    return <Redirect href="/(auth)" />
+    return null
   }
-
-  useEffect(() => {
-    if (session && !profile) {
-      supabase.auth.signOut()
-    }
-  }, [session, profile])
-
-  const { fullName } = profile || {}
 
   return (
     <View style={{ flex: 1, paddingHorizontal: 12, paddingVertical: 24, rowGap: 8 }}>

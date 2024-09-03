@@ -9,7 +9,7 @@ export type UpdateProfileMutationVariables = Types.Exact<{
 }>;
 
 
-export type UpdateProfileMutation = { readonly __typename?: 'Mutation', readonly updateProfile: { readonly __typename?: 'UpdateProfilePayload', readonly profile: { readonly __typename?: 'Profile', readonly id: number, readonly fullName: string | null, readonly userId: string } } };
+export type UpdateProfileMutation = { readonly __typename?: 'Mutation', readonly updateProfile: { readonly __typename?: 'UpdateProfilePayload', readonly profile: { readonly __typename?: 'ProfileOutput', readonly id: number, readonly fullName: string | null, readonly userId: string } } };
 
 
 export const UpdateProfileDocument = gql`

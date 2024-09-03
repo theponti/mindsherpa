@@ -1,7 +1,8 @@
 query Profile {
   profile {
-    id
-    fullName
+    email
+    name
     userId
+    profileId
   }
 }

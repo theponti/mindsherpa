@@ -1,29 +1,34 @@
 import type { Session } from '@supabase/supabase-js'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import React, {
-  type PropsWithChildren,
   createContext,
   useContext,
   useEffect,
-  useState,
-  useRef,
   useMemo,
+  useRef,
+  useState,
+  type PropsWithChildren,
 } from 'react'
-import { QueryClientProvider, QueryClient, useQuery } from '@tanstack/react-query'
 import { Client, Provider as UrqlProvider, fetchExchange } from 'urql'
 
+import { GRAPHQL_URI } from '../constants'
+import { log } from '../logger'
+import { supabase } from '../supabase'
 import { createAuthExchange } from './createAuthExchange'
 import { asyncStorage, graphcacheExchange } from './graphcacheExchange'
-import { log } from '../logger'
-import type { GetProfileOutput } from '../schema/schema-types'
-import { supabase } from '../supabase'
-import { GRAPHQL_URI } from '../constants'
-import { useProfileQuery } from '../services/profiles/Profiles.query.generated'
+
+type Profile = {
+  user_id: string
+  profile_id: string
+  email: string
+  name: string | null
+}
 
 type AppContextType = {
   isLoadingAuth: boolean
   session: Session | null
-  profile: GetProfileOutput | null
-  setProfile: (profile: GetProfileOutput | null) => void
+  profile: Profile | null
+  setProfile: (profile: Profile | null) => void
   setProfileLoading: (isLoading: boolean) => void
   urqlClient: Client
 }
@@ -54,7 +59,7 @@ export const getToken = async () => {
 export function AppProvider({ children }: PropsWithChildren) {
   const [isLoadingSession, setIsLoadingSession] = useState(true)
   const [session, setSession] = useState<Session | null>(null)
-  const [profile, setProfile] = useState<GetProfileOutput | null>(null)
+  const [profile, setProfile] = useState<AppContextType['profile'] | null>(null)
   const [profileLoading, setProfileLoading] = useState(true)
 
   const getTokenRef = useRef(getToken)

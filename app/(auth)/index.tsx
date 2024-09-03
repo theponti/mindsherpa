@@ -1,9 +1,9 @@
 import { Redirect } from 'expo-router'
 import React from 'react'
-import { View, Image } from 'react-native'
+import { Image, View } from 'react-native'
 
 import LoginSheet from '~/components/authentication/login-sheet'
-import { Box, Text } from '~/theme'
+import { Box } from '~/theme'
 import { useAppContext } from '~/utils/app-provider'
 
 function Auth() {

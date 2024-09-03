@@ -25,18 +25,6 @@ export type AuthPayload = {
   readonly userId: Scalars['UUID']['output'];
 };
 
-export type CreateUserInput = {
-  readonly email: Scalars['String']['input'];
-};
-
-export type CreateUserPayload = {
-  readonly __typename?: 'CreateUserPayload';
-  readonly accessToken: Scalars['String']['output'];
-  readonly profile: Profile;
-  readonly refreshToken: Scalars['String']['output'];
-  readonly user: User;
-};
-
 export type DeleteFocusItemInput = {
   readonly id: Scalars['Int']['input'];
 };
@@ -80,9 +68,10 @@ export type GetFocusFilter = {
 
 export type GetProfileOutput = {
   readonly __typename?: 'GetProfileOutput';
-  readonly fullName: Scalars['String']['output'];
-  readonly id: Scalars['String']['output'];
-  readonly userId: Scalars['String']['output'];
+  readonly email: Scalars['String']['output'];
+  readonly name: Maybe<Scalars['String']['output']>;
+  readonly profileId: Scalars['UUID']['output'];
+  readonly userId: Scalars['UUID']['output'];
 };
 
 export type MessageOutput = {
@@ -97,16 +86,10 @@ export type MessageOutput = {
 
 export type Mutation = {
   readonly __typename?: 'Mutation';
-  readonly createUser: CreateUserPayload;
   readonly deleteFocusItem: DeleteFocusItemOutput;
   readonly saveAppleUser: AuthPayload;
   readonly sendChatMessage: ReadonlyArray<MessageOutput>;
   readonly updateProfile: UpdateProfilePayload;
-};
-
-
-export type MutationCreateUserArgs = {
-  input: CreateUserInput;
 };
 
 
@@ -138,8 +121,8 @@ export type NoteOutput = {
   readonly id: Scalars['String']['output'];
 };
 
-export type Profile = {
-  readonly __typename?: 'Profile';
+export type ProfileOutput = {
+  readonly __typename?: 'ProfileOutput';
   readonly fullName: Maybe<Scalars['String']['output']>;
   readonly id: Scalars['Int']['output'];
   readonly userId: Scalars['String']['output'];
@@ -147,7 +130,6 @@ export type Profile = {
 
 export type Query = {
   readonly __typename?: 'Query';
-  readonly currentUser: User;
   readonly focus: FocusOutput;
   readonly notes: ReadonlyArray<NoteOutput>;
   readonly profile: GetProfileOutput;
@@ -165,11 +147,5 @@ export type UpdateProfileInput = {
 
 export type UpdateProfilePayload = {
   readonly __typename?: 'UpdateProfilePayload';
-  readonly profile: Profile;
-};
-
-export type User = {
-  readonly __typename?: 'User';
-  readonly email: Maybe<Scalars['String']['output']>;
-  readonly id: Scalars['String']['output'];
+  readonly profile: ProfileOutput;
 };
