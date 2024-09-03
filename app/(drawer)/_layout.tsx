@@ -1,4 +1,4 @@
-import { Stack } from 'expo-router';
+import { Redirect, Stack } from 'expo-router';
 import React, { useEffect } from 'react';
 
 import { LoadingFull } from '~/components/LoadingFull';
@@ -8,7 +8,9 @@ import { useProfileQuery } from '~/utils/services/profiles/Profiles.query.genera
 
 const App = () => {
   const { session, setProfile } = useAppContext();
-  const [profileQueryResponse, fetchProfile] = useProfileQuery({ pause: true });
+  const [profileQueryResponse, fetchProfile] = useProfileQuery({
+    pause: true,
+  });
 
   useEffect(() => {
     if (session && !profileQueryResponse.data) {
@@ -22,7 +24,11 @@ const App = () => {
     }
   }, [profileQueryResponse.data, setProfile]);
 
-  if (!session || profileQueryResponse.fetching) {
+  if (!session) {
+    return <Redirect href="/(auth)" />;
+  }
+
+  if (profileQueryResponse.fetching) {
     return (
       <LoadingFull>
         <Text variant="title">Loading your account...</Text>
@@ -35,7 +41,7 @@ const App = () => {
       <Stack.Screen name="focus" options={{ headerShown: false }} />
       <Stack.Screen name="(sherpa)" options={{ headerShown: false }} />
       <Stack.Screen name="(notebook)" options={{ headerShown: false }} />
-      <Stack.Screen name="(account)" options={{ presentation: 'modal', gestureEnabled: true }} />
+      <Stack.Screen name="(account)" options={{ presentation: 'modal', headerTitle: 'Account' }} />
     </Stack>
   );
 };

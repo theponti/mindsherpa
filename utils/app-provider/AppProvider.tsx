@@ -1,7 +1,7 @@
-import { Session } from '@supabase/supabase-js';
+import type { Session } from '@supabase/supabase-js';
 import React, {
+  type PropsWithChildren,
   createContext,
-  PropsWithChildren,
   useContext,
   useEffect,
   useState,
@@ -14,9 +14,10 @@ import { Client, Provider as UrqlProvider, fetchExchange } from 'urql';
 import { createAuthExchange } from './createAuthExchange';
 import { asyncStorage, graphcacheExchange } from './graphcacheExchange';
 import { log } from '../logger';
-import { GetProfileOutput } from '../schema/schema-types';
+import type { GetProfileOutput } from '../schema/schema-types';
 import { supabase } from '../supabase';
 import { GRAPHQL_URI } from '../constants';
+import { useProfileQuery } from '../services/profiles/Profiles.query.generated';
 
 type AppContextType = {
   isLoadingAuth: boolean;
@@ -62,17 +63,18 @@ export function AppProvider({ children }: PropsWithChildren) {
         url: GRAPHQL_URI,
         exchanges: [graphcacheExchange, createAuthExchange(getTokenRef), fetchExchange],
       }),
-    [getTokenRef]
+    []
   );
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setIsLoadingAuth(false);
-      setSession(session);
-    });
+    // Load session initial session.
+    supabase.auth.getSession();
+
+    // Watch for changes to Supabase authentication session.
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
       setIsLoadingAuth(false);
       setSession(session);
+
       if (event === 'SIGNED_OUT') {
         asyncStorage?.clear();
         getTokenRef.current = getToken;
@@ -84,7 +86,7 @@ export function AppProvider({ children }: PropsWithChildren) {
     return () => {
       authListener.subscription.unsubscribe();
     };
-  }, []);
+  }, [queryClient.clear]);
 
   const contextValue: AppContextType = {
     isLoadingAuth,

@@ -12,6 +12,7 @@ import AutoGrowingInput from '../text-input-autogrow'
 import { UploadFileButton } from '../upload-file-button'
 import MindsherpaIcon from '../ui/icon'
 import { FormSubmitButton } from './note-form-submit-button'
+import { captureException } from '@sentry/react-native'
 
 type NoteFormProps = {
   isRecording: boolean
@@ -51,6 +52,7 @@ export const NoteForm = (props: NoteFormProps) => {
       setContent('')
     },
     onError: (error) => {
+      captureException(error)
       setGenerateError(true)
     },
   })
@@ -100,7 +102,7 @@ export const NoteForm = (props: NoteFormProps) => {
       {generateError ? (
         <NoteFormError>
           <Text variant="body" color="white">
-            There was an issued generating focus items from your input.
+            Sherpa is having a tummy ache. Please try again later.
           </Text>
           <Pressable onPress={() => setGenerateError(false)}>
             <MindsherpaIcon

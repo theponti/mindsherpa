@@ -7,10 +7,10 @@ export default ({ config }: ConfigContext): ExpoConfig => {
   let name: string;
 
   switch (ENV) {
-    case "development":
-      bundleIdentifier = "com.pontistudios.mindsherpa.dev";
-      name = "mindsherpa-dev";
-      break;
+    // case "development":
+    //   bundleIdentifier = "com.pontistudios.mindsherpa.dev";
+    //   name = "mindsherpa-dev";
+    //   break;
     case "preview":
     case "production":
     default:
@@ -64,6 +64,9 @@ export default ({ config }: ConfigContext): ExpoConfig => {
           microphonePermission:
             "Allow $(PRODUCT_NAME) to access your microphone.",
         },
+      ],
+      [
+        "expo-secure-store",
       ],
       [
         "@sentry/react-native/expo",

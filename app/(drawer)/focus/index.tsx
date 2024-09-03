@@ -220,7 +220,7 @@ const FocusHeader = React.memo(() => {
     <View style={headerStyles.header}>
       <View>
         <Text fontSize={30} fontWeight={600}>
-          Today Meow
+          Today
         </Text>
         <Text variant="body" color="gray">
           {todaysDate}
@@ -235,8 +235,8 @@ const FocusHeader = React.memo(() => {
           marginRight: 12,
         }}
       >
-        <Link href="/(drawer)/(sherpa)">
-          <MindsherpaIcon name="hat-wizard" size={24} />
+        <Link href="/(account)/">
+          <MindsherpaIcon name="user-astronaut" size={24} />
         </Link>
       </View>
     </View>

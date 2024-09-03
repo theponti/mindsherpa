@@ -1,23 +1,22 @@
-import 'react-native-url-polyfill/auto';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createClient } from '@supabase/supabase-js';
-import { makeRedirectUri } from 'expo-auth-session';
-import { Platform, AppState } from 'react-native';
+import "react-native-url-polyfill/auto";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { createClient } from "@supabase/supabase-js";
+import { AppState, Platform } from "react-native";
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl) {
-  throw new Error('Missing env.EXPO_PUBLIC_SUPABASE_URL');
+  throw new Error("Missing env.EXPO_PUBLIC_SUPABASE_URL");
 }
 
 if (!supabaseAnonKey) {
-  throw new Error('Missing env.EXPO_PUBLIC_SUPABASE_ANON_KEY');
+  throw new Error("Missing env.EXPO_PUBLIC_SUPABASE_ANON_KEY");
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
-    ...(Platform.OS !== 'web' ? { storage: AsyncStorage } : {}),
+    ...(Platform.OS !== "web" ? { storage: AsyncStorage } : {}),
     // storage: AsyncStorage,
     autoRefreshToken: true,
     persistSession: true,
@@ -30,25 +29,10 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 // to receive `onAuthStateChange` events with the `TOKEN_REFRESHED` or
 // `SIGNED_OUT` event if the user's session is terminated. This should
 // only be registered once.
-AppState.addEventListener('change', (state) => {
-  if (state === 'active') {
+AppState.addEventListener("change", (state) => {
+  if (state === "active") {
     supabase.auth.startAutoRefresh();
   } else {
     supabase.auth.stopAutoRefresh();
   }
 });
-
-export const useMagicLink = () => {
-  const redirectTo = makeRedirectUri();
-
-  const signInWithOtp = async (email: string) => {
-    return supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: redirectTo,
-      },
-    });
-  };
-
-  return { signInWithOtp };
-};

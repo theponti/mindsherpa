@@ -1,23 +1,22 @@
-import { FontAwesome } from '@expo/vector-icons';
-import React from 'react';
-import { ActivityIndicator, Text } from 'react-native';
-import { Pressable } from 'react-native';
-import { type PressableProps, type ViewStyle, StyleSheet } from 'react-native';
-import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+import { FontAwesome } from '@expo/vector-icons'
+import React from 'react'
+import { ActivityIndicator, Text } from 'react-native'
+import { Pressable } from 'react-native'
+import { type PressableProps, type ViewStyle, StyleSheet } from 'react-native'
 import Reanimated, {
   type SharedValue,
   interpolateColor,
   useAnimatedStyle,
   useSharedValue,
-} from 'react-native-reanimated';
-import * as ContextMenu from 'zeego/context-menu';
+} from 'react-native-reanimated'
+import * as ContextMenu from 'zeego/context-menu'
 
-import { theme } from '~/theme';
-import { AnimatedText } from '~/theme/Text';
-import { borderStyle, listStyles } from '~/theme/styles';
-import { useAppContext } from '~/utils/app-provider';
-import type { FocusOutputItem } from '~/utils/schema/graphcache';
-import { useFocusItemComplete } from './use-focus-item-complete';
+import { theme } from '~/theme'
+import { AnimatedText } from '~/theme/Text'
+import { borderStyle, listStyles } from '~/theme/styles'
+import { useAppContext } from '~/utils/app-provider'
+import type { FocusOutputItem } from '~/utils/schema/graphcache'
+import { useFocusItemComplete } from './use-focus-item-complete'
 
 export const TaskListItem = ({
   item,
@@ -28,59 +27,59 @@ export const TaskListItem = ({
   style,
   ...props
 }: PressableProps & {
-  item: FocusOutputItem;
-  label: string;
-  onComplete: (data: FocusOutputItem) => void;
-  onDelete: () => void;
-  showBorder?: boolean;
-  style?: ViewStyle[];
+  item: FocusOutputItem
+  label: string
+  onComplete: (data: FocusOutputItem) => void
+  onDelete: () => void
+  showBorder?: boolean
+  style?: ViewStyle[]
 }) => {
-  const { session } = useAppContext();
+  const { session } = useAppContext()
   if (!session) {
-    return null;
+    return null
   }
 
-  const fontColor = useSharedValue(0);
-  const opacity = useSharedValue(1);
+  const fontColor = useSharedValue(0)
+  const opacity = useSharedValue(1)
   const completeItem = useFocusItemComplete({
     id: item.id,
     token: session.access_token,
     onSuccess: (data) => {
-      onComplete(data);
-      opacity.value = 1;
-      fontColor.value = 1;
+      onComplete(data)
+      opacity.value = 1
+      fontColor.value = 1
       const interval = setInterval(() => {
-        fontColor.value -= 0.1;
-      }, 100);
-      setTimeout(() => clearInterval(interval), 1000);
+        fontColor.value -= 0.1
+      }, 100)
+      setTimeout(() => clearInterval(interval), 1000)
     },
     onError: () => {
-      opacity.value = 1;
-      fontColor.value = 1;
+      opacity.value = 1
+      fontColor.value = 1
       const interval = setInterval(() => {
-        fontColor.value -= 0.1;
-      }, 100);
-      setTimeout(() => clearInterval(interval), 1000);
+        fontColor.value -= 0.1
+      }, 100)
+      setTimeout(() => clearInterval(interval), 1000)
     },
-  });
+  })
 
   const onRadioButtonPress = () => {
-    opacity.value = 0.4;
-    completeItem.mutate();
-  };
+    opacity.value = 0.4
+    completeItem.mutate()
+  }
 
   const textStyle = useAnimatedStyle(() => {
-    const color = interpolateColor(fontColor.value, [0, 1], [theme.colors.black, theme.colors.red]);
+    const color = interpolateColor(fontColor.value, [0, 1], [theme.colors.black, theme.colors.red])
     return {
       color,
-    };
-  }, [fontColor]);
+    }
+  }, [fontColor])
 
   const opacityStyle = useAnimatedStyle(() => {
     return {
       opacity: opacity.value,
-    };
-  }, [opacity]);
+    }
+  }, [opacity])
 
   return (
     <ContextMenu.Root>
@@ -89,7 +88,8 @@ export const TaskListItem = ({
           <Pressable
             style={[styles.iconWrap]}
             onPress={onRadioButtonPress}
-            disabled={completeItem.isPending}>
+            disabled={completeItem.isPending}
+          >
             {completeItem.isPending ? (
               <ActivityIndicator size={20} color={theme.colors.black} />
             ) : (
@@ -110,7 +110,8 @@ export const TaskListItem = ({
         alignOffset={10}
         loop={false}
         avoidCollisions={true}
-        collisionPadding={12}>
+        collisionPadding={12}
+      >
         <ContextMenu.Label>Actions</ContextMenu.Label>
         <ContextMenu.Item key="delete" onSelect={onDelete}>
           <ContextMenu.ItemIcon ios={{ name: 'trash', size: 20 }} />
@@ -118,8 +119,8 @@ export const TaskListItem = ({
         </ContextMenu.Item>
       </ContextMenu.Content>
     </ContextMenu.Root>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -146,7 +147,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-});
+})
 
 function LeftAction(prog: SharedValue<number>, drag: SharedValue<number>) {
   const styleAnimation = useAnimatedStyle(() => {
@@ -157,14 +158,14 @@ function LeftAction(prog: SharedValue<number>, drag: SharedValue<number>) {
           ...(drag.value > 100 ? { width: 100 + drag.value } : {}),
         },
       ],
-    };
-  });
+    }
+  })
 
   return (
     <Reanimated.View style={[leftActionStyle.container, styleAnimation]}>
       <Text style={leftActionStyle.completeButton}>Complete</Text>
     </Reanimated.View>
-  );
+  )
 }
 
 const leftActionStyle = StyleSheet.create({
@@ -182,7 +183,7 @@ const leftActionStyle = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-});
+})
 
 function RightAction(prog: SharedValue<number>, drag: SharedValue<number>) {
   const styleAnimation = useAnimatedStyle(() => {
@@ -191,12 +192,12 @@ function RightAction(prog: SharedValue<number>, drag: SharedValue<number>) {
     return {
       transform: [{ translateX: drag.value + 80 }],
       ...(drag.value > 100 ? { width: 100 + drag.value } : {}),
-    };
-  });
+    }
+  })
 
   return (
     <Reanimated.View style={styleAnimation}>
       <Text style={styles.deleteButton}>Delete</Text>
     </Reanimated.View>
-  );
+  )
 }

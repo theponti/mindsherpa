@@ -1,14 +1,9 @@
-import { useCallback } from 'react';
-import {
-  GestureResponderEvent,
-  Pressable,
-  type PressableProps,
-  type ViewStyle,
-} from 'react-native';
-import { TouchableOpacity, TouchableOpacityProps } from 'react-native-gesture-handler';
-import { Text } from '~/theme';
-import { borderStyle, listStyles } from '~/theme/styles';
-import { NoteOutput } from '~/utils/schema/graphcache';
+import { useCallback } from 'react'
+import type { GestureResponderEvent, ViewStyle } from 'react-native'
+import { TouchableOpacity, type TouchableOpacityProps } from 'react-native-gesture-handler'
+import { Text } from '~/theme'
+import { borderStyle, listStyles } from '~/theme/styles'
+import type { NoteOutput } from '~/utils/schema/graphcache'
 
 export const NoteListItem = ({
   icon,
@@ -19,14 +14,14 @@ export const NoteListItem = ({
   style,
   ...props
 }: TouchableOpacityProps & {
-  icon?: React.ReactNode;
-  item: NoteOutput;
-  headerRight?: React.ReactNode;
-  label: string;
-  showBorder?: boolean;
-  style?: ViewStyle[];
+  icon?: React.ReactNode
+  item: NoteOutput
+  headerRight?: React.ReactNode
+  label: string
+  showBorder?: boolean
+  style?: ViewStyle[]
 }) => {
-  const onSwipeRight = useCallback((event: GestureResponderEvent) => {}, []);
+  const onSwipeRight = useCallback((event: GestureResponderEvent) => {}, [])
   return (
     <TouchableOpacity
       style={[
@@ -34,12 +29,13 @@ export const NoteListItem = ({
         showBorder ? borderStyle.borderBottom : borderStyle.noBorder,
         style,
       ]}
-      {...props}>
+      {...props}
+    >
       {icon ?? null}
       <Text variant="body" style={listStyles.text}>
         {label}
       </Text>
       {headerRight ?? null}
     </TouchableOpacity>
-  );
-};
+  )
+}
