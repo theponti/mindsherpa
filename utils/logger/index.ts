@@ -1,4 +1,6 @@
 // ! TODO - Implement Sentry logger
-export const log = (message: string, error: any) => {
-  console.log(message, error);
-};
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+export const log = (...args: any[]) => {
+  // biome-ignore lint/suspicious/noConsoleLog: <explanation>
+  console.log(...args)
+}

@@ -4,12 +4,11 @@ import { Button } from '~/components/Button'
 import TextInput from '~/components/text-input'
 import { Text } from '~/theme'
 import { useAppContext } from '~/utils/app-provider'
-import { supabase } from '~/utils/supabase'
 
 function Account() {
-  const { session } = useAppContext()
+  const { session, signOut } = useAppContext()
   const onLogoutPress = () => {
-    supabase.auth.signOut()
+    signOut()
   }
 
   if (!session) {

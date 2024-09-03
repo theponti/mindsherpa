@@ -1,13 +1,16 @@
 import { useFonts } from '@expo-google-fonts/inter'
 import * as Sentry from '@sentry/react-native'
 import { ThemeProvider } from '@shopify/restyle'
+import { useQuery } from '@tanstack/react-query'
 import { Slot, SplashScreen, Stack, useRouter, useSegments } from 'expo-router'
-import React, { useCallback, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { theme } from '~/theme'
 import { AppProvider, useAppContext } from '~/utils/app-provider'
+import { log } from '~/utils/logger'
 import '~/utils/observability'
-import { useProfileQuery } from '~/utils/services/profiles/Profiles.query.generated'
+import { request } from '~/utils/query-client'
+import type { Profile } from '~/utils/services/profiles'
 import { supabase } from '~/utils/supabase'
 
 SplashScreen.preventAutoHideAsync()
@@ -16,49 +19,59 @@ function InnerRootLayout() {
   const router = useRouter()
   const segments = useSegments()
   const { isLoadingAuth, profile, session, setProfile, setProfileLoading } = useAppContext()
-  const [profileQueryResponse, fetchProfile] = useProfileQuery({ pause: true })
+  const {
+    refetch,
+    error: profileError,
+    isError: isErrorProfile,
+    isLoading: isLoadingProfile,
+    data: loadedProfile,
+  } = useQuery<Profile | null>({
+    queryKey: ['profile'],
+    queryFn: async () => {
+      if (!session || profile) return null
+      try {
+        const { data } = await request<Profile>({
+          method: 'GET',
+          url: '/user/profile',
+          headers: {
+            Authorization: `Bearer ${session?.access_token}`,
+          },
+        })
+
+        setProfile({
+          user_id: data.user_id,
+          profile_id: data.profile_id,
+          email: data.email,
+          name: data.name,
+        })
+        setProfileLoading(false)
+
+        return data
+      } catch (error) {
+        Sentry.captureException(profileError)
+
+        if (session) {
+          supabase.auth.signOut()
+        }
+
+        return null
+      }
+    },
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    enabled: Boolean(session && !profile && session.access_token),
+  })
 
   const [loaded, error] = useFonts({
     'Font Awesome Regular': require('../assets/fonts/icons/fa-regular-400.ttf'),
     'Plus Jakarta Sans': require('../assets/fonts/Plus_Jakarta_Sans.ttf'),
   })
 
-  const handleProfileFetch = useCallback(() => {
-    if (session && !profileQueryResponse.data) {
-      fetchProfile({
-        fetchOptions: {
-          headers: {
-            Authorization: `Bearer ${session.access_token}`,
-          },
-        },
-      })
-    }
-  }, [session, profileQueryResponse.data, fetchProfile])
-
   useEffect(() => {
-    handleProfileFetch()
-  }, [handleProfileFetch])
-
-  useEffect(() => {
-    if (profileQueryResponse.data?.profile) {
-      const { profile } = profileQueryResponse.data
-      setProfile({
-        user_id: profile.userId,
-        profile_id: profile.profileId,
-        email: profile.email,
-        name: profile.name,
-      })
-      setProfileLoading(false)
+    if (session && !isErrorProfile && !isLoadingProfile) {
+      refetch()
     }
-
-    if (profileQueryResponse.error) {
-      Sentry.captureException(profileQueryResponse.error)
-
-      if (session) {
-        supabase.auth.signOut()
-      }
-    }
-  }, [profileQueryResponse, session, setProfile, setProfileLoading])
+  }, [refetch, session, isErrorProfile, isLoadingProfile])
 
   useEffect(() => {
     if (loaded || error) {
@@ -71,9 +84,16 @@ function InnerRootLayout() {
 
     const inAuthGroup = segments[0] === '(drawer)'
 
+    log('Segments', segments)
+
     if (session && profile && !inAuthGroup) {
+      log('routing to focus')
       router.replace('/(drawer)/focus')
-    } else if (!session) {
+      return
+    }
+
+    if (!session && inAuthGroup) {
+      log('routing to auth')
       router.replace('/(auth)')
     }
   }, [isLoadingAuth, profile, segments, router, session])

@@ -1,7 +1,9 @@
 import type { Session } from '@supabase/supabase-js'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { useRouter } from 'expo-router'
 import React, {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -10,19 +12,12 @@ import React, {
   type PropsWithChildren,
 } from 'react'
 import { Client, Provider as UrqlProvider, fetchExchange } from 'urql'
-
 import { GRAPHQL_URI } from '../constants'
 import { log } from '../logger'
+import type { Profile } from '../services/profiles'
 import { supabase } from '../supabase'
 import { createAuthExchange } from './createAuthExchange'
 import { asyncStorage, graphcacheExchange } from './graphcacheExchange'
-
-type Profile = {
-  user_id: string
-  profile_id: string
-  email: string
-  name: string | null
-}
 
 type AppContextType = {
   isLoadingAuth: boolean
@@ -30,6 +25,7 @@ type AppContextType = {
   profile: Profile | null
   setProfile: (profile: Profile | null) => void
   setProfileLoading: (isLoading: boolean) => void
+  signOut: () => void
   urqlClient: Client
 }
 
@@ -57,6 +53,7 @@ export const getToken = async () => {
 }
 
 export function AppProvider({ children }: PropsWithChildren) {
+  const router = useRouter()
   const [isLoadingSession, setIsLoadingSession] = useState(true)
   const [session, setSession] = useState<Session | null>(null)
   const [profile, setProfile] = useState<AppContextType['profile'] | null>(null)
@@ -74,18 +71,12 @@ export function AppProvider({ children }: PropsWithChildren) {
   )
 
   useEffect(() => {
-    // supabase.auth.getSession()
+    supabase.auth.getSession()
 
     // Watch for changes to Supabase authentication session.
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
       setIsLoadingSession(false)
       setSession(session)
-
-      if (!session && profileLoading) {
-        setProfileLoading(false)
-        setProfile(null)
-        return
-      }
 
       if (event === 'SIGNED_OUT') {
         asyncStorage?.clear()
@@ -98,7 +89,19 @@ export function AppProvider({ children }: PropsWithChildren) {
     return () => {
       authListener.subscription.unsubscribe()
     }
-  }, [profileLoading, queryClient.clear])
+  }, [queryClient.clear])
+
+  const signOut = useCallback(() => {
+    supabase.auth.signOut()
+    setProfile(null)
+    setProfileLoading(false)
+    setSession(null)
+    queryClient.clear()
+    asyncStorage?.clear()
+    getTokenRef.current = getToken
+    router.replace('/(auth)')
+    console.log('signed out')
+  }, [router, queryClient.clear])
 
   const contextValue: AppContextType = {
     isLoadingAuth: profileLoading || isLoadingSession,
@@ -106,6 +109,7 @@ export function AppProvider({ children }: PropsWithChildren) {
     profile,
     setProfile,
     setProfileLoading,
+    signOut,
     urqlClient,
   }
 

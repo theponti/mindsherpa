@@ -34,7 +34,7 @@ const LoginSheet = ({ isLoadingAuth }: { isLoadingAuth?: boolean }) => {
     },
     onSuccess: (data) => {
       setProfile(data)
-      router.push('/(drawer)')
+      router.push('/(drawer)/focus')
     },
     onError: (error) => {
       captureException(error)
