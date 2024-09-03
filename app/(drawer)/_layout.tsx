@@ -1,5 +1,5 @@
 import { Redirect, Stack } from 'expo-router'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { LoadingFull } from '~/components/LoadingFull'
 import { Text } from '~/theme'
@@ -7,33 +7,52 @@ import { useAppContext } from '~/utils/app-provider'
 import { useProfileQuery } from '~/utils/services/profiles/Profiles.query.generated'
 import { supabase } from '~/utils/supabase'
 
-const App = () => {
-  const { session, setProfile } = useAppContext()
+const DrawerLayout = () => {
+  const { session, setProfile, profile, setProfileLoading } = useAppContext()
   const [profileQueryResponse, fetchProfile] = useProfileQuery({
     pause: true,
   })
+  const [retryCount, setRetryCount] = useState(0)
+  const maxRetries = 3
 
   useEffect(() => {
-    if (session && !profileQueryResponse.data) {
+    let isMounted = true
+
+    if (session && !profileQueryResponse.data && retryCount < maxRetries) {
       fetchProfile()
+      setRetryCount(retryCount + 1)
     }
-  }, [session, fetchProfile, profileQueryResponse.data])
+
+    return () => {
+      isMounted = false
+    }
+  }, [session, fetchProfile, profileQueryResponse.data, retryCount])
 
   useEffect(() => {
-    if (profileQueryResponse.data?.profile) {
+    let isMounted = true
+
+    if (profileQueryResponse.data?.profile && isMounted) {
       setProfile(profileQueryResponse.data.profile)
+      setProfileLoading(false) // set to false when profile loads successfully
     }
 
     if (profileQueryResponse.error) {
       supabase.auth.signOut()
     }
-  }, [profileQueryResponse, setProfile])
+
+    return () => {
+      isMounted = false
+    }
+  }, [profileQueryResponse, setProfile, setProfileLoading])
 
   if (!session) {
     return <Redirect href="/(auth)" />
   }
 
-  if (profileQueryResponse.fetching) {
+  if (
+    profileQueryResponse.fetching ||
+    (profileQueryResponse.data == null && retryCount < maxRetries)
+  ) {
     return (
       <LoadingFull>
         <Text variant="title">Loading your account...</Text>
@@ -51,4 +70,4 @@ const App = () => {
   )
 }
 
-export default App
+export default DrawerLayout
