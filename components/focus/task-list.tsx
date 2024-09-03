@@ -1,27 +1,27 @@
-import { FlatList, StyleSheet, Text, View } from 'react-native';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react'
+import { FlatList, StyleSheet, Text, View } from 'react-native'
 
-import type { FocusOutputItem } from '~/utils/schema/graphcache';
-import { TaskListItem } from './task-list-item';
+import type { FocusItem } from '~/utils/services/notes/types'
+import { TaskListItem } from './task-list-item'
 
 export const TaskList = ({
   data,
   onItemDelete,
 }: {
-  data: FocusOutputItem[];
-  onItemDelete: (id: number) => void;
+  data: FocusItem[]
+  onItemDelete: (id: number) => void
 }) => {
-  const [items, setItems] = useState<FocusOutputItem[]>(data);
+  const [items, setItems] = useState<FocusItem[]>(data)
   const onItemComplete = useCallback((id: number) => {
-    setItems((current) => current.filter((item) => item.id !== id));
-  }, []);
+    setItems((current) => current.filter((item) => item.id !== id))
+  }, [])
 
   useEffect(() => {
-    setItems(data);
-  }, [data]);
+    setItems(data)
+  }, [data])
 
   const renderItem = useCallback(
-    ({ item, index }: { item: FocusOutputItem; index: number }) => {
+    ({ item, index }: { item: FocusItem; index: number }) => {
       return (
         <TaskListItem
           label={item.text}
@@ -30,13 +30,13 @@ export const TaskList = ({
           onDelete={() => onItemDelete(item.id)}
           showBorder={data.length === 1 || index < data.length - 1}
         />
-      );
+      )
     },
     [onItemComplete, onItemDelete, data.length]
-  );
+  )
 
   if (!data.length) {
-    return null;
+    return null
   }
 
   return (
@@ -53,8 +53,8 @@ export const TaskList = ({
         />
       </View>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -72,4 +72,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#667085',
   },
-});
+})

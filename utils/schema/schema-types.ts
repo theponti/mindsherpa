@@ -13,7 +13,6 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
-  Date: { input: any; output: any; }
   DateTime: { input: string; output: string; }
   UUID: { input: string; output: string; }
 };
@@ -23,47 +22,6 @@ export type AuthPayload = {
   readonly accessToken: Scalars['String']['output'];
   readonly refreshToken: Scalars['String']['output'];
   readonly userId: Scalars['UUID']['output'];
-};
-
-export type DeleteFocusItemInput = {
-  readonly id: Scalars['Int']['input'];
-};
-
-export type DeleteFocusItemOutput = {
-  readonly __typename?: 'DeleteFocusItemOutput';
-  readonly success: Scalars['Boolean']['output'];
-};
-
-export type FocusOutput = {
-  readonly __typename?: 'FocusOutput';
-  readonly items: ReadonlyArray<FocusOutputItem>;
-};
-
-export type FocusOutputItem = {
-  readonly __typename?: 'FocusOutputItem';
-  readonly category: Scalars['String']['output'];
-  readonly createdAt: Scalars['DateTime']['output'];
-  readonly dueDate: Maybe<Scalars['Date']['output']>;
-  readonly id: Scalars['Int']['output'];
-  readonly priority: Scalars['Int']['output'];
-  readonly profileId: Scalars['UUID']['output'];
-  readonly sentiment: Scalars['String']['output'];
-  readonly state: FocusState;
-  readonly taskSize: Scalars['String']['output'];
-  readonly text: Scalars['String']['output'];
-  readonly type: Scalars['String']['output'];
-  readonly updatedAt: Scalars['DateTime']['output'];
-};
-
-export enum FocusState {
-  Active = 'active',
-  Backlog = 'backlog',
-  Completed = 'completed',
-  Deleted = 'deleted'
-}
-
-export type GetFocusFilter = {
-  readonly category: Scalars['String']['input'];
 };
 
 export type GetProfileOutput = {
@@ -86,15 +44,9 @@ export type MessageOutput = {
 
 export type Mutation = {
   readonly __typename?: 'Mutation';
-  readonly deleteFocusItem: DeleteFocusItemOutput;
   readonly saveAppleUser: AuthPayload;
   readonly sendChatMessage: ReadonlyArray<MessageOutput>;
   readonly updateProfile: UpdateProfilePayload;
-};
-
-
-export type MutationDeleteFocusItemArgs = {
-  input: DeleteFocusItemInput;
 };
 
 
@@ -130,14 +82,8 @@ export type ProfileOutput = {
 
 export type Query = {
   readonly __typename?: 'Query';
-  readonly focus: FocusOutput;
   readonly notes: ReadonlyArray<NoteOutput>;
   readonly profile: GetProfileOutput;
-};
-
-
-export type QueryFocusArgs = {
-  filter?: InputMaybe<GetFocusFilter>;
 };
 
 export type UpdateProfileInput = {

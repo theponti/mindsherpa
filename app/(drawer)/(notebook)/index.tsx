@@ -1,34 +1,27 @@
-import { FontAwesome } from '@expo/vector-icons';
-import { useEffect } from 'react';
-import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useEffect } from 'react'
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native'
+import { FlatList } from 'react-native-gesture-handler'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { LoadingFull } from '~/components/LoadingFull';
-import { ScreenContent } from '~/components/ScreenContent';
-import { Card } from '~/components/ui/card';
-import { FeedbackBlock } from '~/components/feedback-block';
-import { NoteForm } from '~/components/notes/note-form';
-import { NoteListItem } from '~/components/notes/note-list-item';
-import { ViewHeader } from '~/components/view-header';
-import { Text } from '~/theme';
-import type { NoteOutput } from '~/utils/schema/graphcache';
-import { useNotesQuery } from '~/utils/services/notes/Notes.query.generated';
-import { theme } from '~/theme';
+import { LoadingFull } from '~/components/LoadingFull'
+import { ScreenContent } from '~/components/ScreenContent'
+import { FeedbackBlock } from '~/components/feedback-block'
+import { NoteListItem } from '~/components/notes/note-list-item'
+import { ViewHeader } from '~/components/view-header'
+import { Text, theme } from '~/theme'
+import type { NoteOutput } from '~/utils/schema/graphcache'
+import { useNotesQuery } from '~/utils/services/notes/Notes.query.generated'
 
 const NotebookScreen = () => {
   const [getNotesResponse, getNotes] = useNotesQuery({
     pause: true,
     requestPolicy: 'network-only',
-  });
-  const notes = getNotesResponse.data?.notes;
-  const onFormSubmit = () => {
-    getNotes();
-  };
+  })
+  const notes = getNotesResponse.data?.notes
 
   useEffect(() => {
-    getNotes();
-  }, [getNotes]);
+    getNotes()
+  }, [getNotes])
 
   return (
     <ScreenContent>
@@ -37,16 +30,15 @@ const NotebookScreen = () => {
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
-          style={styles.container}>
+          style={styles.container}
+        >
           <View style={styles.header}>
             <Text variant="cardHeader">Notes</Text>
           </View>
           {getNotesResponse.fetching ? <LoadingFull /> : null}
           {!getNotesResponse.fetching && notes ? (
             <View style={{ paddingHorizontal: 12, flex: 1 }}>
-              <Card>
-                <NotesList notes={[...notes]} />
-              </Card>
+              <NotesList notes={[...notes]} />
             </View>
           ) : null}
           {getNotesResponse.error ? (
@@ -54,12 +46,11 @@ const NotebookScreen = () => {
               <Text>Your notes could not be loaded.</Text>
             </FeedbackBlock>
           ) : null}
-          <NoteForm onSubmit={onFormSubmit} />
         </KeyboardAvoidingView>
       </SafeAreaView>
     </ScreenContent>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -83,33 +74,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-});
+})
 
-export default NotebookScreen;
-
-const HeaderButtons = () => {
-  return (
-    <View style={headerButtonStyles.headerIcons}>
-      <Text style={headerButtonStyles.iconPlaceholder}>
-        <FontAwesome name="ellipsis-v" size={24} color={theme.colors.black} />
-      </Text>
-      <Text style={headerButtonStyles.iconPlaceholder}>
-        <FontAwesome name="plus" size={24} color={theme.colors.black} />
-      </Text>
-    </View>
-  );
-};
-
-const headerButtonStyles = StyleSheet.create({
-  headerIcons: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  iconPlaceholder: {
-    fontSize: 24,
-    marginLeft: 20,
-  },
-});
+export default NotebookScreen
 
 const NotesList = ({ notes }: { readonly notes: NoteOutput[] }) => {
   if (notes.length === 0) {
@@ -118,7 +85,7 @@ const NotesList = ({ notes }: { readonly notes: NoteOutput[] }) => {
         <Text variant="title">No notes yet.</Text>
         <Text variant="body">You can add notes by typing in the text field below.</Text>
       </View>
-    );
+    )
   }
 
   return (
@@ -130,5 +97,5 @@ const NotesList = ({ notes }: { readonly notes: NoteOutput[] }) => {
       keyExtractor={(item) => item.id}
       contentContainerStyle={styles.listContainer}
     />
-  );
-};
+  )
+}

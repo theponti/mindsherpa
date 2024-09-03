@@ -1,6 +1,6 @@
-import { Link, useFocusEffect } from 'expo-router'
-import React, { useCallback, useEffect, useState, useMemo } from 'react'
-import { View, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native'
+import { Link } from 'expo-router'
+import React, { useCallback, useMemo, useState } from 'react'
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native'
 import { RefreshControl, ScrollView } from 'react-native-gesture-handler'
 
 import { LoadingContainer } from '~/components/LoadingFull'
@@ -8,124 +8,40 @@ import { PulsingCircle } from '~/components/animated/pulsing-circle'
 import { FeedbackBlock } from '~/components/feedback-block'
 import { TaskList } from '~/components/focus/task-list'
 import { NoteForm } from '~/components/notes/note-form'
-import { NotebookStack } from '~/components/notes/notebook-stack'
 import MindsherpaIcon from '~/components/ui/icon'
 import { Text, theme } from '~/theme'
-import type { FocusOutputItem } from '~/utils/schema/graphcache'
-import { type FocusQuery, useFocusQuery } from '~/utils/services/Focus.query.generated'
-import { useDeleteFocusItemMutation } from '~/utils/services/notes/DeleteFocusItem.mutation.generated'
+import { useAuthenticatedRequest } from '~/utils/query-client'
+import type { FocusItem } from '~/utils/services/notes/types'
+import { useDeleteFocus } from '~/utils/services/notes/use-delete-focus'
+import { useFocusQuery } from '~/utils/services/notes/use-focus-query'
 
-const baseFocusItems = {
-  tasks: [],
-  events: [],
-  reminders: [],
-  notebooks: [],
-}
-
-type FocusItem = FocusQuery['focus']['items'][0]
-
-type FocusItemsMap = {
-  tasks: FocusItem[]
-  events: FocusItem[]
-  reminders: FocusItem[]
-  notebooks: FocusItem[]
-}
 export const FocusView = () => {
+  const authRequest = useAuthenticatedRequest()
+  const [isRecording, setIsRecording] = useState(false)
   const [refreshing, setRefreshing] = React.useState(false)
-  const [focusResponse, getFocus] = useFocusQuery({
-    pause: true,
-    requestPolicy: 'network-only',
-  })
-  const [hasError, setHasError] = useState<boolean>(false)
-  const [focusItems, setFocusItems] = useState<FocusItemsMap>(baseFocusItems)
-  const isLoading = focusResponse.fetching
-  const hasData = focusItems.notebooks.length > 0
-
-  const setFocusItemsFromResponse = useCallback((items: FocusQuery['focus']['items']) => {
-    const tasks: FocusItem[] = []
-    const events: FocusItem[] = []
-    const reminders: FocusItem[] = []
-    const notebooks: FocusItem[] = []
-
-    if (!items.length) {
-      return baseFocusItems
-    }
-
-    for (const item of items) {
-      switch (item.type) {
-        case 'task':
-          tasks.push(item)
-          break
-        case 'event':
-          events.push(item)
-          break
-        case 'reminder':
-          reminders.push(item)
-          break
-        default:
-      }
-      notebooks.push(item)
-    }
-
-    return setFocusItems({
-      tasks,
-      events,
-      reminders,
-      notebooks,
-    })
-  }, [])
-
-  const onFormSubmit = useCallback(
-    (data: FocusOutputItem[]) => {
-      setFocusItemsFromResponse([...focusItems.notebooks, ...data])
+  const [focusItems, setFocusItems] = useState<FocusItem[]>([])
+  const { refetch, isPending, isError } = useFocusQuery({
+    onSuccess: (data) => {
+      setRefreshing(false)
+      setFocusItems(data.items)
     },
-    [focusItems, setFocusItemsFromResponse]
-  )
+    onError: (error) => {
+      setRefreshing(false)
+    },
+  })
+  const { mutate: deleteFocusItem } = useDeleteFocus({
+    onSuccess: (id: number) => {
+      setFocusItems((prev) => prev.filter((item) => item.id !== id))
+    },
+  })
+  const onFormSubmit = useCallback((data: FocusItem[]) => {
+    setFocusItems((prev) => [...prev, ...data])
+  }, [])
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
-    getFocus()
-  }, [getFocus])
-
-  // 🗑️ Delete items
-  const [isDeleting, setIsDeleting] = useState(false)
-  const [deleteResponse, deleteFocusItem] = useDeleteFocusItemMutation()
-  const onItemDelete = useCallback(
-    async (id: number) => {
-      setIsDeleting(true)
-      await deleteFocusItem({ input: { id } })
-      setFocusItemsFromResponse(focusItems.notebooks.filter((item) => item.id !== id))
-      setIsDeleting(false)
-    },
-    [focusItems.notebooks, deleteFocusItem, setFocusItemsFromResponse]
-  )
-
-  const [isRecording, setIsRecording] = useState(false)
-  const [isOpen, setIsOpen] = useState(true)
-  const toggleSheet = () => {
-    setIsOpen(!isOpen)
-  }
-
-  // 🛰️ Reload focus items when the screen is focused
-  useFocusEffect(useCallback(() => getFocus(), [getFocus]))
-
-  useEffect(() => {
-    if (focusResponse.error) {
-      setRefreshing(false)
-      setHasError(true)
-    }
-
-    if (focusResponse.data?.focus.items) {
-      setHasError(false)
-      setRefreshing(false)
-      setFocusItemsFromResponse(focusResponse.data?.focus.items)
-    }
-  }, [focusResponse.data?.focus.items, focusResponse.error, setFocusItemsFromResponse])
-
-  const onErrorRetry = useCallback(() => {
-    setHasError(false)
-    onRefresh()
-  }, [onRefresh])
+    refetch()
+  }, [refetch])
 
   return (
     <KeyboardAvoidingView
@@ -140,32 +56,20 @@ export const FocusView = () => {
           style={styles.scrollContainer}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         >
-          {isLoading && !refreshing ? (
+          {isPending && !refreshing ? (
             <LoadingContainer>
               <PulsingCircle />
             </LoadingContainer>
           ) : null}
 
-          {hasError ? (
-            <View style={[styles.errorContainer]}>
-              <FeedbackBlock>
-                <Text variant="body" color="white">
-                  There was issue loading your focus.
-                </Text>
-                <Text variant="body" color="white">
-                  Please, try again later.
-                </Text>
-              </FeedbackBlock>
-            </View>
-          ) : null}
+          {isError ? <FocusLoadingError /> : null}
 
-          {!isLoading && hasData ? (
+          {!isPending && focusItems.length > 0 ? (
             <View style={[styles.focuses]}>
-              <TaskList data={focusItems.tasks} onItemDelete={onItemDelete} />
-              <NotebookStack items={focusItems.notebooks} />
+              <TaskList data={focusItems} onItemDelete={deleteFocusItem} />
             </View>
           ) : null}
-          {!isLoading && !hasData && !hasError ? (
+          {!isPending && !isError && focusItems.length === 0 ? (
             <View style={[styles.empty]}>
               <Text variant="bodyLarge" color="primary">
                 You have no focus items yet.
@@ -198,10 +102,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: theme.colors.white,
     borderRadius: 12,
-  },
-  errorContainer: {
-    padding: 12,
-    marginHorizontal: 12,
   },
   scrollContainer: {
     paddingTop: 12,
@@ -253,4 +153,31 @@ const headerStyles = StyleSheet.create({
     marginTop: 91,
     rowGap: 4,
   },
+})
+
+const FocusLoadingError = React.memo(() => {
+  return (
+    <View
+      style={[
+        {
+          padding: 12,
+          marginHorizontal: 12,
+        },
+      ]}
+    >
+      <FeedbackBlock error>
+        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', columnGap: 24 }}>
+          <MindsherpaIcon name="circle-exclamation" size={24} color={theme.colors.tomato} />
+          <View style={{ flex: 1 }}>
+            <Text variant="body" color="black">
+              Your focus could not be loaded.
+            </Text>
+            <Text variant="body" color="black">
+              Please, try again later.
+            </Text>
+          </View>
+        </View>
+      </FeedbackBlock>
+    </View>
+  )
 })

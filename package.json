@@ -14,6 +14,7 @@
     "build:preview:ios": "ENV=preview eas build --profile preview --platform ios",
     "build:production:android": "ENV=production eas build --profile production --platform android",
     "build:production:ios": "ENV=production eas build --profile production --platform ios",
+    "build:update:preview": "NODE_ENV=production eas update --platform ios --branch preview --clear-cache", 
     "prebuild": "expo prebuild",
     "web": "expo start --web",
     "codegen": "graphql-codegen --config codegen.ts"

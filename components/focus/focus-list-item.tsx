@@ -1,10 +1,10 @@
-import type { ReactNode } from 'react';
-import { Pressable, View, type PressableProps, type ViewStyle, StyleSheet } from 'react-native';
-import * as ContextMenu from 'zeego/context-menu';
+import type { ReactNode } from 'react'
+import { Pressable, StyleSheet, View, type PressableProps, type ViewStyle } from 'react-native'
+import * as ContextMenu from 'zeego/context-menu'
 
-import { Text } from '~/theme';
-import { borderStyle, listStyles } from '~/theme/styles';
-import type { FocusOutputItem } from '~/utils/schema/graphcache';
+import { Text } from '~/theme'
+import { borderStyle, listStyles } from '~/theme/styles'
+import type { FocusItem } from '~/utils/services/notes/types'
 
 export const FocusListItem = ({
   icon,
@@ -15,12 +15,12 @@ export const FocusListItem = ({
   style,
   ...props
 }: PressableProps & {
-  icon?: ReactNode;
-  item: FocusOutputItem;
-  headerRight: ReactNode;
-  onDelete: () => void;
-  showBorder?: boolean;
-  style?: ViewStyle[];
+  icon?: ReactNode
+  item: FocusItem
+  headerRight: ReactNode
+  onDelete: () => void
+  showBorder?: boolean
+  style?: ViewStyle[]
 }) => {
   return (
     <ContextMenu.Root>
@@ -32,7 +32,8 @@ export const FocusListItem = ({
             { flexDirection: 'column' },
             style,
           ]}
-          {...props}>
+          {...props}
+        >
           <View style={[styles.textContainer]}>
             <View>{icon}</View>
             <Text variant="body" style={[listStyles.text]}>
@@ -45,7 +46,8 @@ export const FocusListItem = ({
         alignOffset={10}
         loop={false}
         avoidCollisions={true}
-        collisionPadding={12}>
+        collisionPadding={12}
+      >
         <ContextMenu.Label>Actions</ContextMenu.Label>
         <ContextMenu.Item key="delete" onSelect={onDelete}>
           <ContextMenu.ItemIcon ios={{ name: 'trash', size: 20 }} />
@@ -53,8 +55,8 @@ export const FocusListItem = ({
         </ContextMenu.Item>
       </ContextMenu.Content>
     </ContextMenu.Root>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   textContainer: {
@@ -62,4 +64,4 @@ const styles = StyleSheet.create({
     columnGap: 8,
     alignItems: 'center',
   },
-});
+})

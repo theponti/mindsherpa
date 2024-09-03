@@ -1,5 +1,0 @@
-mutation DeleteFocusItem($input: DeleteFocusItemInput!) {
-  deleteFocusItem(input: $input) {
-    success
-  }
-}

@@ -10,6 +10,7 @@ export default function FocusLayout() {
       <Stack.Screen
         name="notebook"
         options={{
+          presentation: 'modal',
           headerBackTitle: 'Notebook',
           headerLeft: () => (
             <Button

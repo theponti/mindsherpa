@@ -1,13 +1,18 @@
 import { FontAwesome } from '@expo/vector-icons'
 import React from 'react'
-import { ActivityIndicator, Text } from 'react-native'
-import { Pressable } from 'react-native'
-import { type PressableProps, type ViewStyle, StyleSheet } from 'react-native'
+import {
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+  Text,
+  type PressableProps,
+  type ViewStyle,
+} from 'react-native'
 import Reanimated, {
-  type SharedValue,
   interpolateColor,
   useAnimatedStyle,
   useSharedValue,
+  type SharedValue,
 } from 'react-native-reanimated'
 import * as ContextMenu from 'zeego/context-menu'
 
@@ -15,7 +20,7 @@ import { theme } from '~/theme'
 import { AnimatedText } from '~/theme/Text'
 import { borderStyle, listStyles } from '~/theme/styles'
 import { useAppContext } from '~/utils/app-provider'
-import type { FocusOutputItem } from '~/utils/schema/graphcache'
+import type { FocusItem } from '~/utils/services/notes/types'
 import { useFocusItemComplete } from './use-focus-item-complete'
 
 export const TaskListItem = ({
@@ -27,9 +32,9 @@ export const TaskListItem = ({
   style,
   ...props
 }: PressableProps & {
-  item: FocusOutputItem
+  item: FocusItem
   label: string
-  onComplete: (data: FocusOutputItem) => void
+  onComplete: (data: FocusItem) => void
   onDelete: () => void
   showBorder?: boolean
   style?: ViewStyle[]
