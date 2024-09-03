@@ -33,6 +33,7 @@ export const NoteForm = (props: NoteFormProps) => {
         (item) => !data.some((newItem) => newItem.text === item.text)
       )
       setFocusItems(newFocusItems)
+      setGenerateError(false)
     },
     onError: () => {
       setCreateError(true)
