@@ -5,6 +5,7 @@ import { LoadingFull } from '~/components/LoadingFull'
 import { Text } from '~/theme'
 import { useAppContext } from '~/utils/app-provider'
 import { useProfileQuery } from '~/utils/services/profiles/Profiles.query.generated'
+import { supabase } from '~/utils/supabase'
 
 const App = () => {
   const { session, setProfile } = useAppContext()
@@ -22,7 +23,11 @@ const App = () => {
     if (profileQueryResponse.data?.profile) {
       setProfile(profileQueryResponse.data.profile)
     }
-  }, [profileQueryResponse.data, setProfile])
+
+    if (profileQueryResponse.error) {
+      supabase.auth.signOut()
+    }
+  }, [profileQueryResponse, setProfile])
 
   if (!session) {
     return <Redirect href="/(auth)" />
