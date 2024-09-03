@@ -8,7 +8,7 @@ import React, {
   useRef,
   useMemo,
 } from 'react'
-import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
+import { QueryClientProvider, QueryClient, useQuery } from '@tanstack/react-query'
 import { Client, Provider as UrqlProvider, fetchExchange } from 'urql'
 
 import { createAuthExchange } from './createAuthExchange'
@@ -52,7 +52,7 @@ export const getToken = async () => {
 }
 
 export function AppProvider({ children }: PropsWithChildren) {
-  const [isLoadingAuth, setIsLoadingAuth] = useState(true)
+  const [isLoadingSession, setIsLoadingSession] = useState(true)
   const [session, setSession] = useState<Session | null>(null)
   const [profile, setProfile] = useState<GetProfileOutput | null>(null)
   const [profileLoading, setProfileLoading] = useState(true)
@@ -69,12 +69,11 @@ export function AppProvider({ children }: PropsWithChildren) {
   )
 
   useEffect(() => {
-    // Load session initial session.
     supabase.auth.getSession()
 
     // Watch for changes to Supabase authentication session.
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      setIsLoadingAuth(false)
+      setIsLoadingSession(false)
       setSession(session)
 
       if (event === 'SIGNED_OUT') {
@@ -91,7 +90,7 @@ export function AppProvider({ children }: PropsWithChildren) {
   }, [queryClient.clear])
 
   const contextValue: AppContextType = {
-    isLoadingAuth,
+    isLoadingAuth: profileLoading || isLoadingSession,
     session,
     profile,
     setProfile,

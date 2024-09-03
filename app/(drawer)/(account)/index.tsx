@@ -1,4 +1,5 @@
-import { Redirect, Stack, useRouter } from 'expo-router'
+import { Redirect } from 'expo-router'
+import { useEffect } from 'react'
 import { View } from 'react-native'
 
 import { Button } from '~/components/Button'
@@ -8,18 +9,20 @@ import { useAppContext } from '~/utils/app-provider'
 import { supabase } from '~/utils/supabase'
 
 function Account() {
-  const router = useRouter()
   const { session, profile } = useAppContext()
   const onLogoutPress = () => {
     supabase.auth.signOut()
   }
 
-  // router.canGoBack()
-
-  if (!session || !profile) {
-    router.back()
-    return null
+  if (!session) {
+    return <Redirect href="/(auth)" />
   }
+
+  useEffect(() => {
+    if (session && !profile) {
+      supabase.auth.signOut()
+    }
+  }, [session, profile])
 
   const { fullName } = profile || {}
 
