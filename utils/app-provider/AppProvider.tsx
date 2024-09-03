@@ -69,12 +69,18 @@ export function AppProvider({ children }: PropsWithChildren) {
   )
 
   useEffect(() => {
-    supabase.auth.getSession()
+    // supabase.auth.getSession()
 
     // Watch for changes to Supabase authentication session.
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
       setIsLoadingSession(false)
       setSession(session)
+
+      if (!session && profileLoading) {
+        setProfileLoading(false)
+        setProfile(null)
+        return
+      }
 
       if (event === 'SIGNED_OUT') {
         asyncStorage?.clear()
@@ -87,7 +93,7 @@ export function AppProvider({ children }: PropsWithChildren) {
     return () => {
       authListener.subscription.unsubscribe()
     }
-  }, [queryClient.clear])
+  }, [profileLoading, queryClient.clear])
 
   const contextValue: AppContextType = {
     isLoadingAuth: profileLoading || isLoadingSession,

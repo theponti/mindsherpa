@@ -1,7 +1,7 @@
 import * as Sentry from '@sentry/react-native'
 import { useFonts } from '@expo-google-fonts/inter'
 import { ThemeProvider } from '@shopify/restyle'
-import { SplashScreen, Stack, Redirect } from 'expo-router'
+import { SplashScreen, Stack, Redirect, router } from 'expo-router'
 import React, { useEffect, useCallback } from 'react'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
@@ -43,6 +43,10 @@ function InnerRootLayout() {
   }, [handleProfileFetch])
 
   useEffect(() => {
+    if (!isLoadingAuth && !session) {
+      router.replace('/(auth)')
+    }
+
     if (profileQueryResponse.data?.profile) {
       setProfile(profileQueryResponse.data.profile)
       setProfileLoading(false)
@@ -51,7 +55,7 @@ function InnerRootLayout() {
     if (profileQueryResponse.error) {
       supabase.auth.signOut()
     }
-  }, [profileQueryResponse, setProfile, setProfileLoading])
+  }, [profileQueryResponse, isLoadingAuth, session, setProfile, setProfileLoading])
 
   useEffect(() => {
     if (loaded || error) {
@@ -59,7 +63,7 @@ function InnerRootLayout() {
     }
   }, [loaded, error])
 
-  if (isLoadingAuth || profileQueryResponse.fetching) {
+  if (isLoadingAuth) {
     return (
       <LoadingFull>
         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
@@ -67,10 +71,6 @@ function InnerRootLayout() {
         </View>
       </LoadingFull>
     )
-  }
-
-  if (!session) {
-    return <Redirect href="/(auth)" />
   }
 
   if (profileQueryResponse.error) {
