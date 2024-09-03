@@ -1,21 +1,22 @@
-import * as AppleAuthentication from 'expo-apple-authentication';
-import { useRouter } from 'expo-router';
-import { useEffect } from 'react';
-import { Alert, View, StyleSheet, ActivityIndicator } from 'react-native';
-import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import * as AppleAuthentication from 'expo-apple-authentication'
+import { useRouter } from 'expo-router'
+import { useEffect } from 'react'
+import { Alert, View, StyleSheet, ActivityIndicator } from 'react-native'
+import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
 
-import { Text } from '~/theme';
-import { supabase } from '~/utils/supabase';
-import { useAppContext } from '~/utils/app-provider';
-import { useMutation } from '@tanstack/react-query';
-import { request } from '~/utils/query-client';
+import { Text } from '~/theme'
+import { supabase } from '~/utils/supabase'
+import { useAppContext } from '~/utils/app-provider'
+import { useMutation } from '@tanstack/react-query'
+import { request } from '~/utils/query-client'
+import { captureException } from '@sentry/react-native'
 
 const LoginSheet = ({ isLoadingAuth }: { isLoadingAuth?: boolean }) => {
-  const { session } = useAppContext();
-  const router = useRouter();
+  const { session } = useAppContext()
+  const router = useRouter()
   const textStyle = useAnimatedStyle(() => ({
     opacity: withTiming(1, { duration: 1000 }),
-  }));
+  }))
   const createUser = useMutation({
     mutationKey: ['createUser'],
     mutationFn: async ({ email }: { email: string }) => {
@@ -23,18 +24,19 @@ const LoginSheet = ({ isLoadingAuth }: { isLoadingAuth?: boolean }) => {
         method: 'POST',
         url: '/user/create',
         data: { email },
-      });
+      })
 
-      return { data };
+      return { data }
     },
     onSuccess: () => {
-      router.push('/(drawer)');
+      router.push('/(drawer)')
     },
     onError: (error) => {
-      console.log(error);
-      Alert.alert('Error', 'We could not register you at this time. Please try again later.');
+      captureException(error)
+      Alert.alert('Error', 'We could not register you at this time. Please try again later.')
+      supabase.auth.signOut()
     },
-  });
+  })
   const onSignInClick = async () => {
     try {
       const credential = await AppleAuthentication.signInAsync({
@@ -42,11 +44,11 @@ const LoginSheet = ({ isLoadingAuth }: { isLoadingAuth?: boolean }) => {
           AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
           AppleAuthentication.AppleAuthenticationScope.EMAIL,
         ],
-      });
+      })
 
       if (!credential.identityToken) {
-        Alert.alert('Apple Sign-In failed', 'No identify token provided');
-        return null;
+        Alert.alert('Apple Sign-In failed', 'No identify token provided')
+        return null
       }
 
       const {
@@ -55,43 +57,42 @@ const LoginSheet = ({ isLoadingAuth }: { isLoadingAuth?: boolean }) => {
       } = await supabase.auth.signInWithIdToken({
         provider: 'apple',
         token: credential.identityToken,
-      });
+      })
 
       if (error) {
-        throw new Error(error.message);
+        throw new Error(error.message)
       }
 
       if (!user?.email) {
-        throw new Error('No email provided');
+        throw new Error('No email provided')
       }
 
-      createUser.mutate({ email: user.email });
+      createUser.mutate({ email: user.email })
     } catch (error: unknown) {
       if (error instanceof Error && error.name === 'ERR_REQUEST_CANCELED') {
         // User canceled, no need for an alert
-        return;
+        return
       }
 
-      console.log(error);
-      // captureException(error);
+      captureException(error)
 
       Alert.alert('Sign-In Issue', 'There was a problem signing in. Please try again.', [
         { text: 'OK' },
         {
           text: 'Try Again',
           onPress: () => {
-            onSignInClick();
+            onSignInClick()
           },
         },
-      ]);
+      ])
     }
-  };
+  }
 
   useEffect(() => {
     if (session) {
-      router.push('/(drawer)/focus');
+      router.push('/(drawer)/focus')
     }
-  }, [router, session]);
+  }, [router, session])
 
   if (isLoadingAuth) {
     return (
@@ -105,7 +106,7 @@ const LoginSheet = ({ isLoadingAuth }: { isLoadingAuth?: boolean }) => {
           </View>
         </View>
       </View>
-    );
+    )
   }
 
   return (
@@ -120,8 +121,8 @@ const LoginSheet = ({ isLoadingAuth }: { isLoadingAuth?: boolean }) => {
         />
       </View>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -148,6 +149,6 @@ const styles = StyleSheet.create({
     color: 'black',
     marginTop: -22,
   },
-});
+})
 
-export default LoginSheet;
+export default LoginSheet
