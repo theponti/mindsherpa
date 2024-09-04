@@ -16,11 +16,10 @@ import { useFocusQuery } from '~/utils/services/notes/use-focus-query'
 
 export const FocusView = () => {
   const [isRecording, setIsRecording] = useState(false)
-  const [refreshing, setRefreshing] = React.useState(false)
+  const [refreshing, setRefreshing] = useState(false)
   const [focusItems, setFocusItems] = useState<FocusItem[]>([])
-  const { refetch, isPending, isError } = useFocusQuery({
+  const { data, refetch, isLoading, isError } = useFocusQuery({
     onSuccess: (data) => {
-      setRefreshing(false)
       setFocusItems(data.items)
     },
     onError: (error) => {
@@ -54,7 +53,7 @@ export const FocusView = () => {
           style={styles.scrollContainer}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         >
-          {isPending && !refreshing ? (
+          {isLoading && !refreshing ? (
             <LoadingContainer>
               <PulsingCircle />
             </LoadingContainer>
@@ -62,12 +61,12 @@ export const FocusView = () => {
 
           {isError ? <FocusLoadingError /> : null}
 
-          {!isPending && focusItems.length > 0 ? (
+          {!isLoading && focusItems.length > 0 ? (
             <View style={[styles.focuses]}>
               <TaskList data={focusItems} onItemDelete={deleteFocusItem} />
             </View>
           ) : null}
-          {!isPending && !isError && focusItems.length === 0 ? (
+          {!isLoading && !isError && focusItems.length === 0 ? (
             <View style={[styles.empty]}>
               <Text variant="bodyLarge" color="primary">
                 You have no focus items yet.
@@ -129,8 +128,8 @@ const FocusHeader = React.memo(() => {
           </Text>
         </View>
         <View style={[headerStyles.iconWrap]}>
-          <Link href="/(notebook)/">
-            <MindsherpaIcon name="notes" size={15} />
+          <Link href="/(sherpa)/">
+            <MindsherpaIcon name="message" size={15} />
           </Link>
         </View>
       </View>
