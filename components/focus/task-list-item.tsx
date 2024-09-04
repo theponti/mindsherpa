@@ -12,10 +12,9 @@ import * as ContextMenu from 'zeego/context-menu'
 
 import { theme } from '~/theme'
 import { borderStyle, listStyles } from '~/theme/styles'
-import { useAppContext } from '~/utils/app-provider'
 import type { FocusItem } from '~/utils/services/notes/types'
+import { useFocusItemComplete } from '../../utils/services/notes/use-focus-item-complete'
 import MindsherpaIcon, { type MindsherpaIconName } from '../ui/icon'
-import { useFocusItemComplete } from './use-focus-item-complete'
 
 export const TaskListItem = ({
   item,
@@ -33,9 +32,6 @@ export const TaskListItem = ({
   showBorder?: boolean
   style?: ViewStyle[]
 }) => {
-  const { session } = useAppContext()
-  if (!session) return null
-
   const fontColor = useSharedValue(0)
   const iconBackgroundColor = useSharedValue(theme.colors.grayLight)
   const iconName = useSharedValue<MindsherpaIconName>('check')

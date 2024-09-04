@@ -1,16 +1,13 @@
-import { captureException } from '@sentry/react-native'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, type UseMutationOptions } from '@tanstack/react-query'
 import type { AxiosError } from 'axios'
 import { useAuthenticatedRequest } from '~/utils/query-client'
 import type { FocusResponse } from './types'
 
-export const useDeleteFocus = ({
-  onError,
-  onSuccess,
-}: {
-  onError?: (error: AxiosError) => void
-  onSuccess?: (id: number) => void
-}) => {
+export const useDeleteFocus = (
+  props: UseMutationOptions<number, AxiosError, number> & {
+    onError?: (error: AxiosError) => void
+  }
+) => {
   const authRequest = useAuthenticatedRequest()
 
   return useMutation<number, AxiosError, number>({
@@ -21,12 +18,6 @@ export const useDeleteFocus = ({
       })
       return id
     },
-    onSuccess: (id) => {
-      onSuccess?.(id)
-    },
-    onError: (error) => {
-      captureException(error)
-      onError?.(error as AxiosError)
-    },
+    ...props,
   })
 }

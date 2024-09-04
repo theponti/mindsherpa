@@ -16,7 +16,7 @@ export const useFocusQuery = ({
 }) => {
   const authRequest = useAuthenticatedRequest()
   return useQuery<FocusResponse | null>({
-    queryKey: ['focus'],
+    queryKey: ['focusItems'],
     queryFn: async () => {
       try {
         const { data } = await authRequest<FocusResponse>({
