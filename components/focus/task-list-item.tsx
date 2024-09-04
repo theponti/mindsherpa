@@ -1,26 +1,20 @@
-import { FontAwesome } from '@expo/vector-icons'
 import React from 'react'
-import {
-  ActivityIndicator,
-  Pressable,
-  StyleSheet,
-  Text,
-  type PressableProps,
-  type ViewStyle,
-} from 'react-native'
+import { Pressable, StyleSheet, Text, type PressableProps, type ViewStyle } from 'react-native'
 import Reanimated, {
   interpolateColor,
   useAnimatedStyle,
   useSharedValue,
+  withSpring,
+  withTiming,
   type SharedValue,
 } from 'react-native-reanimated'
 import * as ContextMenu from 'zeego/context-menu'
 
 import { theme } from '~/theme'
-import { AnimatedText } from '~/theme/Text'
 import { borderStyle, listStyles } from '~/theme/styles'
 import { useAppContext } from '~/utils/app-provider'
 import type { FocusItem } from '~/utils/services/notes/types'
+import MindsherpaIcon, { type MindsherpaIconName } from '../ui/icon'
 import { useFocusItemComplete } from './use-focus-item-complete'
 
 export const TaskListItem = ({
@@ -40,79 +34,55 @@ export const TaskListItem = ({
   style?: ViewStyle[]
 }) => {
   const { session } = useAppContext()
-  if (!session) {
-    return null
-  }
+  if (!session) return null
 
   const fontColor = useSharedValue(0)
-  const opacity = useSharedValue(1)
+  const iconBackgroundColor = useSharedValue(theme.colors.grayLight)
+  const iconName = useSharedValue<MindsherpaIconName>('check')
+
   const completeItem = useFocusItemComplete({
-    id: item.id,
-    token: session.access_token,
     onSuccess: (data) => {
-      onComplete(data)
-      opacity.value = 1
-      fontColor.value = 1
-      const interval = setInterval(() => {
-        fontColor.value -= 0.1
-      }, 100)
-      setTimeout(() => clearInterval(interval), 1000)
+      iconBackgroundColor.value = withTiming(theme.colors.green, { duration: 500 })
+      setTimeout(() => {
+        onComplete(data)
+      }, 600)
     },
     onError: () => {
-      opacity.value = 1
-      fontColor.value = 1
-      const interval = setInterval(() => {
-        fontColor.value -= 0.1
-      }, 100)
-      setTimeout(() => clearInterval(interval), 1000)
+      iconName.value = 'circle-xmark'
+      iconBackgroundColor.value = withTiming(theme.colors.red, { duration: 500 })
+      setTimeout(() => {
+        iconName.value = 'circle-check'
+        iconBackgroundColor.value = withTiming(theme.colors.grayLight, { duration: 500 })
+      }, 1000)
     },
   })
 
   const onRadioButtonPress = () => {
-    opacity.value = 0.4
-    completeItem.mutate()
+    completeItem.mutate(item.id)
   }
 
-  const textStyle = useAnimatedStyle(() => {
-    const color = interpolateColor(
-      fontColor.value,
-      [0, 1],
-      [theme.colors.secondary, theme.colors.red]
-    )
-    return {
-      color,
-    }
-  }, [fontColor])
+  const textStyle = useAnimatedStyle(() => ({
+    color: interpolateColor(fontColor.value, [0, 1], [theme.colors.secondary, theme.colors.red]),
+  }))
 
-  const opacityStyle = useAnimatedStyle(() => {
-    return {
-      opacity: opacity.value,
-    }
-  }, [opacity])
+  const iconStyle = useAnimatedStyle(() => ({
+    backgroundColor: withSpring(iconBackgroundColor.value, { stiffness: 1000 }),
+  }))
 
   return (
     <ContextMenu.Root>
       <ContextMenu.Trigger action="longPress">
-        <Reanimated.View style={[styles.container, opacityStyle]}>
-          <AnimatedText variant="body" style={[listStyles.text, styles.text, textStyle]}>
+        <Reanimated.View style={[styles.container]}>
+          <Reanimated.Text style={[listStyles.text, styles.text, textStyle]}>
             {label}
-          </AnimatedText>
-          <Pressable
-            style={[styles.iconWrap]}
+          </Reanimated.Text>
+          <AnimatedPressable
+            style={[styles.icon, iconStyle]}
             onPress={onRadioButtonPress}
             disabled={completeItem.isPending}
           >
-            {completeItem.isPending ? (
-              <ActivityIndicator size={20} color={theme.colors.black} />
-            ) : (
-              <FontAwesome
-                name="circle-o"
-                size={20}
-                color={theme.colors.quaternary}
-                style={[styles.icon]}
-              />
-            )}
-          </Pressable>
+            <MindsherpaIcon name={iconName.value} size={20} color="white" />
+          </AnimatedPressable>
         </Reanimated.View>
       </ContextMenu.Trigger>
       <ContextMenu.Content
@@ -131,12 +101,15 @@ export const TaskListItem = ({
   )
 }
 
+const AnimatedPressable = Reanimated.createAnimatedComponent(Pressable)
+
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 16,
     paddingHorizontal: 24,
+    paddingRight: 16,
     columnGap: 12,
     marginHorizontal: 12,
     backgroundColor: theme.colors.white,
@@ -149,8 +122,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 28,
   },
-  icon: {},
-  iconWrap: {
+  icon: {
+    borderRadius: 9999,
+    padding: 8,
+    paddingHorizontal: 10,
     flexDirection: 'row',
     alignItems: 'center',
   },

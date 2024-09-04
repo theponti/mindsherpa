@@ -1,27 +1,25 @@
-import { useMutation } from '@tanstack/react-query';
-import type { AxiosError } from 'axios';
+import { useMutation } from '@tanstack/react-query'
+import type { AxiosError } from 'axios'
 
-import { request } from '~/utils/query-client';
-import type { FocusOutputItem } from '~/utils/schema/graphcache';
+import { useAuthenticatedRequest } from '~/utils/query-client'
+import type { FocusItem } from '~/utils/services/notes/types'
 
 type UseFocusItemComplete = {
-  id: number;
-  token: string;
-  onSuccess?: (data: FocusOutputItem) => void;
-  onError?: (error: AxiosError) => void;
-};
-export const useFocusItemComplete = ({ id, token }: UseFocusItemComplete) => {
+  onSuccess?: (data: FocusItem) => void
+  onError?: (error: AxiosError) => void
+}
+export const useFocusItemComplete = ({ onSuccess, onError }: UseFocusItemComplete) => {
+  const authRequest = useAuthenticatedRequest()
   return useMutation({
     mutationKey: ['completeItem'],
-    mutationFn: async () => {
-      const { data } = await request<FocusOutputItem>({
+    mutationFn: async (id: number) => {
+      const { data } = await authRequest<FocusItem>({
         method: 'PUT',
         url: `/tasks/complete/${id}`,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      return data;
+      })
+      return data
     },
-  });
-};
+    onSuccess,
+    onError,
+  })
+}

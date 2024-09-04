@@ -10,13 +10,11 @@ import { TaskList } from '~/components/focus/task-list'
 import { NoteForm } from '~/components/notes/note-form'
 import MindsherpaIcon from '~/components/ui/icon'
 import { Text, theme } from '~/theme'
-import { useAuthenticatedRequest } from '~/utils/query-client'
 import type { FocusItem } from '~/utils/services/notes/types'
 import { useDeleteFocus } from '~/utils/services/notes/use-delete-focus'
 import { useFocusQuery } from '~/utils/services/notes/use-focus-query'
 
 export const FocusView = () => {
-  const authRequest = useAuthenticatedRequest()
   const [isRecording, setIsRecording] = useState(false)
   const [refreshing, setRefreshing] = React.useState(false)
   const [focusItems, setFocusItems] = useState<FocusItem[]>([])
