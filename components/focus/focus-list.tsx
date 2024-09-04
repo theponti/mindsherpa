@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { FlatList, StyleSheet, Text, View } from 'react-native'
+import { FlatList, StyleSheet, View } from 'react-native'
 
 import type { FocusItem } from '~/utils/services/notes/types'
 import { FocusListItem } from './focus-list-item'
@@ -41,9 +41,6 @@ export const FocusList = ({
 
   return (
     <View style={[styles.container]}>
-      <View style={[styles.header]}>
-        <Text style={[styles.headerText]}>To Dos</Text>
-      </View>
       <View>
         <FlatList
           data={items}
