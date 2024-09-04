@@ -16,7 +16,7 @@ import type { FocusItem } from '~/utils/services/notes/types'
 import { useFocusItemComplete } from '../../utils/services/notes/use-focus-item-complete'
 import MindsherpaIcon, { type MindsherpaIconName } from '../ui/icon'
 
-export const TaskListItem = ({
+export const FocusListItem = ({
   item,
   label,
   onComplete,

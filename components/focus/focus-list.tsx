@@ -2,9 +2,9 @@ import { useCallback, useEffect, useState } from 'react'
 import { FlatList, StyleSheet, Text, View } from 'react-native'
 
 import type { FocusItem } from '~/utils/services/notes/types'
-import { TaskListItem } from './task-list-item'
+import { FocusListItem } from './focus-list-item'
 
-export const TaskList = ({
+export const FocusList = ({
   data,
   onItemDelete,
 }: {
@@ -23,7 +23,7 @@ export const TaskList = ({
   const renderItem = useCallback(
     ({ item, index }: { item: FocusItem; index: number }) => {
       return (
-        <TaskListItem
+        <FocusListItem
           label={item.text}
           item={item}
           onComplete={() => onItemComplete(item.id)}

@@ -7,7 +7,7 @@ import { RefreshControl, ScrollView } from 'react-native-gesture-handler'
 import { LoadingContainer } from '~/components/LoadingFull'
 import { PulsingCircle } from '~/components/animated/pulsing-circle'
 import { FeedbackBlock } from '~/components/feedback-block'
-import { TaskList } from '~/components/focus/task-list'
+import { FocusList } from '~/components/focus/focus-list'
 import { NoteForm } from '~/components/notes/note-form'
 import MindsherpaIcon from '~/components/ui/icon'
 import { Text, theme } from '~/theme'
@@ -99,7 +99,7 @@ export const FocusView = () => {
 
           {hasFocusItems ? (
             <View style={[styles.focuses]}>
-              <TaskList data={focusItems} onItemDelete={deleteFocusItem} />
+              <FocusList data={focusItems} onItemDelete={deleteFocusItem} />
             </View>
           ) : null}
           {hasNoFocusItems ? (
