@@ -28,14 +28,13 @@ export const NoteForm = (props: NoteFormProps) => {
   const { mutateAsync: createFocusItems, isPending: isCreating } = useFocusItemsCreate({
     onSuccess: (data) => {
       onSubmit(data)
-      setCreateError(false)
-      const newFocusItems = focusItems.filter(
-        (item) => !data.some((newItem) => newItem.text === item.text)
+      setFocusItems((prev) =>
+        prev.filter((item) => !data.some((newItem) => newItem.text === item.text))
       )
-      setFocusItems(newFocusItems)
       setGenerateError(false)
     },
-    onError: () => {
+    onError: (error) => {
+      console.log('create error', error)
       setCreateError(true)
     },
   })
@@ -51,7 +50,6 @@ export const NoteForm = (props: NoteFormProps) => {
         ])
       }
       setContent('')
-      setGenerateError(false)
     },
     onError: (error) => {
       captureException(error)
@@ -77,10 +75,12 @@ export const NoteForm = (props: NoteFormProps) => {
   }
 
   const onFocusItemPreviewClick = async (focusItem: CreateNoteOutput['focus_items'][0]) => {
+    setCreateError(false)
     createFocusItems([focusItem])
   }
 
   const handleSubmit = () => {
+    setGenerateError(false)
     generateFocusItems(content)
   }
 

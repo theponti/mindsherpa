@@ -1,4 +1,3 @@
-import { captureException } from '@sentry/react-native'
 import { useMutation } from '@tanstack/react-query'
 import type { AxiosError } from 'axios'
 import { useAuthenticatedRequest } from '~/utils/query-client'
@@ -15,18 +14,13 @@ export const useFocusItemsCreate = ({
 
   const mutation = useMutation<FocusItems, AxiosError, FocusItems>({
     mutationFn: async (items) => {
-      try {
-        const response = await authRequest<FocusItems>({
-          url: '/notes/focus',
-          method: 'POST',
-          data: { items },
-        })
+      const response = await authRequest<FocusItems>({
+        url: '/notes/focus',
+        method: 'POST',
+        data: { items },
+      })
 
-        return response.data
-      } catch (error) {
-        captureException(error)
-        throw error
-      }
+      return response.data
     },
     onSuccess,
     onError,

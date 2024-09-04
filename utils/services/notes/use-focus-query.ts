@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import type { AxiosError } from 'axios'
 
 import { useAuthenticatedRequest } from '~/utils/query-client'
-import type { FocusResponse } from './types'
+import type { FocusItems, FocusResponse } from './types'
 
 export const useFocusQuery = ({
   onError,
@@ -15,7 +15,7 @@ export const useFocusQuery = ({
   params?: Record<string, string | string[] | number>
 }) => {
   const authRequest = useAuthenticatedRequest()
-  return useQuery<FocusResponse | null>({
+  return useQuery<FocusItems | null>({
     queryKey: ['focusItems'],
     queryFn: async () => {
       try {
@@ -25,7 +25,7 @@ export const useFocusQuery = ({
           ...(params ? { params } : {}),
         })
         onSuccess?.(data)
-        return data
+        return data.items
       } catch (error) {
         captureException(error)
         onError?.(error as AxiosError)
