@@ -50,6 +50,7 @@ export const TaskList = ({
           keyExtractor={(item) => `${item.id}`}
           renderItem={renderItem}
           scrollEnabled={false}
+          contentContainerStyle={styles.listContainer}
         />
       </View>
     </View>
@@ -60,6 +61,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingBottom: 32,
+  },
+  listContainer: {
+    rowGap: 12,
   },
   header: {
     flexDirection: 'row',

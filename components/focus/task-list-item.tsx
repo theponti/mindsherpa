@@ -74,7 +74,11 @@ export const TaskListItem = ({
   }
 
   const textStyle = useAnimatedStyle(() => {
-    const color = interpolateColor(fontColor.value, [0, 1], [theme.colors.black, theme.colors.red])
+    const color = interpolateColor(
+      fontColor.value,
+      [0, 1],
+      [theme.colors.secondary, theme.colors.red]
+    )
     return {
       color,
     }
@@ -90,6 +94,9 @@ export const TaskListItem = ({
     <ContextMenu.Root>
       <ContextMenu.Trigger action="longPress">
         <Reanimated.View style={[styles.container, opacityStyle]}>
+          <AnimatedText variant="body" style={[listStyles.text, styles.text, textStyle]}>
+            {label}
+          </AnimatedText>
           <Pressable
             style={[styles.iconWrap]}
             onPress={onRadioButtonPress}
@@ -106,9 +113,6 @@ export const TaskListItem = ({
               />
             )}
           </Pressable>
-          <AnimatedText variant="body" style={[listStyles.text, styles.text, textStyle]}>
-            {label}
-          </AnimatedText>
         </Reanimated.View>
       </ContextMenu.Trigger>
       <ContextMenu.Content
@@ -131,13 +135,19 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
     columnGap: 12,
+    marginHorizontal: 12,
+    backgroundColor: theme.colors.white,
     ...borderStyle.borderBottom,
+    borderRadius: 24,
   },
   text: {
     flex: 1,
     fontWeight: 500,
+    fontSize: 18,
+    lineHeight: 28,
   },
   icon: {},
   iconWrap: {

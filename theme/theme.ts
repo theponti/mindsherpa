@@ -1,15 +1,15 @@
-import { createTheme, useTheme as useRestyleTheme } from '@shopify/restyle';
-import { StyleSheet, type ImageStyle, type TextStyle, type ViewStyle } from 'react-native';
+import { createTheme, useTheme as useRestyleTheme } from '@shopify/restyle'
+import type { ImageStyle, TextStyle, ViewStyle } from 'react-native'
 
 type NamedStyles<T> = {
-  [P in keyof T]: ViewStyle | TextStyle | ImageStyle;
-};
+  [P in keyof T]: ViewStyle | TextStyle | ImageStyle
+}
 
-const SANS_SERIF_FONT = 'Plus Jakarta Sans';
+const SANS_SERIF_FONT = 'Plus Jakarta Sans'
 
 const theme = createTheme({
   colors: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#F9FAFB',
     black: 'rgba(0, 0, 0, 1.00)',
     blue: 'rgba(217, 231, 255, 1.00)',
     blueLight: 'rgba(240, 248, 255, 1.00)',
@@ -34,6 +34,7 @@ const theme = createTheme({
     white: '#fff',
     yellow: 'rgba(255, 206, 84, 1.00)',
     quaternary: '#9097a6',
+    secondary: '#344054',
   },
   spacing: {
     xs_4: 4,
@@ -105,7 +106,7 @@ const theme = createTheme({
       shadowRadius: 2,
     },
   },
-});
+})
 
 export const Shadows = {
   dark: {
@@ -113,19 +114,19 @@ export const Shadows = {
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 1,
   },
-};
+}
 
 export const useTheme = () => {
-  return useRestyleTheme<Theme>();
-};
+  return useRestyleTheme<Theme>()
+}
 
 export const makeStyles = <T extends NamedStyles<T> | NamedStyles<unknown>>(
   styles: (theme: Theme) => T
 ) => {
   return () => {
-    return styles(theme);
-  };
-};
+    return styles(theme)
+  }
+}
 
-export type Theme = typeof theme;
-export default theme;
+export type Theme = typeof theme
+export default theme

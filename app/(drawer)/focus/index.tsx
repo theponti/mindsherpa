@@ -87,6 +87,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
+    backgroundColor: theme.colors.backgroundColor,
   },
   focusContainer: {
     flex: 1,
@@ -118,26 +119,27 @@ const FocusHeader = React.memo(() => {
 
   return (
     <View style={headerStyles.header}>
-      <View>
-        <Text fontSize={30} fontWeight={600}>
-          Today
-        </Text>
+      <View style={[headerStyles.topRow]}>
+        <View style={[headerStyles.iconWrap]}>
+          <Link href="/(account)/">
+            <MindsherpaIcon name="user" size={15} />
+          </Link>
+        </View>
+        <View style={[headerStyles.today]}>
+          <Text fontSize={30} fontWeight={600}>
+            Today
+          </Text>
+        </View>
+        <View style={[headerStyles.iconWrap]}>
+          <Link href="/(notebook)/">
+            <MindsherpaIcon name="notes" size={15} />
+          </Link>
+        </View>
+      </View>
+      <View style={[headerStyles.bottomRow]}>
         <Text variant="body" color="gray">
           {todaysDate}
         </Text>
-      </View>
-      <View
-        style={{
-          borderRadius: 99,
-          padding: 8,
-          borderColor: theme.colors.black,
-          borderWidth: 2,
-          marginRight: 12,
-        }}
-      >
-        <Link href="/(account)/">
-          <MindsherpaIcon name="user-astronaut" size={24} />
-        </Link>
       </View>
     </View>
   )
@@ -145,13 +147,25 @@ const FocusHeader = React.memo(() => {
 
 const headerStyles = StyleSheet.create({
   header: {
-    flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingLeft: 12,
-    paddingBottom: 24,
     marginTop: 91,
     rowGap: 4,
+  },
+  topRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 24,
+  },
+  today: { flex: 1, alignItems: 'center' },
+  bottomRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  iconWrap: {
+    backgroundColor: theme.colors.grayLight,
+    borderRadius: 99,
+    padding: 12,
   },
 })
 

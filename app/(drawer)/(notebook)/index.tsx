@@ -8,7 +8,7 @@ import { ScreenContent } from '~/components/ScreenContent'
 import { FeedbackBlock } from '~/components/feedback-block'
 import { NoteListItem } from '~/components/notes/note-list-item'
 import { ViewHeader } from '~/components/view-header'
-import { Text, theme } from '~/theme'
+import { Text } from '~/theme'
 import type { NoteOutput } from '~/utils/schema/graphcache'
 import { useNotesQuery } from '~/utils/services/notes/Notes.query.generated'
 
@@ -55,7 +55,6 @@ const NotebookScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.backgroundColor,
   },
   header: {
     flexDirection: 'row',

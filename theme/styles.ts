@@ -1,27 +1,5 @@
-import { StyleSheet } from 'react-native';
-import { theme } from './index';
-
-export const defaultStyles = StyleSheet.create({
-  btn: {
-    height: 48,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-    paddingHorizontal: 16,
-  },
-  loadingOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 1000,
-  },
-  pageContainer: {
-    flex: 1,
-    backgroundColor: theme.colors.white,
-  },
-});
+import { StyleSheet } from 'react-native'
+import { theme } from './index'
 
 export const borderStyle = StyleSheet.create({
   noBorder: {
@@ -36,7 +14,7 @@ export const borderStyle = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 12,
   },
-});
+})
 
 export const listStyles = StyleSheet.create({
   container: {
@@ -52,4 +30,4 @@ export const listStyles = StyleSheet.create({
     fontSize: 20,
     color: theme.colors.primary,
   },
-});
+})

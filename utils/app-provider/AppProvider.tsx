@@ -100,7 +100,6 @@ export function AppProvider({ children }: PropsWithChildren) {
     asyncStorage?.clear()
     getTokenRef.current = getToken
     router.replace('/(auth)')
-    console.log('signed out')
   }, [router, queryClient.clear])
 
   const contextValue: AppContextType = {
