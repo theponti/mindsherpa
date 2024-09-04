@@ -1,5 +1,9 @@
-import type { CodegenConfig } from '@graphql-codegen/cli';
-require('dotenv').config();
+import type { CodegenConfig } from '@graphql-codegen/cli'
+import dotenv from 'dotenv'
+
+dotenv.config({
+  path: process.env.NODE_ENV === 'development' ? '.env.development.local' : '.env.production.local',
+})
 
 const config: CodegenConfig = {
   schema: `${process.env.EXPO_PUBLIC_GRAPHQL_ENDPOINT}?dev=true`,
@@ -113,6 +117,6 @@ const config: CodegenConfig = {
       ],
     },
   },
-};
+}
 
-export default config;
+export default config

@@ -1,22 +1,23 @@
 import { useCallback, useState, type PropsWithChildren } from 'react'
-import { Pressable, StyleSheet, View, type ViewProps } from 'react-native'
+import { Pressable, StyleSheet, View } from 'react-native'
 
 import { captureException } from '@sentry/react-native'
 import { Text, theme } from '~/theme'
-import type { FocusOutputItem } from '~/utils/schema/graphcache'
+import type { FocusItem } from '~/utils/services/notes/types'
+import { useFocusItemsCreate } from '../../utils/services/notes/use-focus-item-create'
 import { FeedbackBlock } from '../feedback-block'
-import { useFocusItemsCreate } from '../focus/use-focus-item-create'
 import AudioRecorder from '../media/audio-recorder'
 import { useFocusItemsTextGenerate, type CreateNoteOutput } from '../media/use-audio-upload'
 import AutoGrowingInput from '../text-input-autogrow'
 import MindsherpaIcon from '../ui/icon'
 import { UploadFileButton } from '../upload-file-button'
+import FocusItemPreview from './focus-item-preview'
 import { FormSubmitButton } from './note-form-submit-button'
 
 type NoteFormProps = {
   isRecording: boolean
   setIsRecording: (isRecording: boolean) => void
-  onSubmit: (data: FocusOutputItem[]) => void
+  onSubmit: (data: FocusItem[]) => void
 }
 export const NoteForm = (props: NoteFormProps) => {
   const { isRecording, setIsRecording, onSubmit } = props
@@ -27,14 +28,13 @@ export const NoteForm = (props: NoteFormProps) => {
   const { mutateAsync: createFocusItems, isPending: isCreating } = useFocusItemsCreate({
     onSuccess: (data) => {
       onSubmit(data)
-      setCreateError(false)
-      const newFocusItems = focusItems.filter(
-        (item) => !data.some((newItem) => newItem.text === item.text)
+      setFocusItems((prev) =>
+        prev.filter((item) => !data.some((newItem) => newItem.text === item.text))
       )
-      setFocusItems(newFocusItems)
       setGenerateError(false)
     },
-    onError: () => {
+    onError: (error) => {
+      console.log('create error', error)
       setCreateError(true)
     },
   })
@@ -50,7 +50,6 @@ export const NoteForm = (props: NoteFormProps) => {
         ])
       }
       setContent('')
-      setGenerateError(false)
     },
     onError: (error) => {
       captureException(error)
@@ -71,15 +70,17 @@ export const NoteForm = (props: NoteFormProps) => {
     [setIsRecording]
   )
 
-  const onFocusItemPreviewDeleteClick = (focusItem: FocusOutputItem) => {
+  const onFocusItemPreviewDeleteClick = (focusItem: FocusItem) => {
     setFocusItems((prev) => prev.filter((item) => item.id !== focusItem.id))
   }
 
   const onFocusItemPreviewClick = async (focusItem: CreateNoteOutput['focus_items'][0]) => {
+    setCreateError(false)
     createFocusItems([focusItem])
   }
 
   const handleSubmit = () => {
+    setGenerateError(false)
     generateFocusItems(content)
   }
 
@@ -177,62 +178,6 @@ const styles = StyleSheet.create({
     columnGap: 16,
     alignSelf: 'flex-start',
     marginRight: 16,
-  },
-})
-
-type FocusItemPreviewProps = {
-  disabled: boolean
-  focusItem: FocusOutputItem
-  onDeleteClick: (focusItem: FocusOutputItem) => void
-  onCreateClick: (focusItem: CreateNoteOutput['focus_items'][0]) => void
-} & ViewProps
-const FocusItemPreview = ({
-  disabled,
-  focusItem,
-  onDeleteClick,
-  onCreateClick,
-  ...props
-}: FocusItemPreviewProps) => {
-  const onDeleteIconPress = () => {
-    onDeleteClick(focusItem)
-  }
-
-  const onIconPress = () => {
-    onCreateClick(focusItem)
-  }
-
-  return (
-    <View style={[focusItemStyles.item]} {...props}>
-      <View style={[focusItemStyles.info]}>
-        <Text variant="body" color="black">
-          {focusItem.text}
-        </Text>
-        {focusItem.dueDate ? <Text variant="caption">Due: {focusItem.dueDate}</Text> : null}
-      </View>
-      <Pressable disabled={disabled} style={[focusItemStyles.icon]} onPress={onDeleteIconPress}>
-        <MindsherpaIcon name="trash" size={24} color={theme.colors.red} />
-      </Pressable>
-      <Pressable disabled={disabled} style={[focusItemStyles.icon]} onPress={onIconPress}>
-        <MindsherpaIcon name="list-tree" size={24} color={theme.colors.black} />
-      </Pressable>
-    </View>
-  )
-}
-
-const focusItemStyles = StyleSheet.create({
-  item: {
-    flexDirection: 'row',
-    backgroundColor: theme.colors.blueLight,
-    borderRadius: 16,
-  },
-  info: {
-    flex: 1,
-    paddingVertical: 20,
-    paddingHorizontal: 24,
-  },
-  icon: {
-    justifyContent: 'center',
-    marginRight: 20,
   },
 })
 

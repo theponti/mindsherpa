@@ -8,14 +8,14 @@
       "developmentClient": true,
       "distribution": "internal",
       "env": {
-        "ENV": "development"
+        "NODE_ENV": "development"
       }
     },
     "simulator": {
       "channel": "development",
       "developmentClient": true,
       "env": {
-        "ENV": "development"
+        "NODE_ENV": "development"
       },
       "extends": "development",
       "ios": {
@@ -29,7 +29,7 @@
     "production": {
       "channel": "production",
       "env": {
-        "ENV": "production"
+        "NODE_ENV": "production"
       }
     }
   },

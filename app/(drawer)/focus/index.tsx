@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { Link } from 'expo-router'
 import React, { useCallback, useMemo, useState } from 'react'
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native'
@@ -6,39 +7,74 @@ import { RefreshControl, ScrollView } from 'react-native-gesture-handler'
 import { LoadingContainer } from '~/components/LoadingFull'
 import { PulsingCircle } from '~/components/animated/pulsing-circle'
 import { FeedbackBlock } from '~/components/feedback-block'
-import { TaskList } from '~/components/focus/task-list'
+import { FocusList } from '~/components/focus/focus-list'
 import { NoteForm } from '~/components/notes/note-form'
 import MindsherpaIcon from '~/components/ui/icon'
 import { Text, theme } from '~/theme'
-import type { FocusItem } from '~/utils/services/notes/types'
+import type { FocusItem, FocusItems } from '~/utils/services/notes/types'
 import { useDeleteFocus } from '~/utils/services/notes/use-delete-focus'
 import { useFocusQuery } from '~/utils/services/notes/use-focus-query'
 
 export const FocusView = () => {
+  const queryClient = useQueryClient()
   const [isRecording, setIsRecording] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
-  const [focusItems, setFocusItems] = useState<FocusItem[]>([])
-  const { data, refetch, isLoading, isError } = useFocusQuery({
+  const {
+    data: focusItems,
+    refetch,
+    isLoading,
+    isError,
+  } = useFocusQuery({
     onSuccess: (data) => {
-      setFocusItems(data.items)
+      setRefreshing(false)
     },
     onError: (error) => {
       setRefreshing(false)
     },
   })
   const { mutate: deleteFocusItem } = useDeleteFocus({
-    onSuccess: (id: number) => {
-      setFocusItems((prev) => prev.filter((item) => item.id !== id))
+    onSuccess: async (deletedItemId) => {
+      // Cancel any outgoing fetches
+      await queryClient.cancelQueries({ queryKey: ['focusItems'] })
+
+      // Snapshot the previous value
+      const previousItems = queryClient.getQueryData(['focusItems'])
+
+      // Optimistically update to the new value
+      queryClient.setQueryData(['focusItems'], (old: FocusItem[]) =>
+        old.filter((item) => item.id !== deletedItemId)
+      )
+
+      // Return a context object with the snapshot value
+      return { previousItems }
+    },
+    onError: () => {
+      const previousItems = queryClient.getQueryData(['focusItems'])
+      // If the mutation fails, use the context returned from onMutate to roll back
+      queryClient.setQueryData(['focusItems'], previousItems)
+    },
+    onSettled: () => {
+      // Always refetch after error or success:
+      queryClient.invalidateQueries({ queryKey: ['focusItems'] })
     },
   })
-  const onFormSubmit = useCallback((data: FocusItem[]) => {
-    setFocusItems((prev) => [...prev, ...data])
-  }, [])
+
+  const onFormSubmit = useCallback(
+    (data: FocusItem[]) => {
+      const previousItems = queryClient.getQueryData<FocusItems>(['focusItems'])
+      queryClient.setQueryData(['focusItems'], [...(previousItems || []), ...data])
+    },
+    [queryClient]
+  )
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
     refetch()
   }, [refetch])
+
+  const hasLoadedFocusItems = !isLoading && focusItems
+  const hasFocusItems = hasLoadedFocusItems && focusItems.length > 0
+  const hasNoFocusItems = hasLoadedFocusItems && focusItems.length === 0
 
   return (
     <KeyboardAvoidingView
@@ -61,12 +97,12 @@ export const FocusView = () => {
 
           {isError ? <FocusLoadingError /> : null}
 
-          {!isLoading && focusItems.length > 0 ? (
+          {hasFocusItems ? (
             <View style={[styles.focuses]}>
-              <TaskList data={focusItems} onItemDelete={deleteFocusItem} />
+              <FocusList data={focusItems} onItemDelete={deleteFocusItem} />
             </View>
           ) : null}
-          {!isLoading && !isError && focusItems.length === 0 ? (
+          {hasNoFocusItems ? (
             <View style={[styles.empty]}>
               <Text variant="bodyLarge" color="primary">
                 You have no focus items yet.
@@ -118,7 +154,7 @@ const FocusHeader = React.memo(() => {
     <View style={headerStyles.header}>
       <View style={[headerStyles.topRow]}>
         <View style={[headerStyles.iconWrap]}>
-          <Link href="/(account)/">
+          <Link href="/(account)/" style={[headerStyles.iconLink]}>
             <MindsherpaIcon name="user" size={15} />
           </Link>
         </View>
@@ -162,6 +198,8 @@ const headerStyles = StyleSheet.create({
   iconWrap: {
     backgroundColor: theme.colors.grayLight,
     borderRadius: 99,
+  },
+  iconLink: {
     padding: 12,
   },
 })

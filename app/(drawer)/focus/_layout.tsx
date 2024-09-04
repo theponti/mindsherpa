@@ -1,8 +1,8 @@
-import { Stack, useRouter } from 'expo-router';
-import { Button } from 'react-native';
+import { Stack, useRouter } from 'expo-router'
+import { Button } from 'react-native'
 
 export default function FocusLayout() {
-  const router = useRouter();
+  const router = useRouter()
 
   return (
     <Stack initialRouteName="/(drawer)/focus">
@@ -16,20 +16,12 @@ export default function FocusLayout() {
             <Button
               title="Back"
               onPress={() => {
-                router.push('/(drawer)/focus');
-              }}
-            />
-          ),
-          headerRight: () => (
-            <Button
-              title="Add"
-              onPress={() => {
-                router.push('/(drawer)/focus/notebook/new');
+                router.push('/(drawer)/focus')
               }}
             />
           ),
         }}
       />
     </Stack>
-  );
+  )
 }

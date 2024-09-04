@@ -1,77 +1,25 @@
 import { useFonts } from '@expo-google-fonts/inter'
-import * as Sentry from '@sentry/react-native'
 import { ThemeProvider } from '@shopify/restyle'
-import { useQuery } from '@tanstack/react-query'
 import { Slot, SplashScreen, Stack, useRouter, useSegments } from 'expo-router'
 import React, { useEffect } from 'react'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { theme } from '~/theme'
+import { ApiProvider } from '~/utils/api-provider'
 import { AppProvider, useAppContext } from '~/utils/app-provider'
 import { log } from '~/utils/logger'
 import '~/utils/observability'
-import { request } from '~/utils/query-client'
-import type { Profile } from '~/utils/services/profiles'
-import { supabase } from '~/utils/supabase'
 
 SplashScreen.preventAutoHideAsync()
 
 function InnerRootLayout() {
   const router = useRouter()
   const segments = useSegments()
-  const { isLoadingAuth, profile, session, setProfile, setProfileLoading } = useAppContext()
-  const {
-    refetch,
-    error: profileError,
-    isError: isErrorProfile,
-    isLoading: isLoadingProfile,
-    data: loadedProfile,
-  } = useQuery<Profile | null>({
-    queryKey: ['profile'],
-    queryFn: async () => {
-      if (!session || profile) return null
-      try {
-        const { data } = await request<Profile>({
-          method: 'GET',
-          url: '/user/profile',
-          headers: {
-            Authorization: `Bearer ${session?.access_token}`,
-          },
-        })
-
-        setProfile({
-          user_id: data.user_id,
-          profile_id: data.profile_id,
-          email: data.email,
-          name: data.name,
-        })
-        setProfileLoading(false)
-
-        return data
-      } catch (error) {
-        Sentry.captureException(profileError)
-
-        if (session) {
-          supabase.auth.signOut()
-        }
-
-        return null
-      }
-    },
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    enabled: Boolean(session && !profile && session.access_token),
-  })
+  const { isLoadingAuth, profile, session } = useAppContext()
 
   const [loaded, error] = useFonts({
     'Font Awesome Regular': require('../assets/fonts/icons/fa-regular-400.ttf'),
     'Plus Jakarta Sans': require('../assets/fonts/Plus_Jakarta_Sans.ttf'),
   })
-
-  useEffect(() => {
-    if (session && !isErrorProfile && !isLoadingProfile) {
-      refetch()
-    }
-  }, [refetch, session, isErrorProfile, isLoadingProfile])
 
   useEffect(() => {
     if (loaded || error) {
@@ -114,12 +62,14 @@ function RootLayout() {
   return (
     <ThemeProvider theme={theme}>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <AppProvider>
-          <InnerRootLayout />
-        </AppProvider>
+        <ApiProvider>
+          <AppProvider>
+            <InnerRootLayout />
+          </AppProvider>
+        </ApiProvider>
       </GestureHandlerRootView>
     </ThemeProvider>
   )
 }
 
-export default Sentry.wrap(RootLayout)
+export default RootLayout
