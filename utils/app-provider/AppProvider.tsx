@@ -1,5 +1,6 @@
+import { captureException } from '@sentry/react-native'
 import type { Session } from '@supabase/supabase-js'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'expo-router'
 import React, {
   createContext,
@@ -14,6 +15,7 @@ import React, {
 import { Client, Provider as UrqlProvider, fetchExchange } from 'urql'
 import { GRAPHQL_URI } from '../constants'
 import { log } from '../logger'
+import { queryClient, request } from '../query-client'
 import type { Profile } from '../services/profiles'
 import { supabase } from '../supabase'
 import { createAuthExchange } from './createAuthExchange'
@@ -22,9 +24,7 @@ import { asyncStorage, graphcacheExchange } from './graphcacheExchange'
 type AppContextType = {
   isLoadingAuth: boolean
   session: Session | null
-  profile: Profile | null
-  setProfile: (profile: Profile | null) => void
-  setProfileLoading: (isLoading: boolean) => void
+  profile?: Profile
   signOut: () => void
   urqlClient: Client
 }
@@ -56,11 +56,40 @@ export function AppProvider({ children }: PropsWithChildren) {
   const router = useRouter()
   const [isLoadingSession, setIsLoadingSession] = useState(true)
   const [session, setSession] = useState<Session | null>(null)
-  const [profile, setProfile] = useState<AppContextType['profile'] | null>(null)
-  const [profileLoading, setProfileLoading] = useState(true)
+  const {
+    refetch,
+    error: profileError,
+    isError: isErrorProfile,
+    isLoading: isLoadingProfile,
+    data: profile,
+  } = useQuery<Profile | undefined>({
+    queryKey: ['profile'],
+    queryFn: async () => {
+      if (!session) return
+      try {
+        const { data } = await request<Profile>({
+          method: 'GET',
+          url: '/user/profile',
+          headers: {
+            Authorization: `Bearer ${session?.access_token}`,
+          },
+        })
+
+        return data
+      } catch (error) {
+        captureException(profileError)
+
+        if (session) {
+          supabase.auth.signOut()
+        }
+      }
+    },
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    enabled: Boolean(session?.access_token),
+  })
 
   const getTokenRef = useRef(getToken)
-  const queryClient = useMemo(() => new QueryClient(), [])
   const urqlClient = useMemo<Client>(
     () =>
       new Client({
@@ -82,41 +111,34 @@ export function AppProvider({ children }: PropsWithChildren) {
         asyncStorage?.clear()
         getTokenRef.current = getToken
         queryClient.clear()
-        setProfile(null)
       }
     })
 
     return () => {
       authListener.subscription.unsubscribe()
     }
-  }, [queryClient.clear])
+  }, [])
 
   const signOut = useCallback(() => {
     supabase.auth.signOut()
-    setProfile(null)
-    setProfileLoading(false)
     setSession(null)
     queryClient.clear()
     asyncStorage?.clear()
     getTokenRef.current = getToken
     router.replace('/(auth)')
-  }, [router, queryClient.clear])
+  }, [router])
 
   const contextValue: AppContextType = {
-    isLoadingAuth: profileLoading || isLoadingSession,
+    isLoadingAuth: isLoadingProfile || isLoadingSession,
     session,
     profile,
-    setProfile,
-    setProfileLoading,
     signOut,
     urqlClient,
   }
 
   return (
     <AppContext.Provider value={contextValue}>
-      <QueryClientProvider client={queryClient}>
-        <UrqlProvider value={urqlClient}>{children}</UrqlProvider>
-      </QueryClientProvider>
+      <UrqlProvider value={urqlClient}>{children}</UrqlProvider>
     </AppContext.Provider>
   )
 }

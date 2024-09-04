@@ -1,7 +1,8 @@
 import * as ImagePicker from 'expo-image-picker'
-import { useState, useEffect } from 'react'
-import { StyleSheet, View, Alert, Image, Button } from 'react-native'
+import { useEffect, useState } from 'react'
+import { Alert, Button, Image, StyleSheet, View } from 'react-native'
 
+import { theme } from '~/theme'
 import { supabase } from '../utils/supabase'
 
 interface Props {
@@ -121,10 +122,10 @@ const styles = StyleSheet.create({
     paddingTop: 0,
   },
   noImage: {
-    backgroundColor: '#fae1e6',
-    borderWidth: 10,
-    borderStyle: 'solid',
+    backgroundColor: theme.colors.grayLight,
     borderColor: 'rgb(200, 200, 200)',
+    borderStyle: 'solid',
+    borderWidth: 1,
     borderRadius: 1000,
     justifyContent: 'center',
     alignItems: 'center',

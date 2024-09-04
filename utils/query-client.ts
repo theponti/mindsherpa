@@ -3,7 +3,7 @@ import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios'
 import { useAppContext } from './app-provider'
 import { HOST_URI } from './constants'
 
-const queryClient = new QueryClient({
+export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: true,
@@ -11,7 +11,7 @@ const queryClient = new QueryClient({
   },
 })
 
-const client = axios.create({
+export const client = axios.create({
   baseURL: HOST_URI,
   headers: {
     'Content-Type': 'application/json',

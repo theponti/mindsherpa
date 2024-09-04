@@ -154,7 +154,7 @@ const FocusHeader = React.memo(() => {
     <View style={headerStyles.header}>
       <View style={[headerStyles.topRow]}>
         <View style={[headerStyles.iconWrap]}>
-          <Link href="/(account)/">
+          <Link href="/(account)/" style={[headerStyles.iconLink]}>
             <MindsherpaIcon name="user" size={15} />
           </Link>
         </View>
@@ -198,6 +198,8 @@ const headerStyles = StyleSheet.create({
   iconWrap: {
     backgroundColor: theme.colors.grayLight,
     borderRadius: 99,
+  },
+  iconLink: {
     padding: 12,
   },
 })
