@@ -1,5 +1,12 @@
 import React from 'react'
-import { Pressable, StyleSheet, Text, type PressableProps, type ViewStyle } from 'react-native'
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  type PressableProps,
+  type ViewStyle,
+} from 'react-native'
 import Reanimated, {
   interpolateColor,
   useAnimatedStyle,
@@ -66,34 +73,36 @@ export const FocusListItem = ({
   }))
 
   return (
-    <ContextMenu.Root>
-      <ContextMenu.Trigger action="longPress">
-        <Reanimated.View style={[styles.container]}>
-          <Reanimated.Text style={[listStyles.text, styles.text, textStyle]}>
-            {label}
-          </Reanimated.Text>
-          <AnimatedPressable
-            style={[styles.icon, iconStyle]}
-            onPress={onRadioButtonPress}
-            disabled={completeItem.isPending}
-          >
-            <MindsherpaIcon name={iconName.value} size={20} color="white" />
-          </AnimatedPressable>
-        </Reanimated.View>
-      </ContextMenu.Trigger>
-      <ContextMenu.Content
-        alignOffset={10}
-        loop={false}
-        avoidCollisions={true}
-        collisionPadding={12}
-      >
-        <ContextMenu.Label>Actions</ContextMenu.Label>
-        <ContextMenu.Item key="delete" onSelect={onDelete}>
-          <ContextMenu.ItemIcon ios={{ name: 'trash', size: 20 }} />
-          <ContextMenu.ItemTitle>Delete</ContextMenu.ItemTitle>
-        </ContextMenu.Item>
-      </ContextMenu.Content>
-    </ContextMenu.Root>
+    <Reanimated.View style={[styles.container]}>
+      <ContextMenu.Root>
+        <ContextMenu.Trigger action="longPress" style={[styles.itemContainer]}>
+          <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+            <Reanimated.Text style={[listStyles.text, styles.text, textStyle, { flex: 1 }]}>
+              {label}
+            </Reanimated.Text>
+            <AnimatedPressable
+              style={[styles.icon, iconStyle]}
+              onPress={onRadioButtonPress}
+              disabled={completeItem.isPending}
+            >
+              <MindsherpaIcon name={iconName.value} size={20} color="white" />
+            </AnimatedPressable>
+          </View>
+        </ContextMenu.Trigger>
+        <ContextMenu.Content
+          alignOffset={10}
+          loop={false}
+          avoidCollisions={true}
+          collisionPadding={12}
+        >
+          <ContextMenu.Label>Actions</ContextMenu.Label>
+          <ContextMenu.Item key="delete" onSelect={onDelete}>
+            <ContextMenu.ItemIcon ios={{ name: 'trash', size: 20 }} />
+            <ContextMenu.ItemTitle>Delete</ContextMenu.ItemTitle>
+          </ContextMenu.Item>
+        </ContextMenu.Content>
+      </ContextMenu.Root>
+    </Reanimated.View>
   )
 }
 
@@ -101,16 +110,17 @@ const AnimatedPressable = Reanimated.createAnimatedComponent(Pressable)
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    paddingRight: 16,
     columnGap: 12,
-    marginHorizontal: 12,
     backgroundColor: theme.colors.white,
     ...borderStyle.borderBottom,
     borderRadius: 24,
+  },
+  itemContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    paddingRight: 16,
   },
   text: {
     flex: 1,
