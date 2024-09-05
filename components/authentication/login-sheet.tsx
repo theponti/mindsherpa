@@ -6,8 +6,7 @@ import { useRouter } from 'expo-router'
 import { useCallback } from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
 
-import { useAppContext } from '~/utils/app-provider'
-import { request } from '~/utils/query-client'
+import queryClient, { request } from '~/utils/query-client'
 import { supabase } from '~/utils/supabase'
 
 type CreateUserResponse = {
@@ -17,9 +16,8 @@ type CreateUserResponse = {
   name: string
 }
 
-const LoginSheet = ({ isLoadingAuth }: { isLoadingAuth?: boolean }) => {
+const LoginSheet = () => {
   const router = useRouter()
-  const { setProfile } = useAppContext()
 
   const createUser = useMutation<CreateUserResponse, AxiosError, { email: string }>({
     mutationKey: ['createUser'],
@@ -33,7 +31,7 @@ const LoginSheet = ({ isLoadingAuth }: { isLoadingAuth?: boolean }) => {
       return data
     },
     onSuccess: (data) => {
-      setProfile(data)
+      queryClient.setQueryData(['profile'], data)
       router.push('/(drawer)/focus')
     },
     onError: (error) => {
