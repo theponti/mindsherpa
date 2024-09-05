@@ -6,7 +6,8 @@ import { Button } from '~/components/Button'
 import TextInput from '~/components/text-input'
 import { Text } from '~/theme'
 import { useAppContext } from '~/utils/app-provider'
-import queryClient, { useAuthenticatedRequest } from '~/utils/query-client'
+import queryClient from '~/utils/query-client'
+import { useAuthenticatedRequest } from '~/utils/use-authenticated-request'
 
 function Account() {
   const { session, signOut, profile } = useAppContext()

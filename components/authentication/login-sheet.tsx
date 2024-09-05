@@ -9,20 +9,20 @@ import { Alert, StyleSheet, View } from 'react-native'
 import queryClient, { request } from '~/utils/query-client'
 import { supabase } from '~/utils/supabase'
 
-type CreateUserResponse = {
-  user_id: string
-  profile_id: string
+type AuthenticationResponse = {
+  id: string
   email: string
-  name: string
+  full_name: string
+  user_id: string
 }
 
 const LoginSheet = () => {
   const router = useRouter()
 
-  const createUser = useMutation<CreateUserResponse, AxiosError, { email: string }>({
+  const createUser = useMutation<AuthenticationResponse, AxiosError, { email: string }>({
     mutationKey: ['createUser'],
     mutationFn: async ({ email }: { email: string }) => {
-      const { data } = await request<CreateUserResponse>({
+      const { data } = await request<AuthenticationResponse>({
         method: 'POST',
         url: '/user/create',
         data: { email },
@@ -32,7 +32,7 @@ const LoginSheet = () => {
     },
     onSuccess: (data) => {
       queryClient.setQueryData(['profile'], data)
-      router.push('/(drawer)/focus')
+      // router.push('/(drawer)/focus')
     },
     onError: (error) => {
       captureException(error)

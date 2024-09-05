@@ -2,7 +2,7 @@ import { captureException } from '@sentry/react-native'
 import { useQuery } from '@tanstack/react-query'
 import type { AxiosError } from 'axios'
 
-import { useAuthenticatedRequest } from '~/utils/query-client'
+import { useAuthenticatedRequest } from '~/utils/use-authenticated-request'
 import type { FocusItems, FocusResponse } from './types'
 
 export const useFocusQuery = ({

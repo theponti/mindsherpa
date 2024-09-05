@@ -6,7 +6,6 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { theme } from '~/theme'
 import { ApiProvider } from '~/utils/api-provider'
 import { AppProvider, useAppContext } from '~/utils/app-provider'
-import { log } from '~/utils/logger'
 import '~/utils/observability'
 
 SplashScreen.preventAutoHideAsync()
@@ -32,16 +31,12 @@ function InnerRootLayout() {
 
     const inAuthGroup = segments[0] === '(drawer)'
 
-    log('Segments', segments)
-
     if (session && profile && !inAuthGroup) {
-      log('routing to focus')
       router.replace('/(drawer)/focus')
       return
     }
 
     if (!session && inAuthGroup) {
-      log('routing to auth')
       router.replace('/(auth)')
     }
   }, [isLoadingAuth, profile, segments, router, session])

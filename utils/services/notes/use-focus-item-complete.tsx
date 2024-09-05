@@ -1,8 +1,8 @@
 import { useMutation } from '@tanstack/react-query'
 import type { AxiosError } from 'axios'
 
-import { useAuthenticatedRequest } from '~/utils/query-client'
 import type { FocusItem } from '~/utils/services/notes/types'
+import { useAuthenticatedRequest } from '~/utils/use-authenticated-request'
 
 type UseFocusItemComplete = {
   onSuccess?: (data: FocusItem) => void

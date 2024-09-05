@@ -1,6 +1,5 @@
 import { QueryClient } from '@tanstack/react-query'
 import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios'
-import { useAppContext } from './app-provider'
 import { HOST_URI } from './constants'
 
 export const queryClient = new QueryClient({
@@ -25,26 +24,6 @@ export const request = async <T>(options: AxiosRequestConfig) => {
     .catch((error) => {
       throw error
     })
-}
-
-export const useAuthenticatedRequest = <T>() => {
-  const { session } = useAppContext()
-
-  return async <T>(options: AxiosRequestConfig) => {
-    const onSuccess = (response: AxiosResponse<T>) => response
-
-    return client<T>({
-      ...options,
-      headers: {
-        // ...options.headers,
-        Authorization: `Bearer ${session?.access_token}`,
-      },
-    })
-      .then(onSuccess)
-      .catch((error) => {
-        throw error
-      })
-  }
 }
 
 export default queryClient

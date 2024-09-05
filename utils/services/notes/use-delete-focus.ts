@@ -1,6 +1,6 @@
 import { useMutation, type UseMutationOptions } from '@tanstack/react-query'
 import type { AxiosError } from 'axios'
-import { useAuthenticatedRequest } from '~/utils/query-client'
+import { useAuthenticatedRequest } from '~/utils/use-authenticated-request'
 import type { FocusResponse } from './types'
 
 export const useDeleteFocus = (
