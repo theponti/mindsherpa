@@ -56,13 +56,7 @@ export function AppProvider({ children }: PropsWithChildren) {
   const router = useRouter()
   const [isLoadingSession, setIsLoadingSession] = useState(true)
   const [session, setSession] = useState<Session | null>(null)
-  const {
-    refetch,
-    error: profileError,
-    isError: isErrorProfile,
-    isLoading: isLoadingProfile,
-    data: profile,
-  } = useQuery<Profile | undefined>({
+  const { isLoading: isLoadingProfile, data: profile } = useQuery<Profile | undefined>({
     queryKey: ['profile'],
     queryFn: async () => {
       if (!session) return
@@ -77,11 +71,7 @@ export function AppProvider({ children }: PropsWithChildren) {
 
         return data
       } catch (error) {
-        captureException(profileError)
-
-        if (session) {
-          supabase.auth.signOut()
-        }
+        captureException(error)
       }
     },
     refetchOnMount: false,

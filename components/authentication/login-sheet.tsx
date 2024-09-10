@@ -2,42 +2,33 @@ import { captureException } from '@sentry/react-native'
 import { useMutation } from '@tanstack/react-query'
 import type { AxiosError } from 'axios'
 import * as AppleAuthentication from 'expo-apple-authentication'
-import { useRouter } from 'expo-router'
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
+import { Text } from '~/theme'
 
 import queryClient, { request } from '~/utils/query-client'
 import { supabase } from '~/utils/supabase'
 
-type AuthenticationResponse = {
-  id: string
-  email: string
-  full_name: string
-  user_id: string
-}
-
 const LoginSheet = () => {
-  const router = useRouter()
-
-  const createUser = useMutation<AuthenticationResponse, AxiosError, { email: string }>({
+  const [authError, setAuthError] = useState<string | null>(null)
+  const createUser = useMutation<AuthenticationResponse, AxiosError, CreateUserPayload>({
     mutationKey: ['createUser'],
-    mutationFn: async ({ email }: { email: string }) => {
+    mutationFn: async ({ email, userId }: CreateUserPayload) => {
       const { data } = await request<AuthenticationResponse>({
         method: 'POST',
         url: '/user/create',
-        data: { email },
+        data: { email, userId },
       })
 
       return data
     },
     onSuccess: (data) => {
       queryClient.setQueryData(['profile'], data)
-      // router.push('/(drawer)/focus')
     },
     onError: (error) => {
       captureException(error)
-      Alert.alert('Error', 'We could not register you at this time. Please try again later.')
-      supabase.auth.signOut()
+      setAuthError('There was a problem signing in. Our team is working on it.')
+      // supabase.auth.signOut()
     },
   })
 
@@ -71,7 +62,7 @@ const LoginSheet = () => {
         throw new Error('No email provided')
       }
 
-      createUser.mutate({ email: user.email })
+      createUser.mutate({ email: user.email, userId: user.id })
     } catch (error: unknown) {
       if (error instanceof Error && error.name === 'ERR_REQUEST_CANCELED') {
         // User canceled, no need for an alert
@@ -79,21 +70,17 @@ const LoginSheet = () => {
       }
 
       captureException(error)
-
-      Alert.alert('Sign-In Issue', 'There was a problem signing in. Please try again.', [
-        { text: 'OK' },
-        {
-          text: 'Try Again',
-          onPress: () => {
-            onSignInClick()
-          },
-        },
-      ])
+      setAuthError('There was a problem signing in. Our team is working on it.')
     }
   }, [createUser.mutate])
 
   return (
     <View style={[styles.container]}>
+      {(authError || createUser.error) && (
+        <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+          <Text style={styles.text}>{authError}</Text>
+        </View>
+      )}
       <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
         <AppleAuthentication.AppleAuthenticationButton
           buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}

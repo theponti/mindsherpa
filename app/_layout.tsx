@@ -31,6 +31,11 @@ function InnerRootLayout() {
 
     const inAuthGroup = segments[0] === '(drawer)'
 
+    if (session && !profile && !inAuthGroup) {
+      router.replace('/(drawer)/onboarding')
+      return
+    }
+
     if (session && profile && !inAuthGroup) {
       router.replace('/(drawer)/focus')
       return

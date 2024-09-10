@@ -35,6 +35,7 @@ const theme = createTheme({
     yellow: 'rgba(255, 206, 84, 1.00)',
     quaternary: '#9097a6',
     secondary: '#344054',
+    tertiary: '#F2F4F7',
   },
   spacing: {
     xs_4: 4,
