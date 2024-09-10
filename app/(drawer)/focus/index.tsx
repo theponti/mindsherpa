@@ -72,9 +72,7 @@ export const FocusView = () => {
     refetch()
   }, [refetch])
 
-  const hasLoadedFocusItems = !isLoading && focusItems
-  const hasFocusItems = hasLoadedFocusItems && focusItems.length > 0
-  const hasNoFocusItems = hasLoadedFocusItems && focusItems.length === 0
+  const hasFocusItems = Boolean(!isLoading && focusItems && focusItems.length > 0)
 
   return (
     <KeyboardAvoidingView
@@ -97,12 +95,12 @@ export const FocusView = () => {
 
           {isError ? <FocusLoadingError /> : null}
 
-          {hasFocusItems ? (
+          {hasFocusItems && focusItems ? (
             <View style={[styles.focuses]}>
               <FocusList data={focusItems} onItemDelete={deleteFocusItem} />
             </View>
           ) : null}
-          {hasNoFocusItems ? (
+          {!hasFocusItems ? (
             <View style={[styles.empty]}>
               <Text variant="bodyLarge" color="primary">
                 You have no focus items yet.
