@@ -164,7 +164,7 @@ const FocusHeader = React.memo(() => {
           </Text>
         </View>
         <View style={[headerStyles.iconWrap]}>
-          <Link href="/(sherpa)/">
+          <Link href="/(sherpa)/" style={[headerStyles.iconLink]}>
             <MindsherpaIcon name="message" size={15} />
           </Link>
         </View>
