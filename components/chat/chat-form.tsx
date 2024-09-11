@@ -1,54 +1,53 @@
-import { type PropsWithChildren, useCallback, useState } from 'react';
-import { StyleSheet, View, type ViewProps } from 'react-native';
-import { Pressable } from 'react-native';
+import { useCallback, useState, type PropsWithChildren } from 'react'
+import { Pressable, StyleSheet, View, type ViewProps } from 'react-native'
 
-import { Text, theme } from '~/theme';
-import type { FocusOutputItem, MessageOutput } from '~/utils/schema/graphcache';
-import { useEndChat, useSendMessage } from '~/utils/services/use-chat-messages';
-
-import { FeedbackBlock } from '../feedback-block';
-import type { CreateNoteOutput } from '../media/use-audio-upload';
-import AutoGrowingInput from '../text-input-autogrow';
-import { UploadFileButton } from '../upload-file-button';
-import MindsherpaIcon from '../ui/icon';
-import { FormSubmitButton } from '../notes/note-form-submit-button';
-import AudioTranscriber from './audio-transcriber';
+import { Text, theme } from '~/theme'
+import type { MessageOutput } from '~/utils/schema/graphcache'
+import type { FocusItemInput } from '~/utils/services/notes/types'
+import { useSendMessage } from '~/utils/services/use-chat-messages'
+import { FeedbackBlock } from '../feedback-block'
+import type { CreateNoteOutput } from '../media/use-audio-upload'
+import { FormSubmitButton } from '../notes/note-form-submit-button'
+import AutoGrowingInput from '../text-input-autogrow'
+import MindsherpaIcon from '../ui/icon'
+import { UploadFileButton } from '../upload-file-button'
+import AudioTranscriber from './audio-transcriber'
 
 type ChatFormProps = {
-  chatId: string;
-  isEndingChat: boolean;
-  onEndChat: () => void;
-  onSuccess: (messages: readonly MessageOutput[]) => void;
-};
+  chatId: string
+  isEndingChat: boolean
+  onEndChat: () => void
+  onSuccess: (messages: readonly MessageOutput[]) => void
+}
 export const ChatForm = (props: ChatFormProps) => {
-  const { chatId, isEndingChat, onSuccess } = props;
-  const [isRecording, setIsRecording] = useState(false);
-  const [transcribeError, setTranscribeError] = useState<boolean>(false);
+  const { chatId, isEndingChat, onSuccess } = props
+  const [isRecording, setIsRecording] = useState(false)
+  const [transcribeError, setTranscribeError] = useState<boolean>(false)
   const { isChatSending, message, setMessage, sendChatMessage, sendChatError, setSendChatError } =
     useSendMessage({
       chatId,
       onSuccess,
       onError: () => console.log('error sending chat'),
-    });
+    })
 
   const onRecordingStateChange = useCallback((isRecording: boolean) => {
-    setIsRecording(isRecording);
-  }, []);
+    setIsRecording(isRecording)
+  }, [])
 
   const onAudioTranscribed = useCallback(
     (transcription: string) => {
-      setMessage(transcription);
+      setMessage(transcription)
     },
     [setMessage]
-  );
+  )
 
   const handleSubmit = () => {
-    sendChatMessage();
-  };
+    sendChatMessage()
+  }
 
   const handleTranscribeError = () => {
-    setTranscribeError(true);
-  };
+    setTranscribeError(true)
+  }
 
   return (
     <View style={[styles.container]}>
@@ -112,7 +111,8 @@ export const ChatForm = (props: ChatFormProps) => {
                 borderRadius: 90,
                 paddingHorizontal: 12,
                 paddingVertical: 12,
-              }}>
+              }}
+            >
               {isEndingChat ? (
                 <MindsherpaIcon name="spinner" size={20} color={theme.colors.grayDark} />
               ) : (
@@ -128,8 +128,8 @@ export const ChatForm = (props: ChatFormProps) => {
         </View>
       </View>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -160,14 +160,14 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     marginRight: 16,
   },
-});
+})
 
 type FocusItemPreviewProps = {
-  disabled: boolean;
-  focusItem: FocusOutputItem;
-  onDeleteClick: (focusItem: FocusOutputItem) => void;
-  onCreateClick: (focusItem: CreateNoteOutput['focus_items'][0]) => void;
-} & ViewProps;
+  disabled: boolean
+  focusItem: FocusItemInput
+  onDeleteClick: (focusItem: FocusItemInput) => void
+  onCreateClick: (focusItem: CreateNoteOutput['items'][0]) => void
+} & ViewProps
 const FocusItemPreview = ({
   disabled,
   focusItem,
@@ -176,12 +176,12 @@ const FocusItemPreview = ({
   ...props
 }: FocusItemPreviewProps) => {
   const onDeleteIconPress = () => {
-    onDeleteClick(focusItem);
-  };
+    onDeleteClick(focusItem)
+  }
 
   const onIconPress = () => {
-    onCreateClick(focusItem);
-  };
+    onCreateClick(focusItem)
+  }
 
   return (
     <View style={[focusItemStyles.item]} {...props}>
@@ -189,7 +189,7 @@ const FocusItemPreview = ({
         <Text variant="body" color="black">
           {focusItem.text}
         </Text>
-        {focusItem.dueDate ? <Text variant="caption">Due: {focusItem.dueDate}</Text> : null}
+        {focusItem.due_date ? <Text variant="caption">Due: {focusItem.due_date}</Text> : null}
       </View>
       <Pressable disabled={disabled} style={[focusItemStyles.icon]} onPress={onDeleteIconPress}>
         <MindsherpaIcon name="trash" size={24} color={theme.colors.red} />
@@ -198,8 +198,8 @@ const FocusItemPreview = ({
         <MindsherpaIcon name="list-tree" size={24} color={theme.colors.black} />
       </Pressable>
     </View>
-  );
-};
+  )
+}
 
 const focusItemStyles = StyleSheet.create({
   item: {
@@ -216,15 +216,15 @@ const focusItemStyles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: 20,
   },
-});
+})
 
 const NoteFormError = ({ children }: PropsWithChildren) => {
   return (
     <FeedbackBlock>
       <View style={[noteFormErrorStyles.container]}>{children}</View>
     </FeedbackBlock>
-  );
-};
+  )
+}
 
 const noteFormErrorStyles = StyleSheet.create({
   container: {
@@ -237,4 +237,4 @@ const noteFormErrorStyles = StyleSheet.create({
   closeButton: {
     paddingHorizontal: 8,
   },
-});
+})

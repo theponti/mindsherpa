@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
 import type { AxiosError } from 'axios'
-import type { FocusItems } from '~/utils/services/notes/types'
+import type { FocusItemInput, FocusItems } from '~/utils/services/notes/types'
 import { useAuthenticatedRequest } from '~/utils/use-authenticated-request'
 
 export const useFocusItemsCreate = ({
@@ -12,7 +12,7 @@ export const useFocusItemsCreate = ({
 }) => {
   const authRequest = useAuthenticatedRequest()
 
-  const mutation = useMutation<FocusItems, AxiosError, FocusItems>({
+  const mutation = useMutation<FocusItems, AxiosError, FocusItemInput[]>({
     mutationFn: async (items) => {
       const response = await authRequest<FocusItems>({
         url: '/notes/focus',

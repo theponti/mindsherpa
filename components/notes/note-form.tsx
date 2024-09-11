@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, View } from 'react-native'
 
 import { captureException } from '@sentry/react-native'
 import { Text, theme } from '~/theme'
-import type { FocusItem } from '~/utils/services/notes/types'
+import type { FocusItem, FocusItemInput } from '~/utils/services/notes/types'
 import { useFocusItemsCreate } from '../../utils/services/notes/use-focus-item-create'
 import { FeedbackBlock } from '../feedback-block'
 import AudioRecorder from '../media/audio-recorder'
@@ -24,7 +24,7 @@ export const NoteForm = (props: NoteFormProps) => {
   const [content, setContent] = useState('')
   const [createError, setCreateError] = useState<boolean>(false)
   const [generateError, setGenerateError] = useState<boolean>(false)
-  const [focusItems, setFocusItems] = useState<CreateNoteOutput['focus_items']>([])
+  const [focusItems, setFocusItems] = useState<CreateNoteOutput['items']>([])
   const { mutateAsync: createFocusItems, isPending: isCreating } = useFocusItemsCreate({
     onSuccess: (data) => {
       onSubmit(data)
@@ -34,7 +34,7 @@ export const NoteForm = (props: NoteFormProps) => {
       setGenerateError(false)
     },
     onError: (error) => {
-      console.log('create error', error)
+      captureException(error)
       setCreateError(true)
     },
   })
@@ -43,7 +43,7 @@ export const NoteForm = (props: NoteFormProps) => {
       if (data) {
         setFocusItems((prev) => [
           ...prev,
-          ...data.focus_items.map((item) => ({
+          ...data.items.map((item) => ({
             ...item,
             id: Math.floor(Math.random() * 1000),
           })),
@@ -65,16 +65,16 @@ export const NoteForm = (props: NoteFormProps) => {
   const onStopRecording = useCallback(
     (data: CreateNoteOutput) => {
       setIsRecording(false)
-      setFocusItems(data.focus_items)
+      setFocusItems(data.items)
     },
     [setIsRecording]
   )
 
-  const onFocusItemPreviewDeleteClick = (focusItem: FocusItem) => {
-    setFocusItems((prev) => prev.filter((item) => item.id !== focusItem.id))
+  const onFocusItemPreviewDeleteClick = (focusItem: FocusItemInput) => {
+    setFocusItems((prev) => prev.filter((item) => item.text !== focusItem.text))
   }
 
-  const onFocusItemPreviewClick = async (focusItem: CreateNoteOutput['focus_items'][0]) => {
+  const onFocusItemPreviewClick = async (focusItem: FocusItemInput) => {
     setCreateError(false)
     createFocusItems([focusItem])
   }
@@ -101,24 +101,10 @@ export const NoteForm = (props: NoteFormProps) => {
           </Pressable>
         </NoteFormError>
       ) : null}
-      {generateError ? (
-        <NoteFormError>
-          <Text variant="body" color="white">
-            Sherpa is having a tummy ache. Please try again later.
-          </Text>
-          <Pressable onPress={() => setGenerateError(false)}>
-            <MindsherpaIcon
-              name="circle-x"
-              size={26}
-              color={theme.colors.grayMedium}
-              style={noteFormErrorStyles.closeButton}
-            />
-          </Pressable>
-        </NoteFormError>
-      ) : null}
+      {generateError ? <GenerateError onCloseClick={() => setGenerateError(false)} /> : null}
       {focusItems.map((item) => (
         <FocusItemPreview
-          key={item.id}
+          key={item.text}
           disabled={isPending}
           focusItem={item}
           onDeleteClick={onFocusItemPreviewDeleteClick}
@@ -183,7 +169,7 @@ const styles = StyleSheet.create({
 
 const NoteFormError = ({ children }: PropsWithChildren) => {
   return (
-    <FeedbackBlock>
+    <FeedbackBlock error>
       <View style={[noteFormErrorStyles.container]}>{children}</View>
     </FeedbackBlock>
   )
@@ -201,3 +187,45 @@ const noteFormErrorStyles = StyleSheet.create({
     paddingHorizontal: 8,
   },
 })
+
+const GenerateError = ({ onCloseClick }: { onCloseClick: () => void }) => {
+  return (
+    <NoteFormError>
+      <View style={{ flex: 1 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', columnGap: 12 }}>
+          <MindsherpaIcon
+            name="circle-exclamation"
+            size={26}
+            color={theme.colors.tomato}
+            style={noteFormErrorStyles.closeButton}
+          />
+          <View style={{ flex: 1, paddingLeft: 12 }}>
+            <Text variant="body" color="black">
+              Sherpa is having a tummy ache.
+            </Text>
+            <Text variant="body" color="black">
+              Please try again later.
+            </Text>
+          </View>
+        </View>
+        <Pressable
+          onPress={onCloseClick}
+          style={[
+            {
+              borderRadius: 8,
+              borderWidth: 1,
+              borderColor: theme.colors.tomato,
+              marginTop: 24,
+              paddingVertical: 8,
+              alignItems: 'center',
+            },
+          ]}
+        >
+          <Text variant="body" color="black">
+            Close
+          </Text>
+        </Pressable>
+      </View>
+    </NoteFormError>
+  )
+}

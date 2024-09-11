@@ -1,34 +1,31 @@
-import { captureException } from '@sentry/react-native';
-import { useMutation } from '@tanstack/react-query';
-import type { AxiosError } from 'axios';
-import * as FileSystem from 'expo-file-system';
+import { captureException } from '@sentry/react-native'
+import { useMutation } from '@tanstack/react-query'
+import type { AxiosError } from 'axios'
+import * as FileSystem from 'expo-file-system'
 
-import { useAppContext } from '~/utils/app-provider';
-import { request } from '~/utils/query-client';
-import type { FocusOutputItem } from '~/utils/schema/graphcache';
+import { useAppContext } from '~/utils/app-provider'
+import { request } from '~/utils/query-client'
+import type { FocusItemInput } from '~/utils/services/notes/types'
 
 export type CreateNoteOutput = {
-  id: string;
-  content: string;
-  created_at: string;
-  focus_items: FocusOutputItem[];
-};
+  items: FocusItemInput[]
+}
 
 export const useAudioUpload = ({
   onSuccess,
   onError,
 }: {
-  onSuccess?: (data: CreateNoteOutput) => void;
-  onError?: () => void;
+  onSuccess?: (data: CreateNoteOutput) => void
+  onError?: () => void
 }) => {
-  const { session } = useAppContext();
-  const token = session?.access_token;
+  const { session } = useAppContext()
+  const token = session?.access_token
 
   const mutation = useMutation<CreateNoteOutput, AxiosError, string>({
     mutationFn: async (fileUri: string) => {
       const audioFile = await FileSystem.readAsStringAsync(fileUri, {
         encoding: FileSystem.EncodingType.Base64,
-      });
+      })
 
       const { data } = await request<CreateNoteOutput>({
         url: '/notes/voice',
@@ -41,29 +38,29 @@ export const useAudioUpload = ({
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-      });
+      })
 
-      return data;
+      return data
     },
     onSuccess,
     onError: (error) => {
-      captureException(error);
-      onError?.();
+      captureException(error)
+      onError?.()
     },
-  });
+  })
 
-  return mutation;
-};
+  return mutation
+}
 
 export const useFocusItemsTextGenerate = ({
   onSuccess,
   onError,
 }: {
-  onSuccess?: (data: CreateNoteOutput) => void;
-  onError?: (error: AxiosError) => void;
+  onSuccess?: (data: CreateNoteOutput) => void
+  onError?: (error: AxiosError) => void
 }) => {
-  const { session } = useAppContext();
-  const token = session?.access_token;
+  const { session } = useAppContext()
+  const token = session?.access_token
 
   const mutation = useMutation<CreateNoteOutput, AxiosError, string>({
     mutationFn: async (content: string) => {
@@ -75,16 +72,16 @@ export const useFocusItemsTextGenerate = ({
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-      });
+      })
 
-      return data;
+      return data
     },
     onSuccess,
     onError: (error) => {
-      captureException(error);
-      onError?.(error);
+      captureException(error)
+      onError?.(error)
     },
-  });
+  })
 
-  return mutation;
-};
+  return mutation
+}

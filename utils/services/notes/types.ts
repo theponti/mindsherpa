@@ -1,17 +1,8 @@
-export type FocusItem = {
-  id: number
-  type: string
-  taskSize: string
-  text: string
-  category: string
-  priority: number
-  sentiment: string
-  state: string
-  dueDate: string
-  profileId: string
-  createdAt: string
-  updatedAt: string
-}
+import type { components } from '~/utils/api-types'
+
+export type FocusItemInput = components['schemas']['FocusItemInput']
+
+export type FocusItem = components['schemas']['FocusItem']
 
 export type FocusItems = FocusItem[]
 

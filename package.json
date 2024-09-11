@@ -14,10 +14,11 @@
     "build:preview:ios": "NODE_ENV=preview eas build --profile preview --platform ios",
     "build:production:android": "NODE_ENV=production eas build --profile production --platform android",
     "build:production:ios": "NODE_ENV=production eas build --profile production --platform ios",
-    "build:update:preview": "NODE_ENV=production eas update --platform ios --branch preview --clear-cache", 
+    "build:update:preview": "NODE_ENV=production eas update --platform ios --branch preview --clear-cache",
     "prebuild": "expo prebuild",
     "web": "expo start --web",
-    "codegen": "NODE_ENV=development graphql-codegen --config codegen.ts"
+    "codegen": "NODE_ENV=development graphql-codegen --config codegen.ts",
+    "codegen:swagger": "openapi-typescript http://localhost:8002/openapi.json --output api-types.ts"
   },
   "dependencies": {
     "@biomejs/biome": "^1.8.3",
