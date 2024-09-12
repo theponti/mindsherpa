@@ -1,6 +1,6 @@
 import type { components } from '~/utils/api-types'
 
-export type FocusItemInput = components['schemas']['FocusItemInput']
+export type FocusItemInput = components['schemas']['FocusItemBaseV2']
 
 export type FocusItem = components['schemas']['FocusItem']
 

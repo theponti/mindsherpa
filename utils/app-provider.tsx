@@ -7,26 +7,18 @@ import React, {
   useCallback,
   useContext,
   useEffect,
-  useMemo,
-  useRef,
   useState,
-  type PropsWithChildren,
+  type PropsWithChildren
 } from 'react'
-import { Client, Provider as UrqlProvider, fetchExchange } from 'urql'
-import { GRAPHQL_URI } from '../constants'
-import { log } from '../logger'
-import { queryClient, request } from '../query-client'
-import type { Profile } from '../services/profiles'
-import { supabase } from '../supabase'
-import { createAuthExchange } from './createAuthExchange'
-import { asyncStorage, graphcacheExchange } from './graphcacheExchange'
+import { queryClient, request } from './query-client'
+import type { Profile } from './services/profiles'
+import { supabase } from './supabase'
 
 type AppContextType = {
   isLoadingAuth: boolean
   session: Session | null
   profile?: Profile
   signOut: () => void
-  urqlClient: Client
 }
 
 const AppContext = createContext<AppContextType | null>(null)
@@ -39,17 +31,6 @@ export const useAppContext = () => {
   }
 
   return context
-}
-
-export const getToken = async () => {
-  const { data, error } = await supabase.auth.refreshSession()
-
-  if (error) {
-    log('Could not refresh token', error.message)
-    return null
-  }
-
-  return data.session?.access_token ?? null
 }
 
 export function AppProvider({ children }: PropsWithChildren) {
@@ -79,16 +60,6 @@ export function AppProvider({ children }: PropsWithChildren) {
     enabled: Boolean(session?.access_token),
   })
 
-  const getTokenRef = useRef(getToken)
-  const urqlClient = useMemo<Client>(
-    () =>
-      new Client({
-        url: GRAPHQL_URI,
-        exchanges: [graphcacheExchange, createAuthExchange(getTokenRef), fetchExchange],
-      }),
-    []
-  )
-
   useEffect(() => {
     supabase.auth.getSession()
 
@@ -98,8 +69,6 @@ export function AppProvider({ children }: PropsWithChildren) {
       setSession(session)
 
       if (event === 'SIGNED_OUT') {
-        asyncStorage?.clear()
-        getTokenRef.current = getToken
         queryClient.clear()
       }
     })
@@ -113,8 +82,6 @@ export function AppProvider({ children }: PropsWithChildren) {
     supabase.auth.signOut()
     setSession(null)
     queryClient.clear()
-    asyncStorage?.clear()
-    getTokenRef.current = getToken
     router.replace('/(auth)')
   }, [router])
 
@@ -123,12 +90,11 @@ export function AppProvider({ children }: PropsWithChildren) {
     session,
     profile,
     signOut,
-    urqlClient,
   }
 
   return (
     <AppContext.Provider value={contextValue}>
-      <UrqlProvider value={urqlClient}>{children}</UrqlProvider>
+      {children}
     </AppContext.Provider>
   )
 }

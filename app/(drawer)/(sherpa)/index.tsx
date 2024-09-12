@@ -5,7 +5,7 @@ import { Chat } from '~/components/chat/chat'
 import { ViewHeader } from '~/components/view-header'
 import { Text } from '~/theme'
 import type { Chat as ChatType } from '~/utils/services/chat/types'
-import { useActiveChat } from '~/utils/services/use-chat-messages'
+import { useActiveChat } from '~/utils/services/chat/use-chat-messages'
 
 export default function Sherpa() {
   const [activeChat, setActiveChat] = useState<ChatType | null>(null)

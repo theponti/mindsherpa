@@ -14,7 +14,6 @@ const DrawerLayout = () => {
       <Stack.Screen name="onboarding" options={{ headerShown: false }} />
       <Stack.Screen name="focus" options={{ headerShown: false }} />
       <Stack.Screen name="(sherpa)" options={{ headerShown: false }} />
-      <Stack.Screen name="(notebook)" options={{ headerShown: false }} />
       <Stack.Screen name="(account)" options={{ presentation: 'modal', headerTitle: 'Account' }} />
     </Stack>
   )

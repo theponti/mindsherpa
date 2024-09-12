@@ -11,7 +11,7 @@ import {
 
 import { Text } from '~/theme'
 import queryClient from '~/utils/query-client'
-import { useChatMessages, useEndChat } from '~/utils/services/use-chat-messages'
+import { useChatMessages, useEndChat } from '~/utils/services/chat/use-chat-messages'
 import { FeedbackBlock } from '../feedback-block'
 import { ChatForm } from './chat-form'
 import ChatLoading from './chat-loading'

@@ -3,12 +3,12 @@ import { useState } from 'react'
 
 import { captureException } from '@sentry/react-native'
 import { AxiosError } from 'axios'
-import { useAppContext } from '~/utils/app-provider/AppProvider'
+import { useAppContext } from '~/utils/app-provider'
 import type { Chat } from '~/utils/services/chat/types'
-import { components } from '../api-types'
-import { log } from '../logger'
-import queryClient, { request } from '../query-client'
-import { useAuthenticatedRequest } from '../use-authenticated-request'
+import { components } from '../../api-types'
+import { log } from '../../logger'
+import queryClient, { request } from '../../query-client'
+import { useAuthenticatedRequest } from '../../use-authenticated-request'
 
 export type MessageOutput = components['schemas']['MessageOutput']
 
