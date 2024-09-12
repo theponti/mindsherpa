@@ -38,6 +38,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/sherpa/intent": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Sherpa User Intent */
+        post: operations["sherpa_user_intent_sherpa_intent_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/graphql": {
         parameters: {
             query?: never;
@@ -86,8 +103,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Create Focus Items From Text Route */
-        post: operations["create_focus_items_from_text_route_notes_text_post"];
+        /** Create Text Note Route */
+        post: operations["create_text_note_route_notes_text_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -286,6 +303,11 @@ export interface components {
             /** Input */
             input: string;
         };
+        /** Body_sherpa_user_intent_sherpa_intent_post */
+        Body_sherpa_user_intent_sherpa_intent_post: {
+            /** Input */
+            input: string;
+        };
         /** Body_stream_chat_chat_stream_post */
         Body_stream_chat_chat_stream_post: {
             /** Message */
@@ -315,11 +337,6 @@ export interface components {
         CreateFocusItemsPayload: {
             /** Content */
             content: string;
-        };
-        /** CreateFocusItemsResponse */
-        CreateFocusItemsResponse: {
-            /** Items */
-            items: components["schemas"]["FocusItemInput"][];
         };
         /** CreateUserInput */
         CreateUserInput: {
@@ -399,6 +416,24 @@ export interface components {
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /** IntentOutput */
+        IntentOutput: {
+            /**
+             * Function Name
+             * @description The name of the function to call
+             */
+            function_name: string;
+            /**
+             * Parameters
+             * @description The parameters to pass to the function
+             */
+            parameters: Record<string, never>;
+        };
+        /** IntentsResponse */
+        IntentsResponse: {
+            /** Intents */
+            intents: components["schemas"]["IntentOutput"][];
         };
         /** MessageOutput */
         MessageOutput: {
@@ -533,6 +568,39 @@ export interface operations {
             };
         };
     };
+    sherpa_user_intent_sherpa_intent_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/x-www-form-urlencoded": components["schemas"]["Body_sherpa_user_intent_sherpa_intent_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     handle_http_get_graphql_get: {
         parameters: {
             query?: never;
@@ -644,7 +712,7 @@ export interface operations {
             };
         };
     };
-    create_focus_items_from_text_route_notes_text_post: {
+    create_text_note_route_notes_text_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -663,7 +731,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["CreateFocusItemsResponse"];
+                    "application/json": components["schemas"]["IntentsResponse"];
                 };
             };
             /** @description Validation Error */
@@ -696,7 +764,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["CreateFocusItemsResponse"];
+                    "application/json": components["schemas"]["IntentsResponse"];
                 };
             };
             /** @description Validation Error */

@@ -51,37 +51,3 @@ export const useAudioUpload = ({
 
   return mutation
 }
-
-export const useFocusItemsTextGenerate = ({
-  onSuccess,
-  onError,
-}: {
-  onSuccess?: (data: CreateNoteOutput) => void
-  onError?: (error: AxiosError) => void
-}) => {
-  const { session } = useAppContext()
-  const token = session?.access_token
-
-  const mutation = useMutation<CreateNoteOutput, AxiosError, string>({
-    mutationFn: async (content: string) => {
-      const { data } = await request<CreateNoteOutput>({
-        url: '/notes/text',
-        method: 'POST',
-        data: { content },
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      })
-
-      return data
-    },
-    onSuccess,
-    onError: (error) => {
-      captureException(error)
-      onError?.(error)
-    },
-  })
-
-  return mutation
-}

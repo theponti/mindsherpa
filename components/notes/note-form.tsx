@@ -7,7 +7,8 @@ import type { FocusItem, FocusItemInput } from '~/utils/services/notes/types'
 import { useFocusItemsCreate } from '../../utils/services/notes/use-focus-item-create'
 import { FeedbackBlock } from '../feedback-block'
 import AudioRecorder from '../media/audio-recorder'
-import { useFocusItemsTextGenerate, type CreateNoteOutput } from '../media/use-audio-upload'
+import type { CreateNoteOutput } from '../media/use-audio-upload'
+import { useGetUserIntent } from '../media/use-get-user-intent'
 import AutoGrowingInput from '../text-input-autogrow'
 import MindsherpaIcon from '../ui/icon'
 import { UploadFileButton } from '../upload-file-button'
@@ -38,17 +39,30 @@ export const NoteForm = (props: NoteFormProps) => {
       setCreateError(true)
     },
   })
-  const { mutate: generateFocusItems, isPending: isGenerating } = useFocusItemsTextGenerate({
+  const { mutate: generateFocusItems, isPending: isGenerating } = useGetUserIntent({
     onSuccess: (data) => {
       if (data) {
-        setFocusItems((prev) => [
-          ...prev,
-          ...data.items.map((item) => ({
-            ...item,
-            id: Math.floor(Math.random() * 1000),
-          })),
-        ])
+        const createTasks = data.intents.reduce<FocusItemInput[]>((result, item) => {
+          if (item.function_name === 'create_tasks') {
+            const tasks = Array.isArray(item.parameters?.tasks) ? item.parameters?.tasks : []
+            for (const task of tasks) {
+              result.push(task)
+            }
+          }
+          return result
+        }, [])
+
+        if (createTasks.length > 0) {
+          setFocusItems((prev) => [
+            ...prev,
+            ...createTasks.map((item) => ({
+              ...item,
+              id: Math.floor(Math.random() * 1000),
+            })),
+          ])
+        }
       }
+
       setContent('')
     },
     onError: (error) => {

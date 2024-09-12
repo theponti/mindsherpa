@@ -18,7 +18,7 @@
     "prebuild": "expo prebuild",
     "web": "expo start --web",
     "codegen": "NODE_ENV=development graphql-codegen --config codegen.ts",
-    "codegen:swagger": "openapi-typescript http://localhost:8002/openapi.json --output api-types.ts"
+    "codegen:swagger": "openapi-typescript http://localhost:8002/openapi.json --output utils/api-types.ts"
   },
   "dependencies": {
     "@biomejs/biome": "^1.8.3",

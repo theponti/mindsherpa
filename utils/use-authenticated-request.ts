@@ -1,4 +1,4 @@
-import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios'
+import axios, { type AxiosError, type AxiosRequestConfig, type AxiosResponse } from 'axios'
 import { useAppContext } from './app-provider'
 import { HOST_URI } from './constants'
 
@@ -28,4 +28,26 @@ export const useAuthenticatedRequest = () => {
         throw error
       })
   }
+}
+
+export const useRequest = async (options: AxiosRequestConfig) => {
+  const { session } = useAppContext()
+
+  // Set the authorization header
+  if (session?.access_token) {
+    options.headers = {
+      ...(options.headers ?? {}),
+      Authorization: `Bearer ${session?.access_token}`,
+    }
+  }
+
+  const onSuccess = (response: AxiosResponse) => {
+    return response?.data?.data
+  }
+
+  const onError = (error: AxiosError) => {
+    return Promise.reject(error.response?.data)
+  }
+
+  return authenticatedClient(options).then(onSuccess).catch(onError)
 }
