@@ -2,7 +2,6 @@ import { useCallback, useState, type PropsWithChildren } from 'react'
 import { Pressable, StyleSheet, View, type ViewProps } from 'react-native'
 
 import { Text, theme } from '~/theme'
-import type { MessageOutput } from '~/utils/schema/graphcache'
 import type { FocusItemInput } from '~/utils/services/notes/types'
 import { useSendMessage } from '~/utils/services/use-chat-messages'
 import { FeedbackBlock } from '../feedback-block'
@@ -17,18 +16,13 @@ type ChatFormProps = {
   chatId: string
   isEndingChat: boolean
   onEndChat: () => void
-  onSuccess: (messages: readonly MessageOutput[]) => void
 }
 export const ChatForm = (props: ChatFormProps) => {
-  const { chatId, isEndingChat, onSuccess } = props
+  const { chatId, isEndingChat } = props
   const [isRecording, setIsRecording] = useState(false)
   const [transcribeError, setTranscribeError] = useState<boolean>(false)
   const { isChatSending, message, setMessage, sendChatMessage, sendChatError, setSendChatError } =
-    useSendMessage({
-      chatId,
-      onSuccess,
-      onError: () => console.log('error sending chat'),
-    })
+    useSendMessage({ chatId })
 
   const onRecordingStateChange = useCallback((isRecording: boolean) => {
     setIsRecording(isRecording)

@@ -10,8 +10,8 @@ import {
 } from 'react-native'
 
 import { Text } from '~/theme'
+import queryClient from '~/utils/query-client'
 import { useChatMessages, useEndChat } from '~/utils/services/use-chat-messages'
-import type { MessageOutput } from '~/utils/schema/graphcache'
 import { FeedbackBlock } from '../feedback-block'
 import { ChatForm } from './chat-form'
 import ChatLoading from './chat-loading'
@@ -24,22 +24,20 @@ export type ChatProps = {
 export const Chat = (props: ChatProps) => {
   const { chatId, onChatEnd } = props
   const {
-    addMessages,
     isPending: isMessagesLoading,
-    messages,
-    setMessages,
+    data: messages,
   } = useChatMessages({ chatId })
   const { mutate: endChat, isPending: isEndingChat } = useEndChat({
     chatId,
     onSuccess: () => {
-      setMessages([])
+      queryClient.invalidateQueries({ queryKey: ['chatMessages', chatId] })
       onChatEnd()
     },
   })
   const flatListRef = useRef<FlatList>(null)
 
   const scrollToBottom = useCallback(() => {
-    if (flatListRef.current && messages.length > 0) {
+    if (flatListRef.current && messages && messages.length > 0) {
       flatListRef.current.scrollToIndex({
         index: messages.length > 2 ? messages.length - 1 : 1,
         viewOffset: -100,
@@ -53,6 +51,9 @@ export const Chat = (props: ChatProps) => {
     }, 500)
   }, [scrollToBottom])
 
+  const formattedMessages = messages && messages.length > 0 ? messages : []
+  const hasMessages = Boolean(formattedMessages && formattedMessages.length > 0)
+  
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -69,13 +70,13 @@ export const Chat = (props: ChatProps) => {
           <FlatList
             ref={flatListRef}
             contentContainerStyle={styles.messagesContainer}
-            data={messages}
+            data={formattedMessages}
             keyExtractor={(item) => item.id}
             keyboardShouldPersistTaps="handled"
             renderItem={renderMessage}
             onContentSizeChange={scrollToBottom}
             getItemLayout={(_, index) => ({
-              length: messages.length,
+              length: formattedMessages.length,
               offset: 100 * index,
               index,
             })}
@@ -83,7 +84,7 @@ export const Chat = (props: ChatProps) => {
           />
         )}
 
-        {!isMessagesLoading && messages && messages.length === 0 ? (
+        {!isMessagesLoading && !hasMessages ? (
           <FeedbackBlock error={false}>
             <Text variant="body" color="quaternary">
               How can Sherpa help?
@@ -95,7 +96,6 @@ export const Chat = (props: ChatProps) => {
           chatId={chatId}
           isEndingChat={isEndingChat}
           onEndChat={endChat}
-          onSuccess={(messages: readonly MessageOutput[]) => addMessages(messages)}
         />
       </View>
     </KeyboardAvoidingView>

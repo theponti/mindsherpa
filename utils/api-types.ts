@@ -4,6 +4,23 @@
  */
 
 export interface paths {
+    "/chat": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Chat */
+        post: operations["chat_chat_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/chat/stream": {
         parameters: {
             query?: never;
@@ -55,18 +72,17 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/graphql": {
+    "/sherpa/intent/agent": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Handle Http Get */
-        get: operations["handle_http_get_graphql_get"];
+        get?: never;
         put?: never;
-        /** Handle Http Post */
-        post: operations["handle_http_post_graphql_post"];
+        /** Sherpa User Intent Agent */
+        post: operations["sherpa_user_intent_agent_sherpa_intent_agent_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -206,24 +222,8 @@ export interface paths {
         /** Get Chat */
         get: operations["get_chat_chat__chat_id__get"];
         put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/user_intent/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Get User Intent Route */
-        post: operations["get_user_intent_route_api_user_intent__post"];
+        /** Send Chat Message */
+        post: operations["send_chat_message_chat__chat_id__post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -293,23 +293,48 @@ export interface components {
             /** Audio Data */
             audio_data: string;
         };
-        /** Body_get_user_intent_route_api_user_intent__post */
-        Body_get_user_intent_route_api_user_intent__post: {
-            /** User Input */
-            user_input: string;
+        /** Body_chat_chat_post */
+        Body_chat_chat_post: {
+            /** Message */
+            message: string;
         };
         /** Body_sherpa_focus_item_sherpa_focus_post */
         Body_sherpa_focus_item_sherpa_focus_post: {
             /** Input */
             input: string;
         };
+        /** Body_sherpa_user_intent_agent_sherpa_intent_agent_post */
+        Body_sherpa_user_intent_agent_sherpa_intent_agent_post: {
+            /** Input */
+            input: string;
+            /**
+             * Profile Id
+             * Format: uuid
+             */
+            profile_id: string;
+        };
         /** Body_sherpa_user_intent_sherpa_intent_post */
         Body_sherpa_user_intent_sherpa_intent_post: {
             /** Input */
             input: string;
+            /**
+             * Profile Id
+             * Format: uuid
+             */
+            profile_id: string;
         };
         /** Body_stream_chat_chat_stream_post */
         Body_stream_chat_chat_stream_post: {
+            /** Message */
+            message: string;
+        };
+        /** ChatMessageInput */
+        ChatMessageInput: {
+            /**
+             * Chat Id
+             * Format: uuid
+             */
+            chat_id: string;
             /** Message */
             message: string;
         };
@@ -328,15 +353,31 @@ export interface components {
              */
             created_at: string;
         };
-        /** CreateFocusItemInput */
-        CreateFocusItemInput: {
+        /** CreateFocusItemBaseV2 */
+        CreateFocusItemBaseV2: {
             /** Items */
-            items: components["schemas"]["FocusItemInput"][];
+            items: components["schemas"]["FocusItemBaseV2"][];
         };
         /** CreateFocusItemsPayload */
         CreateFocusItemsPayload: {
             /** Content */
             content: string;
+        };
+        /** CreateIntentsResponse */
+        CreateIntentsResponse: {
+            input: components["schemas"]["CreateTasksParameters"];
+            /** Output */
+            output: components["schemas"]["FocusItem"][];
+        };
+        /** CreateTasksParameters */
+        CreateTasksParameters: {
+            /**
+             * Profile Id
+             * Format: uuid
+             */
+            profile_id: string;
+            /** Tasks */
+            tasks: components["schemas"]["FocusItemBaseV2"][];
         };
         /** CreateUserInput */
         CreateUserInput: {
@@ -390,8 +431,8 @@ export interface components {
              */
             updated_at: string;
         };
-        /** FocusItemInput */
-        FocusItemInput: {
+        /** FocusItemBaseV2 */
+        FocusItemBaseV2: {
             /** Category */
             category: string;
             /** Due Date */
@@ -412,28 +453,17 @@ export interface components {
          * @enum {string}
          */
         FocusState: "backlog" | "active" | "completed" | "deleted";
+        /** GeneratedIntentsResponse */
+        GeneratedIntentsResponse: {
+            /** Output */
+            output: string;
+            create: components["schemas"]["CreateIntentsResponse"] | null;
+            search: components["schemas"]["SearchIntentsResponse"] | null;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
-        };
-        /** IntentOutput */
-        IntentOutput: {
-            /**
-             * Function Name
-             * @description The name of the function to call
-             */
-            function_name: string;
-            /**
-             * Parameters
-             * @description The parameters to pass to the function
-             */
-            parameters: Record<string, never>;
-        };
-        /** IntentsResponse */
-        IntentsResponse: {
-            /** Intents */
-            intents: components["schemas"]["IntentOutput"][];
         };
         /** MessageOutput */
         MessageOutput: {
@@ -479,6 +509,13 @@ export interface components {
              */
             user_id: string;
         };
+        /** SearchIntentsResponse */
+        SearchIntentsResponse: {
+            /** Input */
+            input: string;
+            /** Output */
+            output: components["schemas"]["FocusItem"][];
+        };
         /** UpdateProfileInput */
         UpdateProfileInput: {
             /** Full Name */
@@ -502,6 +539,39 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    chat_chat_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/x-www-form-urlencoded": components["schemas"]["Body_chat_chat_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     stream_chat_chat_stream_post: {
         parameters: {
             query?: never;
@@ -601,41 +671,18 @@ export interface operations {
             };
         };
     };
-    handle_http_get_graphql_get: {
+    sherpa_user_intent_agent_sherpa_intent_agent_post: {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
-        responses: {
-            /** @description The GraphiQL integrated development environment. */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            /** @description Not found if GraphiQL or query via GET are not enabled. */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
+        requestBody: {
+            content: {
+                "application/x-www-form-urlencoded": components["schemas"]["Body_sherpa_user_intent_agent_sherpa_intent_agent_post"];
             };
         };
-    };
-    handle_http_post_graphql_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
         responses: {
             /** @description Successful Response */
             200: {
@@ -643,7 +690,16 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["GeneratedIntentsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -688,7 +744,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateFocusItemInput"];
+                "application/json": components["schemas"]["CreateFocusItemBaseV2"];
             };
         };
         responses: {
@@ -731,7 +787,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["IntentsResponse"];
+                    "application/json": components["schemas"]["GeneratedIntentsResponse"];
                 };
             };
             /** @description Validation Error */
@@ -764,7 +820,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["IntentsResponse"];
+                    "application/json": components["schemas"]["GeneratedIntentsResponse"];
                 };
             };
             /** @description Validation Error */
@@ -924,7 +980,7 @@ export interface operations {
             };
         };
     };
-    get_user_intent_route_api_user_intent__post: {
+    send_chat_message_chat__chat_id__post: {
         parameters: {
             query?: never;
             header?: never;
@@ -933,7 +989,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/x-www-form-urlencoded": components["schemas"]["Body_get_user_intent_route_api_user_intent__post"];
+                "application/json": components["schemas"]["ChatMessageInput"];
             };
         };
         responses: {
@@ -943,7 +999,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["MessageOutput"][];
                 };
             };
             /** @description Validation Error */

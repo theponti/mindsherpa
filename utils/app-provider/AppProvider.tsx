@@ -119,7 +119,7 @@ export function AppProvider({ children }: PropsWithChildren) {
   }, [router])
 
   const contextValue: AppContextType = {
-    isLoadingAuth: isLoadingProfile || isLoadingSession,
+    isLoadingAuth: isLoadingProfile && isLoadingSession,
     session,
     profile,
     signOut,

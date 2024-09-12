@@ -2,11 +2,11 @@ import { captureException } from '@sentry/react-native'
 import { useMutation } from '@tanstack/react-query'
 import type { AxiosError } from 'axios'
 import type { components } from '~/utils/api-types'
-import { useAppContext } from '~/utils/app-provider'
 import { useAuthenticatedRequest } from '~/utils/use-authenticated-request'
 
-export type GetIntents = components['schemas']['IntentsResponse']
-export type Intent = components['schemas']['IntentOutput']
+export type GetIntents = components['schemas']['GeneratedIntentsResponse']
+export type CreateIntents = GetIntents['create']
+export type SearchIntents = GetIntents['search']
 
 export const useGetUserIntent = ({
   onSuccess,
@@ -16,8 +16,6 @@ export const useGetUserIntent = ({
   onError?: (error: AxiosError) => void
 }) => {
   const authRequest = useAuthenticatedRequest()
-  const { session } = useAppContext()
-  const token = session?.access_token
 
   const mutation = useMutation<GetIntents, AxiosError, string>({
     mutationFn: async (content: string) => {

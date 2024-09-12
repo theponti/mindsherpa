@@ -1,8 +1,8 @@
 import { StyleSheet, View } from 'react-native'
 import Markdown from 'react-native-markdown-display'
+import type { MessageOutput } from '~/components/chat/use-chat-messages'
 import { theme } from '~/theme'
 import { borderStyle } from '~/theme/styles'
-import type { MessageOutput } from '~/utils/schema/graphcache'
 
 const ChatMessage = ({ message }: { message: MessageOutput }) => {
   const { role, message: content } = message

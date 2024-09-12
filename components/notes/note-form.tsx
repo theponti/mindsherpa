@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, View } from 'react-native'
 
 import { captureException } from '@sentry/react-native'
 import { Text, theme } from '~/theme'
+import queryClient from '~/utils/query-client'
 import type { FocusItem, FocusItemInput } from '~/utils/services/notes/types'
 import { useFocusItemsCreate } from '../../utils/services/notes/use-focus-item-create'
 import { FeedbackBlock } from '../feedback-block'
@@ -42,20 +43,12 @@ export const NoteForm = (props: NoteFormProps) => {
   const { mutate: generateFocusItems, isPending: isGenerating } = useGetUserIntent({
     onSuccess: (data) => {
       if (data) {
-        const createTasks = data.intents.reduce<FocusItemInput[]>((result, item) => {
-          if (item.function_name === 'create_tasks') {
-            const tasks = Array.isArray(item.parameters?.tasks) ? item.parameters?.tasks : []
-            for (const task of tasks) {
-              result.push(task)
-            }
-          }
-          return result
-        }, [])
+        const searchTasks = data.search?.output
 
-        if (createTasks.length > 0) {
+        if (searchTasks && searchTasks.length > 0) {
           setFocusItems((prev) => [
             ...prev,
-            ...createTasks.map((item) => ({
+            ...searchTasks.map((item) => ({
               ...item,
               id: Math.floor(Math.random() * 1000),
             })),
@@ -64,6 +57,7 @@ export const NoteForm = (props: NoteFormProps) => {
       }
 
       setContent('')
+      queryClient.invalidateQueries({ queryKey: ['focusItems'] })
     },
     onError: (error) => {
       captureException(error)

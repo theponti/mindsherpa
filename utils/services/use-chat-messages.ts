@@ -1,96 +1,73 @@
-import { type MutationOptions, useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, type MutationOptions } from '@tanstack/react-query'
 import { useState } from 'react'
 
+import { captureException } from '@sentry/react-native'
+import { AxiosError } from 'axios'
 import { useAppContext } from '~/utils/app-provider/AppProvider'
 import type { Chat } from '~/utils/services/chat/types'
+import { components } from '../api-types'
 import { log } from '../logger'
-import type { MessageOutput } from '../schema/graphcache'
-import { request } from '../query-client'
-import { useCreateChatMessageMutation } from './chat/CreateChatMessage.mutation.generated'
+import queryClient, { request } from '../query-client'
+import { useAuthenticatedRequest } from '../use-authenticated-request'
+
+export type MessageOutput = components['schemas']['MessageOutput']
+
+export const useChatMessages = ({ chatId }: { chatId: string }) => {
+  const authRequest = useAuthenticatedRequest()
+
+  return useQuery<MessageOutput[], AxiosError>({ 
+    queryKey: ['chatMessages', chatId],
+    queryFn: async () => {
+      const { data } = await authRequest<MessageOutput[]>({
+        url: `/chat/${chatId}`,
+        method: 'GET',
+      })
+
+      return data
+    },
+    enabled: Boolean(chatId),
+  })
+}
 
 export const useSendMessage = ({
   chatId,
-  onSuccess,
-  onError,
 }: {
   chatId: string
-  onSuccess: (messages: readonly MessageOutput[]) => void
-  onError: () => void
 }) => {
+  const authRequest = useAuthenticatedRequest()
   const [message, setMessage] = useState('')
   const [sendChatError, setSendChatError] = useState(false)
-  const [sendChatMessageResponse, sendChatMessageMutation] = useCreateChatMessageMutation()
-
-  const sendChatMessage = async () => {
-    try {
-      const response = await sendChatMessageMutation({
-        chatId,
-        message,
+  const { mutateAsync: sendChatMessage, isPending: isChatSending } = useMutation({
+    mutationKey: ['sendChatMessage', chatId],
+    mutationFn: async () => {
+      const { data } = await authRequest<MessageOutput>({
+        url: `/chat/${chatId}/messages`,
+        method: 'POST',
+        data: { message },
       })
 
-      if (response.error) {
-        throw new Error(response.error.message)
-      }
-
-      if (!response.data || !response.data.sendChatMessage) {
-        throw new Error('No data returned')
-      }
-
+      return data
+    },
+    onSuccess: (response) => {
       setMessage('')
       setSendChatError(false)
-      onSuccess(response.data.sendChatMessage)
-    } catch (error) {
+      queryClient.invalidateQueries({ queryKey: ['chatMessages', chatId] })
+    },
+    onError: (error) => {
       log('Error sending chat message:', error)
-      setSendChatError(true)
-      onError()
-    }
-  }
+      captureException(error)
+    },
+  })
 
   return {
     message,
-    isChatSending: sendChatMessageResponse.fetching,
+    isChatSending,
     sendChatMessage,
-    sendChatMessageResponse,
     setMessage,
 
     // Error handling
     sendChatError,
     setSendChatError,
-  }
-}
-
-export const useChatMessages = ({ chatId }: { chatId: string }) => {
-  const { session } = useAppContext()
-  const [messages, setMessages] = useState<MessageOutput[]>([])
-  const { refetch, isError, isPending } = useQuery<MessageOutput[]>({
-    queryKey: ['chatMessages', chatId],
-    queryFn: async () => {
-      const { data } = await request<MessageOutput[]>({
-        method: 'GET',
-        url: `/chat/${chatId}`,
-        headers: {
-          Authorization: `Bearer ${session?.access_token}`,
-        },
-      })
-
-      setMessages(data)
-      return data
-    },
-    refetchOnMount: true,
-    refetchOnWindowFocus: true,
-  })
-
-  const addMessages = (newMessages: readonly MessageOutput[]) => {
-    setMessages((prevMessages) => [...prevMessages, ...newMessages])
-  }
-
-  return {
-    addMessages,
-    isPending,
-    isError,
-    messages,
-    refetch,
-    setMessages,
   }
 }
 
