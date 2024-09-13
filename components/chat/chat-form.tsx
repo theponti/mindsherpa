@@ -5,7 +5,6 @@ import { Text, theme } from '~/theme'
 import { useSendMessage } from '~/utils/services/chat/use-chat-messages'
 import type { FocusItemInput } from '~/utils/services/notes/types'
 import { FeedbackBlock } from '../feedback-block'
-import type { CreateNoteOutput } from '../media/use-audio-upload'
 import { FormSubmitButton } from '../notes/note-form-submit-button'
 import AutoGrowingInput from '../text-input-autogrow'
 import MindsherpaIcon from '../ui/icon'
@@ -160,7 +159,7 @@ type FocusItemPreviewProps = {
   disabled: boolean
   focusItem: FocusItemInput
   onDeleteClick: (focusItem: FocusItemInput) => void
-  onCreateClick: (focusItem: CreateNoteOutput['items'][0]) => void
+  onCreateClick: (focusItem: FocusItemInput) => void
 } & ViewProps
 const FocusItemPreview = ({
   disabled,
