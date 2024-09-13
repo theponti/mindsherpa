@@ -49,7 +49,7 @@
     "expo-crypto": "~13.0.2",
     "expo-dev-client": "~4.0.25",
     "expo-file-system": "~17.0.1",
-    "expo-font": "~12.0.9",
+    "expo-font": "^12.0.10",
     "expo-image-picker": "~15.0.7",
     "expo-keep-awake": "~13.0.2",
     "expo-linear-gradient": "~13.0.2",

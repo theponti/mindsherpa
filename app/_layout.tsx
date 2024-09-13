@@ -1,6 +1,6 @@
-import { useFonts } from '@expo-google-fonts/inter'
 import * as Sentry from '@sentry/react-native'
 import { ThemeProvider } from '@shopify/restyle'
+import { useFonts } from 'expo-font'
 import { Slot, SplashScreen, Stack, useRouter, useSegments } from 'expo-router'
 import React, { useEffect } from 'react'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
