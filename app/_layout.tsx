@@ -1,4 +1,5 @@
 import { useFonts } from '@expo-google-fonts/inter'
+import * as Sentry from '@sentry/react-native'
 import { ThemeProvider } from '@shopify/restyle'
 import { Slot, SplashScreen, Stack, useRouter, useSegments } from 'expo-router'
 import React, { useEffect } from 'react'
@@ -72,4 +73,4 @@ function RootLayout() {
   )
 }
 
-export default RootLayout
+export default Sentry.withErrorBoundary(RootLayout, { showDialog: true })

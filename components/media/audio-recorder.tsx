@@ -2,15 +2,15 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { captureException } from '@sentry/react-native';
 import { Audio } from 'expo-av';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  View,
-  StyleSheet,
-  Pressable,
-  type PressableProps,
   Alert,
+  Pressable,
+  StyleSheet,
+  View,
+  type PressableProps,
 } from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
 import Animated, {
   interpolateColor,
   useAnimatedStyle,
@@ -18,10 +18,10 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 
-import { type CreateNoteOutput, useAudioUpload } from '~/components/media/use-audio-upload';
+import { useAudioUpload, type AudioUploadResponse } from '~/components/media/use-audio-upload';
 import { theme } from '~/theme';
-import type { Recordings } from './recordings-list';
 import { AudioLevelVisualizer } from './audio-meterings';
+import type { Recordings } from './recordings-list';
 
 export default function AudioRecorder({
   multi,
@@ -32,20 +32,20 @@ export default function AudioRecorder({
 }: PressableProps & {
   multi?: boolean;
   onStartRecording: () => void;
-  onStopRecording: (note: CreateNoteOutput) => void;
+  onStopRecording: (note: AudioUploadResponse) => void;
 }) {
   const [recording, setRecording] = useState<Audio.Recording>();
   const [meterings, setMeterings] = useState<number[]>([]);
   const [recordingStatus, setRecordingStatus] = useState<Audio.RecordingStatus>();
   const [recordings, setRecordings] = useState<Recordings>([]);
   const { mutate, isPending } = useAudioUpload({
-    onSuccess: (data: CreateNoteOutput) => {
+    onSuccess: (data: AudioUploadResponse) => {
       onStopRecording(data);
       setRecording(undefined); // Clear recording
       setMeterings([]); // Clear meterings
     },
     onError: () => {
-      Alert.alert('Your voice note failed to upload. Try again later.');
+      Alert.alert('Sherpa could not create a task at the time. Try again later.');
       /**
        * The product should retain the recording so the user can attempt to upload
        * it again. If the user choses not to retry, they can clear the input.

@@ -222,8 +222,24 @@ export interface paths {
         /** Get Chat */
         get: operations["get_chat_chat__chat_id__get"];
         put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/chat/{chat_id}/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
         /** Send Chat Message */
-        post: operations["send_chat_message_chat__chat_id__post"];
+        post: operations["send_chat_message_chat__chat_id__messages_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -330,11 +346,6 @@ export interface components {
         };
         /** ChatMessageInput */
         ChatMessageInput: {
-            /**
-             * Chat Id
-             * Format: uuid
-             */
-            chat_id: string;
             /** Message */
             message: string;
         };
@@ -456,7 +467,7 @@ export interface components {
         /** GeneratedIntentsResponse */
         GeneratedIntentsResponse: {
             /** Output */
-            output: string;
+            output: string | null;
             create: components["schemas"]["CreateIntentsResponse"] | null;
             search: components["schemas"]["SearchIntentsResponse"] | null;
         };
@@ -509,10 +520,22 @@ export interface components {
              */
             user_id: string;
         };
+        /** SearchIntentParameters */
+        SearchIntentParameters: {
+            /** Keyword */
+            keyword: string;
+            /** Due On */
+            due_on: string | null;
+            /** Due After */
+            due_after: string | null;
+            /** Due Before */
+            due_before: string | null;
+            /** Status */
+            status: string | null;
+        };
         /** SearchIntentsResponse */
         SearchIntentsResponse: {
-            /** Input */
-            input: string;
+            input: components["schemas"]["SearchIntentParameters"];
             /** Output */
             output: components["schemas"]["FocusItem"][];
         };
@@ -980,7 +1003,7 @@ export interface operations {
             };
         };
     };
-    send_chat_message_chat__chat_id__post: {
+    send_chat_message_chat__chat_id__messages_post: {
         parameters: {
             query?: never;
             header?: never;

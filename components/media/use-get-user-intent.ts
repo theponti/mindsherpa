@@ -4,22 +4,22 @@ import type { AxiosError } from 'axios'
 import type { components } from '~/utils/api-types'
 import { useAuthenticatedRequest } from '~/utils/use-authenticated-request'
 
-export type GetIntents = components['schemas']['GeneratedIntentsResponse']
-export type CreateIntents = GetIntents['create']
-export type SearchIntents = GetIntents['search']
+export type GeneratedIntentsResponse = components['schemas']['GeneratedIntentsResponse']
+export type CreateIntents = GeneratedIntentsResponse['create']
+export type SearchIntents = GeneratedIntentsResponse['search']
 
 export const useGetUserIntent = ({
   onSuccess,
   onError,
 }: {
-  onSuccess?: (data: GetIntents) => void
+  onSuccess?: (data: GeneratedIntentsResponse) => void
   onError?: (error: AxiosError) => void
 }) => {
   const authRequest = useAuthenticatedRequest()
 
-  const mutation = useMutation<GetIntents, AxiosError, string>({
+  const mutation = useMutation<GeneratedIntentsResponse, AxiosError, string>({
     mutationFn: async (content: string) => {
-      const { data } = await authRequest<GetIntents>({
+      const { data } = await authRequest<GeneratedIntentsResponse>({
         url: '/notes/text',
         method: 'POST',
         data: { content },

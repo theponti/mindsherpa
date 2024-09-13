@@ -4,16 +4,14 @@ import { Pressable, StyleSheet, View } from 'react-native'
 import { captureException } from '@sentry/react-native'
 import { Text, theme } from '~/theme'
 import queryClient from '~/utils/query-client'
-import type { FocusItem, FocusItemInput } from '~/utils/services/notes/types'
+import type { FocusItem } from '~/utils/services/notes/types'
 import { useFocusItemsCreate } from '../../utils/services/notes/use-focus-item-create'
 import { FeedbackBlock } from '../feedback-block'
 import AudioRecorder from '../media/audio-recorder'
-import type { CreateNoteOutput } from '../media/use-audio-upload'
-import { useGetUserIntent } from '../media/use-get-user-intent'
+import { GeneratedIntentsResponse, useGetUserIntent } from '../media/use-get-user-intent'
 import AutoGrowingInput from '../text-input-autogrow'
 import MindsherpaIcon from '../ui/icon'
 import { UploadFileButton } from '../upload-file-button'
-import FocusItemPreview from './focus-item-preview'
 import { FormSubmitButton } from './note-form-submit-button'
 
 type NoteFormProps = {
@@ -26,38 +24,23 @@ export const NoteForm = (props: NoteFormProps) => {
   const [content, setContent] = useState('')
   const [createError, setCreateError] = useState<boolean>(false)
   const [generateError, setGenerateError] = useState<boolean>(false)
-  const [focusItems, setFocusItems] = useState<CreateNoteOutput['items']>([])
-  const { mutateAsync: createFocusItems, isPending: isCreating } = useFocusItemsCreate({
+  const [intentOutput, setIntentOutput] = useState<string | null>(null)
+  const { data: focusItems, mutateAsync: createFocusItems, isPending: isCreating } = useFocusItemsCreate({
     onSuccess: (data) => {
       onSubmit(data)
-      setFocusItems((prev) =>
-        prev.filter((item) => !data.some((newItem) => newItem.text === item.text))
-      )
       setGenerateError(false)
+      const previousItems: FocusItem[] = queryClient.getQueryData(['focusItems']) || []
+      queryClient.setQueryData(['focusItems'], [...(previousItems || []), ...data])
     },
     onError: (error) => {
       captureException(error)
       setCreateError(true)
     },
   })
-  const { mutate: generateFocusItems, isPending: isGenerating } = useGetUserIntent({
+  const { data: intent, mutate: generateFocusItems, isPending: isGenerating } = useGetUserIntent({
     onSuccess: (data) => {
-      if (data) {
-        const searchTasks = data.search?.output
-
-        if (searchTasks && searchTasks.length > 0) {
-          setFocusItems((prev) => [
-            ...prev,
-            ...searchTasks.map((item) => ({
-              ...item,
-              id: Math.floor(Math.random() * 1000),
-            })),
-          ])
-        }
-      }
-
+      onGeneratedIntents(data)
       setContent('')
-      queryClient.invalidateQueries({ queryKey: ['focusItems'] })
     },
     onError: (error) => {
       captureException(error)
@@ -70,22 +53,31 @@ export const NoteForm = (props: NoteFormProps) => {
     setIsRecording(true)
   }, [setIsRecording])
 
+  const onGeneratedIntents = useCallback(
+    (data: GeneratedIntentsResponse) => {
+      const searchTasks = data.search?.output
+      const createTasks = data.create?.output
+      
+      if (searchTasks && searchTasks.length > 0) {
+        queryClient.setQueryData(['focusItems'], searchTasks)
+        setIntentOutput(data.output)
+      }
+
+      if (createTasks && createTasks.length > 0) {
+        const previousItems: FocusItem[] = queryClient.getQueryData(['focusItems']) || []
+        queryClient.setQueryData(['focusItems'], [...(previousItems || []), ...createTasks])
+      }
+    },
+    [queryClient]
+  )
+
   const onStopRecording = useCallback(
-    (data: CreateNoteOutput) => {
+    (data: GeneratedIntentsResponse) => {
       setIsRecording(false)
-      setFocusItems(data.items)
+      onGeneratedIntents(data)
     },
     [setIsRecording]
   )
-
-  const onFocusItemPreviewDeleteClick = (focusItem: FocusItemInput) => {
-    setFocusItems((prev) => prev.filter((item) => item.text !== focusItem.text))
-  }
-
-  const onFocusItemPreviewClick = async (focusItem: FocusItemInput) => {
-    setCreateError(false)
-    createFocusItems([focusItem])
-  }
 
   const handleSubmit = () => {
     setGenerateError(false)
@@ -93,7 +85,10 @@ export const NoteForm = (props: NoteFormProps) => {
   }
 
   return (
-    <View style={[styles.container, { paddingTop: focusItems.length > 0 ? 16 : 0 }]}>
+    <View style={[
+      styles.container, 
+      { paddingTop: Array.isArray(focusItems) && focusItems.length > 0 ? 16 : 0 }
+      ]}> 
       {createError ? (
         <NoteFormError>
           <Text variant="body" color="white">
@@ -109,16 +104,10 @@ export const NoteForm = (props: NoteFormProps) => {
           </Pressable>
         </NoteFormError>
       ) : null}
+      {intentOutput ? (
+        <SherpaMessage message={intentOutput} onCloseClick={() => setIntentOutput(null)} />
+      ) : null}
       {generateError ? <GenerateError onCloseClick={() => setGenerateError(false)} /> : null}
-      {focusItems.map((item) => (
-        <FocusItemPreview
-          key={item.text}
-          disabled={isPending}
-          focusItem={item}
-          onDeleteClick={onFocusItemPreviewDeleteClick}
-          onCreateClick={onFocusItemPreviewClick}
-        />
-      ))}
       {!isRecording ? (
         <View style={[styles.inputContainer]}>
           <AutoGrowingInput
@@ -235,5 +224,36 @@ const GenerateError = ({ onCloseClick }: { onCloseClick: () => void }) => {
         </Pressable>
       </View>
     </NoteFormError>
+  )
+}
+
+const SherpaMessage = ({ message, onCloseClick }: { message: string, onCloseClick: () => void }) => {
+  return (
+    <FeedbackBlock style={{ paddingVertical: 12 }}>
+      <Text variant="body" color="white">
+        {message}
+      </Text>
+      <View style={{ flexDirection: 'row' }}> 
+        <Pressable
+          onPress={onCloseClick}
+          style={[
+            {
+              flex: 1,
+              borderRadius: 8,
+              borderWidth: 1,
+              borderColor: theme.colors.white,
+              marginTop: 12,
+              paddingVertical: 8,
+              paddingHorizontal: 12,
+              alignItems: 'center',
+            },
+          ]}
+        >
+          <Text variant="body" color="white">
+            Close
+          </Text>
+        </Pressable>
+      </View>
+    </FeedbackBlock>
   )
 }

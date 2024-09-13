@@ -1,10 +1,13 @@
 import { useEffect, type PropsWithChildren } from 'react'
-import { StyleSheet } from 'react-native'
+import { StyleSheet, ViewStyle } from 'react-native'
 import Animated, { useSharedValue, withTiming } from 'react-native-reanimated'
 
 import { theme } from '~/theme'
 
-export const FeedbackBlock = ({ error, children }: PropsWithChildren<{ error?: boolean }>) => {
+export const FeedbackBlock = ({ error, style, children }: PropsWithChildren<{ 
+  error?: boolean,
+  style?: ViewStyle
+}>) => {
   const opacity = useSharedValue(0)
 
   useEffect(() => {
@@ -12,10 +15,10 @@ export const FeedbackBlock = ({ error, children }: PropsWithChildren<{ error?: b
   })
 
   if (error) {
-    return <Animated.View style={[styles.error, { opacity }]}>{children}</Animated.View>
+    return <Animated.View style={[styles.error, { opacity }, style]}>{children}</Animated.View>
   }
 
-  return <Animated.View style={[styles.info, { opacity }]}>{children}</Animated.View>
+  return <Animated.View style={[styles.info, { opacity }, style]}>{children}</Animated.View>
 }
 
 const styles = StyleSheet.create({

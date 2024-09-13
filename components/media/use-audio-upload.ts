@@ -2,41 +2,32 @@ import { captureException } from '@sentry/react-native'
 import { useMutation } from '@tanstack/react-query'
 import type { AxiosError } from 'axios'
 import * as FileSystem from 'expo-file-system'
+import { components } from '~/utils/api-types'
+import { useAuthenticatedRequest } from '~/utils/use-authenticated-request'
 
-import { useAppContext } from '~/utils/app-provider'
-import { request } from '~/utils/query-client'
-import type { FocusItemInput } from '~/utils/services/notes/types'
-
-export type CreateNoteOutput = {
-  items: FocusItemInput[]
-}
+export type AudioUploadResponse = components["schemas"]["GeneratedIntentsResponse"]
 
 export const useAudioUpload = ({
   onSuccess,
   onError,
 }: {
-  onSuccess?: (data: CreateNoteOutput) => void
+  onSuccess?: (data: AudioUploadResponse) => void
   onError?: () => void
 }) => {
-  const { session } = useAppContext()
-  const token = session?.access_token
+  const authRequest = useAuthenticatedRequest()
 
-  const mutation = useMutation<CreateNoteOutput, AxiosError, string>({
+  const mutation = useMutation<AudioUploadResponse, AxiosError, string>({
     mutationFn: async (fileUri: string) => {
       const audioFile = await FileSystem.readAsStringAsync(fileUri, {
         encoding: FileSystem.EncodingType.Base64,
       })
 
-      const { data } = await request<CreateNoteOutput>({
+      const { data } = await authRequest<AudioUploadResponse>({
         url: '/notes/voice',
         method: 'POST',
         data: {
           filename: 'audio.m4a',
           audio_data: audioFile,
-        },
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
       })
 
