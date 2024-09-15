@@ -1,5 +1,5 @@
 import { MaterialIcons } from '@expo/vector-icons'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { ActivityIndicator, StyleSheet } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
@@ -9,7 +9,7 @@ const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpaci
 const AnimatedText = Animated.createAnimatedComponent(Text)
 
 export const FormSubmitButton = ({
-  // isLoading,
+  isLoading,
   isRecording,
   onSubmitButtonClick,
 }: {
@@ -17,7 +17,6 @@ export const FormSubmitButton = ({
   isRecording?: boolean
   onSubmitButtonClick: () => void
 }) => {
-  const [isLoading, setIsLoading] = useState(false)
   const opacity = useSharedValue(1)
   const loadingOpacity = useSharedValue(0)
   const loadingWidth = useSharedValue(0)
@@ -33,12 +32,6 @@ export const FormSubmitButton = ({
     // 👇 Hide the button while the form is recording audio.
     opacity.value = withSpring(isRecording ? 0 : 1, { duration: 500 })
   }, [isRecording, opacity])
-
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(true)
-    }, 1000)
-  }, [])
 
   useEffect(() => {
     // 👇 Animate the loading indicator.
