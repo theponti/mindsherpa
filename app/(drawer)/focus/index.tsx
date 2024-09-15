@@ -32,7 +32,7 @@ export const FocusView = () => {
       setRefreshing(false)
     },
   })
-  console.log('setting focus items', focusItems?.length)
+
   const { mutate: deleteFocusItem } = useDeleteFocus({
     onSuccess: async (deletedItemId) => {
       // Cancel any outgoing fetches
@@ -110,7 +110,7 @@ export const FocusView = () => {
           ) : null}
         </ScrollView>
       </View>
-      <NoteForm onSubmit={onFormSubmit} isRecording={isRecording} setIsRecording={setIsRecording} />
+      <NoteForm isRecording={isRecording} setIsRecording={setIsRecording} />
     </KeyboardAvoidingView>
   )
 }

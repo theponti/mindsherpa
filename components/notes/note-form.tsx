@@ -5,38 +5,24 @@ import { captureException } from '@sentry/react-native'
 import { Text, theme } from '~/theme'
 import queryClient from '~/utils/query-client'
 import type { FocusItem } from '~/utils/services/notes/types'
-import { useFocusItemsCreate } from '../../utils/services/notes/use-focus-item-create'
 import { FeedbackBlock } from '../feedback-block'
 import AudioRecorder from '../media/audio-recorder'
-import { GeneratedIntentsResponse, useGetUserIntent } from '../media/use-get-user-intent'
 import AutoGrowingInput from '../text-input-autogrow'
 import MindsherpaIcon from '../ui/icon'
 import { UploadFileButton } from '../upload-file-button'
 import { FormSubmitButton } from './note-form-submit-button'
+import { GeneratedIntentsResponse, useGetUserIntent } from './use-get-user-intent'
 
 type NoteFormProps = {
   isRecording: boolean
   setIsRecording: (isRecording: boolean) => void
-  onSubmit: (data: FocusItem[]) => void
 }
 export const NoteForm = (props: NoteFormProps) => {
-  const { isRecording, setIsRecording, onSubmit } = props
+  const { isRecording, setIsRecording } = props
   const [content, setContent] = useState('')
   const [createError, setCreateError] = useState<boolean>(false)
   const [generateError, setGenerateError] = useState<boolean>(false)
   const [intentOutput, setIntentOutput] = useState<string | null>(null)
-  const { data: focusItems, mutateAsync: createFocusItems, isPending: isCreating } = useFocusItemsCreate({
-    onSuccess: (data) => {
-      onSubmit(data)
-      setGenerateError(false)
-      const previousItems: FocusItem[] = queryClient.getQueryData(['focusItems']) || []
-      queryClient.setQueryData(['focusItems'], [...(previousItems || []), ...data])
-    },
-    onError: (error) => {
-      captureException(error)
-      setCreateError(true)
-    },
-  })
   const { data: intent, mutate: generateFocusItems, isPending: isGenerating } = useGetUserIntent({
     onSuccess: (data) => {
       onGeneratedIntents(data)
@@ -47,7 +33,6 @@ export const NoteForm = (props: NoteFormProps) => {
       setGenerateError(true)
     },
   })
-  const isPending = isCreating || isGenerating
 
   const onStartRecording = useCallback(() => {
     setIsRecording(true)
@@ -87,7 +72,7 @@ export const NoteForm = (props: NoteFormProps) => {
   return (
     <View style={[
       styles.container, 
-      { paddingTop: Array.isArray(focusItems) && focusItems.length > 0 ? 16 : 0 }
+      { paddingTop: intentOutput && intentOutput.length > 0 ? 16 : 0 }
       ]}> 
       {createError ? (
         <NoteFormError>
@@ -111,7 +96,7 @@ export const NoteForm = (props: NoteFormProps) => {
       {!isRecording ? (
         <View style={[styles.inputContainer]}>
           <AutoGrowingInput
-            editable={!isRecording && !isPending}
+            editable={!isRecording && !isGenerating}
             placeholder="Drop a note..."
             value={content}
             onChangeText={setContent}
@@ -125,7 +110,7 @@ export const NoteForm = (props: NoteFormProps) => {
         </View>
         <FormSubmitButton
           isRecording={isRecording}
-          isLoading={isPending}
+          isLoading={isGenerating}
           onSubmitButtonClick={handleSubmit}
         />
       </View>

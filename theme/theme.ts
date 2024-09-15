@@ -36,6 +36,7 @@ const theme = createTheme({
     quaternary: '#9097a6',
     secondary: '#344054',
     tertiary: '#F2F4F7',
+    'fg-primary': 'rgba(16, 24, 40, 1)',
   },
   spacing: {
     xs_4: 4,
