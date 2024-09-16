@@ -1,9 +1,9 @@
-import { MaterialIcons } from '@expo/vector-icons'
 import { useEffect } from 'react'
 import { ActivityIndicator, StyleSheet } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
 import { Text, theme } from '~/theme'
+import MindsherpaIcon from '../ui/icon'
 
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity)
 const AnimatedText = Animated.createAnimatedComponent(Text)
@@ -51,7 +51,7 @@ export const FormSubmitButton = ({
       onPress={onSubmitButtonClick}
       style={[styles.sendButton, { backgroundColor: isRecording ? theme.colors.grayMedium : theme.colors['fg-primary'] }]}
     >
-      <MaterialIcons name="arrow-upward" size={24} color={theme.colors.white} />
+      <MindsherpaIcon name="arrow-up" size={20} color={theme.colors.white} />
     </AnimatedTouchableOpacity>
   )
 }
@@ -67,7 +67,8 @@ const styles = StyleSheet.create({
   },
   sendButton: {
     backgroundColor: theme.colors['fg-primary'],
-    borderRadius: 50,
-    padding: 8,
+    borderRadius: 190,
+    paddingHorizontal: 11,
+    paddingVertical: 8,
   },
 })

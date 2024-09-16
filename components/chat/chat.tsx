@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useRef } from 'react'
 import {
   FlatList,
   Keyboard,
@@ -23,10 +23,7 @@ export type ChatProps = {
 }
 export const Chat = (props: ChatProps) => {
   const { chatId, onChatEnd } = props
-  const {
-    isPending: isMessagesLoading,
-    data: messages,
-  } = useChatMessages({ chatId })
+  const { isPending: isMessagesLoading, data: messages } = useChatMessages({ chatId })
   const { mutate: endChat, isPending: isEndingChat } = useEndChat({
     chatId,
     onSuccess: () => {
@@ -36,30 +33,23 @@ export const Chat = (props: ChatProps) => {
   })
   const flatListRef = useRef<FlatList>(null)
 
+  const formattedMessages = messages && messages.length > 0 ? messages : []
+  const hasMessages = Boolean(formattedMessages && formattedMessages.length > 0)
+
   const scrollToBottom = useCallback(() => {
     if (flatListRef.current && messages && messages.length > 0) {
-      flatListRef.current.scrollToIndex({
-        index: messages.length > 2 ? messages.length - 1 : 1,
-        viewOffset: -100,
-      })
+      setTimeout(() => {
+        flatListRef.current?.scrollToIndex({
+          animated: true,
+          index: messages.length - 1,
+          viewOffset: -20,
+        })
+      }, 0)
     }
   }, [messages])
 
-  useEffect(() => {
-    setTimeout(() => {
-      scrollToBottom()
-    }, 500)
-  }, [scrollToBottom])
-
-  const formattedMessages = messages && messages.length > 0 ? messages : []
-  const hasMessages = Boolean(formattedMessages && formattedMessages.length > 0)
-  
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
-      style={styles.container}
-    >
+    <View style={{ flex: 1 }}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={StyleSheet.absoluteFillObject} />
       </TouchableWithoutFeedback>
@@ -74,16 +64,16 @@ export const Chat = (props: ChatProps) => {
             keyExtractor={(item) => item.id}
             keyboardShouldPersistTaps="handled"
             renderItem={renderMessage}
+            onLayout={scrollToBottom}
             onContentSizeChange={scrollToBottom}
-            getItemLayout={(_, index) => ({
-              length: formattedMessages.length,
-              offset: 100 * index,
-              index,
-            })}
-            onStartShouldSetResponder={() => true}
+            onScrollToIndexFailed={scrollToBottom}
           />
         )}
-
+      </View>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+      >
         {!isMessagesLoading && !hasMessages ? (
           <FeedbackBlock error={false}>
             <Text variant="body" color="quaternary">
@@ -92,13 +82,9 @@ export const Chat = (props: ChatProps) => {
           </FeedbackBlock>
         ) : null}
 
-        <ChatForm
-          chatId={chatId}
-          isEndingChat={isEndingChat}
-          onEndChat={endChat}
-        />
-      </View>
-    </KeyboardAvoidingView>
+        <ChatForm chatId={chatId} isEndingChat={isEndingChat} onEndChat={endChat} />
+      </KeyboardAvoidingView>
+    </View>
   )
 }
 
