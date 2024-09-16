@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useRef } from 'react'
 import {
   FlatList,
   Keyboard,
@@ -33,20 +33,20 @@ export const Chat = (props: ChatProps) => {
   })
   const flatListRef = useRef<FlatList>(null)
 
-  const scrollToBottom = useCallback(() => {
-    if (flatListRef.current && messages && messages.length > 0) {
-      setTimeout(() => {
-        flatListRef.current?.scrollToEnd({ animated: true })
-      }, 600)
-    }
-  }, [messages])
-
   const formattedMessages = messages && messages.length > 0 ? messages : []
   const hasMessages = Boolean(formattedMessages && formattedMessages.length > 0)
 
-  useEffect(() => {
-    scrollToBottom()
-  }, [messages, scrollToBottom])
+  const scrollToBottom = useCallback(() => {
+    if (flatListRef.current && messages && messages.length > 0) {
+      setTimeout(() => {
+        flatListRef.current?.scrollToIndex({
+          animated: true,
+          index: messages.length - 1,
+          viewOffset: -20,
+        })
+      }, 0)
+    }
+  }, [messages])
 
   return (
     <View style={{ flex: 1 }}>
@@ -64,7 +64,9 @@ export const Chat = (props: ChatProps) => {
             keyExtractor={(item) => item.id}
             keyboardShouldPersistTaps="handled"
             renderItem={renderMessage}
+            onLayout={scrollToBottom}
             onContentSizeChange={scrollToBottom}
+            onScrollToIndexFailed={scrollToBottom}
           />
         )}
       </View>
