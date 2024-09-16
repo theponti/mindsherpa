@@ -3,8 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
 import * as FileSystem from 'expo-file-system';
 
-import { useAppContext } from '~/utils/app-provider';
-import { request } from '~/utils/query-client';
+import { useAuthenticatedRequest } from '~/utils/use-authenticated-request';
 
 export const useAudioTranscribe = ({
   onSuccess,
@@ -13,8 +12,7 @@ export const useAudioTranscribe = ({
   onSuccess?: (data: string) => void;
   onError?: () => void;
 }) => {
-  const { session } = useAppContext();
-  const token = session?.access_token;
+  const authRequest = useAuthenticatedRequest();
 
   const mutation = useMutation<string, AxiosError, string>({
     mutationFn: async (fileUri: string) => {
@@ -22,16 +20,12 @@ export const useAudioTranscribe = ({
         encoding: FileSystem.EncodingType.Base64,
       });
 
-      const { data } = await request<string>({
+      const { data } = await authRequest<string>({ 
         url: '/ai/speech-to-text',
         method: 'POST',
         data: {
           filename: 'audio.m4a',
           audio_data: audioFile,
-        },
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
       });
 
