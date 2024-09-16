@@ -23,10 +23,7 @@ export type ChatProps = {
 }
 export const Chat = (props: ChatProps) => {
   const { chatId, onChatEnd } = props
-  const {
-    isPending: isMessagesLoading,
-    data: messages,
-  } = useChatMessages({ chatId })
+  const { isPending: isMessagesLoading, data: messages } = useChatMessages({ chatId })
   const { mutate: endChat, isPending: isEndingChat } = useEndChat({
     chatId,
     onSuccess: () => {
@@ -38,28 +35,21 @@ export const Chat = (props: ChatProps) => {
 
   const scrollToBottom = useCallback(() => {
     if (flatListRef.current && messages && messages.length > 0) {
-      flatListRef.current.scrollToIndex({
-        index: messages.length > 2 ? messages.length - 1 : 1,
-        viewOffset: -100,
-      })
+      setTimeout(() => {
+        flatListRef.current?.scrollToEnd({ animated: true })
+      }, 600)
     }
   }, [messages])
 
-  useEffect(() => {
-    setTimeout(() => {
-      scrollToBottom()
-    }, 500)
-  }, [scrollToBottom])
-
   const formattedMessages = messages && messages.length > 0 ? messages : []
   const hasMessages = Boolean(formattedMessages && formattedMessages.length > 0)
-  
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages, scrollToBottom])
+
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
-      style={styles.container}
-    >
+    <View style={{ flex: 1 }}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={StyleSheet.absoluteFillObject} />
       </TouchableWithoutFeedback>
@@ -75,15 +65,13 @@ export const Chat = (props: ChatProps) => {
             keyboardShouldPersistTaps="handled"
             renderItem={renderMessage}
             onContentSizeChange={scrollToBottom}
-            getItemLayout={(_, index) => ({
-              length: formattedMessages.length,
-              offset: 100 * index,
-              index,
-            })}
-            onStartShouldSetResponder={() => true}
           />
         )}
-
+      </View>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+      >
         {!isMessagesLoading && !hasMessages ? (
           <FeedbackBlock error={false}>
             <Text variant="body" color="quaternary">
@@ -92,13 +80,9 @@ export const Chat = (props: ChatProps) => {
           </FeedbackBlock>
         ) : null}
 
-        <ChatForm
-          chatId={chatId}
-          isEndingChat={isEndingChat}
-          onEndChat={endChat}
-        />
-      </View>
-    </KeyboardAvoidingView>
+        <ChatForm chatId={chatId} isEndingChat={isEndingChat} onEndChat={endChat} />
+      </KeyboardAvoidingView>
+    </View>
   )
 }
 

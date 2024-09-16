@@ -1,10 +1,15 @@
 {
+  "[jsonc]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
   "[typescript]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
   "[typescriptreact]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
+  "biome.searchInPath": true,
+  "biome.lspBin": "node_modules/.bin/biome",
   "cSpell.ignoreWords": [
     "graphcache",
     "openai",
@@ -41,16 +46,13 @@
     "supabase/functions"
   ],
   "deno.lint": true,
-  "deno.unstable": true,
   "editor.defaultFormatter": "biomejs.biome",
-  "typescript.enablePromptUseWorkspaceTsdk": true,
-  "typescript.tsdk": "node_modules/typescript/lib",
   "editor.codeActionsOnSave": {
+    "quickfix.biome": "explicit",
     "source.sortImports": "always",
     "source.organizeImports": "always",
     "source.removeUnusedImports": "always"
   },
-  "[jsonc]": {
-    "editor.defaultFormatter": "denoland.vscode-deno"
-  }
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

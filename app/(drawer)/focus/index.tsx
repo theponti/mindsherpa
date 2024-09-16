@@ -110,7 +110,7 @@ export const FocusView = () => {
               <FocusList data={focusItems} onItemDelete={deleteFocusItem} />
             </View>
           ) : null}
-          {!hasFocusItems ? (
+          {(!isLoading && !refreshing) && !hasFocusItems ? (
             <View style={[styles.empty]}>
               <Text variant="bodyLarge" color="primary">
                 You have no focus items yet.
