@@ -20,7 +20,7 @@ type NoteFormProps = {
   setIsRecording: (isRecording: boolean) => void
 }
 export const NoteForm = (props: NoteFormProps) => {
-  const { isRecording, setActiveSearch,setIsRecording } = props
+  const { isRecording, setActiveSearch, setIsRecording } = props
   const [content, setContent] = useState('')
   const [createError, setCreateError] = useState<boolean>(false)
   const [generateError, setGenerateError] = useState<boolean>(false)

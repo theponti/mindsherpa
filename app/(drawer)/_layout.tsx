@@ -19,4 +19,4 @@ const DrawerLayout = () => {
   )
 }
 
-export default React.memo(DrawerLayout)
+export default DrawerLayout
