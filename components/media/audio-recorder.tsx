@@ -4,12 +4,10 @@ import { Audio } from 'expo-av';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-  ActivityIndicator,
-  Alert,
   Pressable,
   StyleSheet,
   View,
-  type PressableProps,
+  type PressableProps
 } from 'react-native';
 import Animated, {
   interpolateColor,
@@ -18,7 +16,6 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 
-import { useAudioUpload, type AudioUploadResponse } from '~/components/media/use-audio-upload';
 import { theme } from '~/theme';
 import { AudioLevelVisualizer } from './audio-meterings';
 import type { Recordings } from './recordings-list';
@@ -32,29 +29,12 @@ export default function AudioRecorder({
 }: PressableProps & {
   multi?: boolean;
   onStartRecording: () => void;
-  onStopRecording: (note: AudioUploadResponse) => void;
+  onStopRecording: (note: string | null) => void;
 }) {
   const [recording, setRecording] = useState<Audio.Recording>();
   const [meterings, setMeterings] = useState<number[]>([]);
   const [recordingStatus, setRecordingStatus] = useState<Audio.RecordingStatus>();
   const [recordings, setRecordings] = useState<Recordings>([]);
-  const { mutate, isPending } = useAudioUpload({
-    onSuccess: (data: AudioUploadResponse) => {
-      onStopRecording(data);
-      setRecording(undefined); // Clear recording
-      setMeterings([]); // Clear meterings
-    },
-    onError: () => {
-      Alert.alert('Sherpa could not create a task at the time. Try again later.');
-      /**
-       * The product should retain the recording so the user can attempt to upload
-       * it again. If the user choses not to retry, they can clear the input.
-       */
-      setRecordingStatus(undefined); // Clear recording status
-      setRecording(undefined); // Clear recording
-      setMeterings([]); // Clear meterings
-    },
-  });
 
   const onRecordingStatusChange = useCallback((status: Audio.RecordingStatus) => {
     setRecordingStatus(status);
@@ -133,9 +113,12 @@ export default function AudioRecorder({
     }
 
     if (file) {
-      mutate(file);
+      setRecordingStatus(undefined); // Clear recording status
+      setRecording(undefined); // Clear recording
+      setMeterings([]); // Clear meterings
+      onStopRecording(file);
     }
-  }, [multi, recording, mutate, handleMultipleRecordings]);
+  }, [multi, recording, handleMultipleRecordings]);
 
   const backgroundColor = useSharedValue(0);
   const speakButtonBackground = useAnimatedStyle(() => ({
@@ -153,15 +136,13 @@ export default function AudioRecorder({
   return (
     <View style={[styles.container]}>
       <AnimatedPressable
-        disabled={isPending}
         style={[pressableStyles.speakButton, speakButtonBackground]}
         onPress={recording ? stopRecording : startRecording}
         {...props}>
-        {isPending ? <ActivityIndicator size="small" color={theme.colors.primary} /> : null}
-        {!isPending && recordingStatus?.isRecording ? (
+        {recordingStatus?.isRecording ? (
           <MaterialIcons name="stop" size={24} color={theme.colors.grayLight} />
         ) : null}
-        {!isPending && !recordingStatus?.isRecording ? (
+        {!recordingStatus?.isRecording ? (
           <MaterialIcons name="mic" size={24} color={theme.colors.primary} />
         ) : null}
       </AnimatedPressable>

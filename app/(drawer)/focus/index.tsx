@@ -1,22 +1,25 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { Link } from 'expo-router'
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native'
 import { RefreshControl, ScrollView } from 'react-native-gesture-handler'
+import Markdown from 'react-native-markdown-display'
 
 import { LoadingContainer } from '~/components/LoadingFull'
 import { PulsingCircle } from '~/components/animated/pulsing-circle'
 import { FeedbackBlock } from '~/components/feedback-block'
+import { FocusHeader } from '~/components/focus/focus-header'
 import { FocusList } from '~/components/focus/focus-list'
 import { NoteForm } from '~/components/notes/note-form'
 import MindsherpaIcon from '~/components/ui/icon'
 import { Text, theme } from '~/theme'
+import { borderStyle } from '~/theme/styles'
 import type { FocusItem, FocusItems } from '~/utils/services/notes/types'
 import { useDeleteFocus } from '~/utils/services/notes/use-delete-focus'
 import { useFocusQuery } from '~/utils/services/notes/use-focus-query'
 
 export const FocusView = () => {
   const queryClient = useQueryClient()
+  const [activeSearch, setActiveSearch] = useState('')
   const [isRecording, setIsRecording] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
   const {
@@ -68,7 +71,12 @@ export const FocusView = () => {
     [queryClient]
   )
 
+  const onActiveSearchClose = useCallback(() => {
+    setActiveSearch('')
+  }, [setActiveSearch])
+
   const onRefresh = useCallback(() => {
+    setActiveSearch('')
     setRefreshing(true)
     refetch()
   }, [refetch])
@@ -98,6 +106,7 @@ export const FocusView = () => {
 
           {hasFocusItems && focusItems ? (
             <View style={[styles.focuses]}>
+              {activeSearch ? <SearchText searchText={activeSearch} onDismiss={onActiveSearchClose} /> : null}
               <FocusList data={focusItems} onItemDelete={deleteFocusItem} />
             </View>
           ) : null}
@@ -110,7 +119,7 @@ export const FocusView = () => {
           ) : null}
         </ScrollView>
       </View>
-      <NoteForm isRecording={isRecording} setIsRecording={setIsRecording} />
+      <NoteForm isRecording={isRecording} setIsRecording={setIsRecording} setActiveSearch={setActiveSearch} />
     </KeyboardAvoidingView>
   )
 }
@@ -143,65 +152,7 @@ const styles = StyleSheet.create({
 
 export default FocusView
 
-const FocusHeader = React.memo(() => {
-  const todaysDate = useMemo(
-    () => new Date().toLocaleString('default', { month: 'long', day: 'numeric' }),
-    []
-  )
 
-  return (
-    <View style={headerStyles.header}>
-      <View style={[headerStyles.topRow]}>
-        <View style={[headerStyles.iconWrap]}>
-          <Link href="/(account)/" style={[headerStyles.iconLink]}>
-            <MindsherpaIcon name="user" size={15} />
-          </Link>
-        </View>
-        <View style={[headerStyles.today]}>
-          <Text fontSize={30} fontWeight={600}>
-            Today
-          </Text>
-        </View>
-        <View style={[headerStyles.iconWrap]}>
-          <Link href="/(sherpa)/" style={[headerStyles.iconLink]}>
-            <MindsherpaIcon name="message" size={15} />
-          </Link>
-        </View>
-      </View>
-      <View style={[headerStyles.bottomRow]}>
-        <Text variant="body" color="gray">
-          {todaysDate}
-        </Text>
-      </View>
-    </View>
-  )
-})
-
-const headerStyles = StyleSheet.create({
-  header: {
-    justifyContent: 'space-between',
-    marginTop: 91,
-    rowGap: 4,
-  },
-  topRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 24,
-  },
-  today: { flex: 1, alignItems: 'center' },
-  bottomRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  iconWrap: {
-    backgroundColor: theme.colors.grayLight,
-    borderRadius: 99,
-  },
-  iconLink: {
-    padding: 12,
-  },
-})
 
 const FocusLoadingError = React.memo(() => {
   return (
@@ -228,4 +179,35 @@ const FocusLoadingError = React.memo(() => {
       </FeedbackBlock>
     </View>
   )
+})
+
+const SearchText = React.memo(({ searchText, onDismiss }: { searchText: string, onDismiss: () => void }) => {
+  return (
+      <View style={{ alignContent: 'center', marginHorizontal: 12, paddingVertical: 12, paddingHorizontal: 16, ...borderStyle.border }}>
+        <Markdown style={{ body: { fontSize: 18, lineHeight: 24, color: theme.colors.black } }}>
+          {searchText}
+        </Markdown>
+        {/* <View style={{ flexDirection: 'row' }}> 
+          <Pressable
+            onPress={onDismiss}
+            style={[
+              {
+                flex: 1,
+                borderRadius: 8,
+                borderWidth: 1,
+                borderColor: theme.colors.quaternary,
+                marginTop: 12,
+                paddingVertical: 8,
+                paddingHorizontal: 12,
+                alignItems: 'center',
+              },
+            ]}
+          >
+            <Text variant="body" color="gray">
+              Close
+            </Text>
+          </Pressable>
+        </View> */}
+      </View>
+    )
 })
