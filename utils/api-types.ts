@@ -119,8 +119,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Create Text Note Route */
-        post: operations["create_text_note_route_notes_text_post"];
+        /** Handle Text Input Route */
+        post: operations["handle_text_input_route_notes_text_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -136,8 +136,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Create Focus Items From Audio Route */
-        post: operations["create_focus_items_from_audio_route_notes_voice_post"];
+        /** Handle Audio Upload Route */
+        post: operations["handle_audio_upload_route_notes_voice_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -178,6 +178,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/chat/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Start Chat */
+        post: operations["start_chat_chat_start_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/chat/active": {
         parameters: {
             query?: never;
@@ -185,8 +202,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get Active Chat */
-        get: operations["get_active_chat_chat_active_get"];
+        /** Get Active Chat Route */
+        get: operations["get_active_chat_route_chat_active_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -364,6 +381,17 @@ export interface components {
              */
             created_at: string;
         };
+        /** ChatParameters */
+        ChatParameters: {
+            /** User Message */
+            user_message: string;
+        };
+        /** ChatResponse */
+        ChatResponse: {
+            input: components["schemas"]["ChatParameters"];
+            /** Output */
+            output: string;
+        };
         /** CreateFocusItemBaseV2 */
         CreateFocusItemBaseV2: {
             /** Items */
@@ -412,7 +440,7 @@ export interface components {
             /** Category */
             category: string;
             /** Due Date */
-            due_date: string | null;
+            due_date?: string | null;
             /** Priority */
             priority: number;
             /** Sentiment */
@@ -447,7 +475,7 @@ export interface components {
             /** Category */
             category: string;
             /** Due Date */
-            due_date: string | null;
+            due_date?: string | null;
             /** Priority */
             priority: number;
             /** Sentiment */
@@ -466,8 +494,11 @@ export interface components {
         FocusState: "backlog" | "active" | "completed" | "deleted";
         /** GeneratedIntentsResponse */
         GeneratedIntentsResponse: {
+            /** Input */
+            input: string | null;
             /** Output */
             output: string | null;
+            chat: components["schemas"]["ChatResponse"] | null;
             create: components["schemas"]["CreateIntentsResponse"] | null;
             search: components["schemas"]["SearchIntentsResponse"] | null;
         };
@@ -524,20 +555,44 @@ export interface components {
         SearchIntentParameters: {
             /** Keyword */
             keyword: string;
-            /** Due On */
-            due_on: string | null;
-            /** Due After */
-            due_after: string | null;
-            /** Due Before */
-            due_before: string | null;
-            /** Status */
-            status: string | null;
+            /**
+             * Profile Id
+             * Format: uuid
+             */
+            profile_id: string;
+            /**
+             * Due On
+             * @description The due date in ISO Date Time Format for the task
+             */
+            due_on?: string | null;
+            /**
+             * Due After
+             * @description A ISO Date Time Format date used when the users wants to search for tasks after a specific date
+             */
+            due_after?: string | null;
+            /**
+             * Due Before
+             * @description A ISO Date Time Format date used when the users wants to search for tasks before a specific date
+             */
+            due_before?: string | null;
+            /**
+             * Status
+             * @description The status of the task
+             */
+            status?: string | null;
         };
         /** SearchIntentsResponse */
         SearchIntentsResponse: {
             input: components["schemas"]["SearchIntentParameters"];
             /** Output */
             output: components["schemas"]["FocusItem"][];
+        };
+        /** StartChatInput */
+        StartChatInput: {
+            /** User Message */
+            user_message: string;
+            /** Sherpa Message */
+            sherpa_message: string;
         };
         /** UpdateProfileInput */
         UpdateProfileInput: {
@@ -791,7 +846,7 @@ export interface operations {
             };
         };
     };
-    create_text_note_route_notes_text_post: {
+    handle_text_input_route_notes_text_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -824,7 +879,7 @@ export interface operations {
             };
         };
     };
-    create_focus_items_from_audio_route_notes_voice_post: {
+    handle_audio_upload_route_notes_voice_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -919,7 +974,40 @@ export interface operations {
             };
         };
     };
-    get_active_chat_chat_active_get: {
+    start_chat_chat_start_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StartChatInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChatOutput"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_active_chat_route_chat_active_get: {
         parameters: {
             query?: never;
             header?: never;

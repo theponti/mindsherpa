@@ -76,6 +76,10 @@ const theme = createTheme({
       fontSize: 28,
       fontWeight: 600,
     },
+    'text-md': {
+      fontFamily: SANS_SERIF_FONT,
+      fontSize: 20,
+    },
     title: {
       fontFamily: SANS_SERIF_FONT,
       fontSize: 20,
