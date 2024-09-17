@@ -20,9 +20,7 @@ import { useFocusQuery } from '~/utils/services/notes/use-focus-query'
 
 export const FocusView = () => {
   const queryClient = useQueryClient()
-  const [activeChat, setActiveChat] = useState<string | null>(
-    'e29344bb-aa55-40e7-a0a9-e29dd354e3d7'
-  )
+  const [activeChat, setActiveChat] = useState<string | null>(null)
   const [activeSearch, setActiveSearch] = useState('')
   const [isRecording, setIsRecording] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
