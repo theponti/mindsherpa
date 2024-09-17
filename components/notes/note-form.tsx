@@ -1,9 +1,11 @@
-import { useCallback, useState, type PropsWithChildren } from 'react'
+import type { PropsWithChildren } from 'react'
+import { useCallback, useState } from 'react'
 import { Pressable, StyleSheet, View } from 'react-native'
 
 import { captureException } from '@sentry/react-native'
 import { Text, theme } from '~/theme'
 import queryClient from '~/utils/query-client'
+import { useStartChat } from '~/utils/services/chat/use-chat-messages'
 import type { FocusItem } from '~/utils/services/notes/types'
 import { FeedbackBlock } from '../feedback-block'
 import AudioRecorder from '../media/audio-recorder'
@@ -12,64 +14,70 @@ import AutoGrowingInput from '../text-input-autogrow'
 import MindsherpaIcon from '../ui/icon'
 import { UploadFileButton } from '../upload-file-button'
 import { FormSubmitButton } from './note-form-submit-button'
-import { GeneratedIntentsResponse, useGetUserIntent } from './use-get-user-intent'
+import { useGetUserIntent, type GeneratedIntentsResponse } from './use-get-user-intent'
 
 type NoteFormProps = {
   isRecording: boolean
+  setActiveChat: (chatId: string) => void
   setActiveSearch: (search: string) => void
   setIsRecording: (isRecording: boolean) => void
 }
 export const NoteForm = (props: NoteFormProps) => {
-  const { isRecording, setActiveSearch, setIsRecording } = props
+  const { isRecording, setActiveSearch, setIsRecording, setActiveChat } = props
   const [content, setContent] = useState('')
   const [createError, setCreateError] = useState<boolean>(false)
   const [generateError, setGenerateError] = useState<boolean>(false)
   const [intentOutput, setIntentOutput] = useState<string | null>(null)
   const { mutate: generateFocusFromAudio, isPending: isAudioGenerating } = useAudioUpload({
     onSuccess: (data: GeneratedIntentsResponse) => {
-      onGeneratedIntents(data);
-      setIsRecording(false);
+      onGeneratedIntents(data)
+      setIsRecording(false)
     },
     onError: () => {
       setGenerateError(true)
     },
-  });
+  })
 
-  
   const { mutate: generateFocusItems, isPending: isTextGenerating } = useGetUserIntent({
     onSuccess: (data) => {
       onGeneratedIntents(data)
-      setContent('')
     },
     onError: (error) => {
-      console.error('Error generating intent:', error); 
+      console.error('Error generating intent:', error)
       captureException(error)
       setGenerateError(true)
     },
   })
 
-
   const onGeneratedIntents = useCallback(
     (data: GeneratedIntentsResponse) => {
       const searchTasks = data.search?.output
       const createTasks = data.create?.output
+      const chatMessage = data.chat?.output
+
+      if (chatMessage && chatMessage.length > 0) {
+        setIntentOutput(chatMessage)
+        return
+      }
 
       if (searchTasks && searchTasks.length > 0 && data.output) {
+        setContent('')
         queryClient.setQueryData(['focusItems'], searchTasks)
         setActiveSearch(data.output)
         /**
          * The product should show the user the search results, so we don't want
          * to show any created tasks.
          */
-        return;
+        return
       }
 
       if (createTasks && createTasks.length > 0) {
+        setContent('')
         const previousItems: FocusItem[] = queryClient.getQueryData(['focusItems']) || []
         queryClient.setQueryData(['focusItems'], [...(previousItems || []), ...createTasks])
       }
     },
-    [queryClient]
+    [setActiveSearch]
   )
 
   const onStartRecording = useCallback(() => {
@@ -82,7 +90,7 @@ export const NoteForm = (props: NoteFormProps) => {
       if (!data) return
       generateFocusFromAudio(data)
     },
-    [setIsRecording]
+    [generateFocusFromAudio, setIsRecording]
   )
 
   const handleSubmit = () => {
@@ -93,10 +101,9 @@ export const NoteForm = (props: NoteFormProps) => {
   const isGenerating = isTextGenerating || isAudioGenerating
 
   return (
-    <View style={[
-      styles.container, 
-      { paddingTop: intentOutput && intentOutput.length > 0 ? 16 : 0 }
-      ]}> 
+    <View
+      style={[styles.container, { paddingTop: intentOutput && intentOutput.length > 0 ? 16 : 0 }]}
+    >
       {createError ? (
         <NoteFormError>
           <Text variant="body" color="white">
@@ -112,8 +119,16 @@ export const NoteForm = (props: NoteFormProps) => {
           </Pressable>
         </NoteFormError>
       ) : null}
+      {intentOutput ? (
+        <SherpaMessage
+          sherpaMessage={intentOutput}
+          userMessage={content}
+          onChatCreated={(chatId) => setActiveChat(chatId)}
+          onCloseClick={() => setIntentOutput(null)}
+        />
+      ) : null}
       {generateError ? <GenerateError onCloseClick={() => setGenerateError(false)} /> : null}
-      {!isRecording ? (
+      {!isRecording && !intentOutput ? (
         <View style={[styles.inputContainer]}>
           <AutoGrowingInput
             editable={!isRecording && isGenerating}
@@ -232,19 +247,43 @@ const GenerateError = ({ onCloseClick }: { onCloseClick: () => void }) => {
   )
 }
 
-const SherpaMessage = ({ message, onCloseClick }: { message: string, onCloseClick: () => void }) => {
+type SherpaMessageProps = {
+  sherpaMessage: string
+  userMessage: string
+  onChatCreated: (chatId: string) => void
+  onCloseClick: () => void
+}
+const SherpaMessage = ({
+  sherpaMessage,
+  userMessage,
+  onChatCreated,
+  onCloseClick,
+}: SherpaMessageProps) => {
+  const { mutate: startChat, isPending } = useStartChat({
+    userMessage,
+    sherpaMessage,
+    onSuccess: (data) => {
+      onChatCreated(data.id)
+    },
+  })
+
+  const onDiscussClick = useCallback(() => {
+    startChat()
+  }, [startChat])
+
   return (
     <FeedbackBlock style={{ paddingVertical: 12 }}>
       <Text variant="body" color="fg-primary">
-        {message}
+        {sherpaMessage}
       </Text>
-      <View style={{ flexDirection: 'row' }}> 
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', columnGap: 12 }}>
         <Pressable
+          disabled={isPending}
           onPress={onCloseClick}
           style={[
             {
               flex: 1,
-              borderRadius: 8,
+              borderRadius: 12,
               borderWidth: 1,
               borderColor: theme.colors.quaternary,
               marginTop: 12,
@@ -256,6 +295,27 @@ const SherpaMessage = ({ message, onCloseClick }: { message: string, onCloseClic
         >
           <Text variant="body" color="gray">
             Close
+          </Text>
+        </Pressable>
+        <Pressable
+          disabled={isPending}
+          onPress={onDiscussClick}
+          style={[
+            {
+              flex: 1,
+              borderRadius: 12,
+              borderWidth: 1,
+              borderColor: theme.colors.quaternary,
+              backgroundColor: isPending ? theme.colors.grayLight : theme.colors['fg-primary'],
+              marginTop: 12,
+              paddingVertical: 8,
+              paddingHorizontal: 12,
+              alignItems: 'center',
+            },
+          ]}
+        >
+          <Text variant="body" color="white">
+            Discuss
           </Text>
         </Pressable>
       </View>

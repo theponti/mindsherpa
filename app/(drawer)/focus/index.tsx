@@ -6,6 +6,7 @@ import Markdown from 'react-native-markdown-display'
 
 import { LoadingContainer } from '~/components/LoadingFull'
 import { PulsingCircle } from '~/components/animated/pulsing-circle'
+import { SherpaAmbient } from '~/components/chat/sherpa-ambient'
 import { FeedbackBlock } from '~/components/feedback-block'
 import { FocusHeader } from '~/components/focus/focus-header'
 import { FocusList } from '~/components/focus/focus-list'
@@ -13,12 +14,15 @@ import { NoteForm } from '~/components/notes/note-form'
 import MindsherpaIcon from '~/components/ui/icon'
 import { Text, theme } from '~/theme'
 import { borderStyle } from '~/theme/styles'
-import type { FocusItem, FocusItems } from '~/utils/services/notes/types'
+import type { FocusItem } from '~/utils/services/notes/types'
 import { useDeleteFocus } from '~/utils/services/notes/use-delete-focus'
 import { useFocusQuery } from '~/utils/services/notes/use-focus-query'
 
 export const FocusView = () => {
   const queryClient = useQueryClient()
+  const [activeChat, setActiveChat] = useState<string | null>(
+    'e29344bb-aa55-40e7-a0a9-e29dd354e3d7'
+  )
   const [activeSearch, setActiveSearch] = useState('')
   const [isRecording, setIsRecording] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
@@ -63,35 +67,27 @@ export const FocusView = () => {
     },
   })
 
-  const onFormSubmit = useCallback(
-    (data: FocusItem[]) => {
-      const previousItems = queryClient.getQueryData<FocusItems>(['focusItems'])
-      queryClient.setQueryData(['focusItems'], [...(previousItems || []), ...data])
-    },
-    [queryClient]
-  )
-
-  const onActiveSearchClose = useCallback(() => {
-    setActiveSearch('')
-  }, [setActiveSearch])
-
   const onRefresh = useCallback(() => {
     setActiveSearch('')
     setRefreshing(true)
     refetch()
   }, [refetch])
 
+  const onEndChat = useCallback(() => {
+    setActiveChat(null)
+  }, [])
+
   const hasFocusItems = Boolean(!isLoading && focusItems && focusItems.length > 0)
 
-  return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
-      style={styles.container}
-    >
-      <View style={[styles.focusContainer]}>
-        <FocusHeader />
+  if (activeChat) {
+    return <SherpaAmbient chatId={activeChat} onEndChat={onEndChat} />
+  }
 
+  return (
+    <View style={{ flex: 1 }}>
+      <FocusHeader />
+
+      <View style={[styles.focusContainer]}>
         <ScrollView
           style={styles.scrollContainer}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
@@ -106,11 +102,11 @@ export const FocusView = () => {
 
           {hasFocusItems && focusItems ? (
             <View style={[styles.focuses]}>
-              {activeSearch ? <SearchText searchText={activeSearch} onDismiss={onActiveSearchClose} /> : null}
+              {activeSearch ? <SearchText searchText={activeSearch} /> : null}
               <FocusList data={focusItems} onItemDelete={deleteFocusItem} />
             </View>
           ) : null}
-          {(!isLoading && !refreshing) && !hasFocusItems ? (
+          {!isLoading && !refreshing && !hasFocusItems ? (
             <View style={[styles.empty]}>
               <Text variant="bodyLarge" color="primary">
                 You have no focus items yet.
@@ -119,8 +115,18 @@ export const FocusView = () => {
           ) : null}
         </ScrollView>
       </View>
-      <NoteForm isRecording={isRecording} setIsRecording={setIsRecording} setActiveSearch={setActiveSearch} />
-    </KeyboardAvoidingView>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+      >
+        <NoteForm
+          isRecording={isRecording}
+          setActiveChat={setActiveChat}
+          setActiveSearch={setActiveSearch}
+          setIsRecording={setIsRecording}
+        />
+      </KeyboardAvoidingView>
+    </View>
   )
 }
 
@@ -152,8 +158,6 @@ const styles = StyleSheet.create({
 
 export default FocusView
 
-
-
 const FocusLoadingError = React.memo(() => {
   return (
     <View
@@ -181,33 +185,20 @@ const FocusLoadingError = React.memo(() => {
   )
 })
 
-const SearchText = React.memo(({ searchText, onDismiss }: { searchText: string, onDismiss: () => void }) => {
+const SearchText = React.memo(({ searchText }: { searchText: string }) => {
   return (
-      <View style={{ alignContent: 'center', marginHorizontal: 12, paddingVertical: 12, paddingHorizontal: 16, ...borderStyle.border }}>
-        <Markdown style={{ body: { fontSize: 18, lineHeight: 24, color: theme.colors.black } }}>
-          {searchText}
-        </Markdown>
-        {/* <View style={{ flexDirection: 'row' }}> 
-          <Pressable
-            onPress={onDismiss}
-            style={[
-              {
-                flex: 1,
-                borderRadius: 8,
-                borderWidth: 1,
-                borderColor: theme.colors.quaternary,
-                marginTop: 12,
-                paddingVertical: 8,
-                paddingHorizontal: 12,
-                alignItems: 'center',
-              },
-            ]}
-          >
-            <Text variant="body" color="gray">
-              Close
-            </Text>
-          </Pressable>
-        </View> */}
-      </View>
-    )
+    <View
+      style={{
+        alignContent: 'center',
+        marginHorizontal: 12,
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        ...borderStyle.border,
+      }}
+    >
+      <Markdown style={{ body: { fontSize: 18, lineHeight: 24, color: theme.colors.black } }}>
+        {searchText}
+      </Markdown>
+    </View>
+  )
 })

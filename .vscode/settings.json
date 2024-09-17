@@ -42,16 +42,11 @@
     "xmark",
     "zeego"
   ],
-  "deno.enablePaths": [
-    "supabase/functions"
-  ],
+  "deno.enablePaths": ["supabase/functions"],
   "deno.lint": true,
   "editor.defaultFormatter": "biomejs.biome",
   "editor.codeActionsOnSave": {
-    "quickfix.biome": "explicit",
-    "source.sortImports": "always",
-    "source.organizeImports": "always",
-    "source.removeUnusedImports": "always"
+    "source.sortImports": "always"
   },
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "typescript.tsdk": "node_modules/typescript/lib"

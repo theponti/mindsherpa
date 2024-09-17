@@ -2,20 +2,21 @@ import { useMutation, useQuery, type MutationOptions } from '@tanstack/react-que
 import { useState } from 'react'
 
 import { captureException } from '@sentry/react-native'
-import { AxiosError } from 'axios'
+import type { AxiosError } from 'axios'
 import { useAppContext } from '~/utils/app-provider'
 import type { Chat } from '~/utils/services/chat/types'
-import { components } from '../../api-types'
+import type { components } from '../../api-types'
 import { log } from '../../logger'
 import queryClient, { request } from '../../query-client'
 import { useAuthenticatedRequest } from '../../use-authenticated-request'
 
 export type MessageOutput = components['schemas']['MessageOutput']
+export type ChatOutput = components['schemas']['ChatOutput']
 
 export const useChatMessages = ({ chatId }: { chatId: string }) => {
   const authRequest = useAuthenticatedRequest()
 
-  return useQuery<MessageOutput[], AxiosError>({ 
+  return useQuery<MessageOutput[], AxiosError>({
     queryKey: ['chatMessages', chatId],
     queryFn: async () => {
       const { data } = await authRequest<MessageOutput[]>({
@@ -69,6 +70,30 @@ export const useSendMessage = ({
     sendChatError,
     setSendChatError,
   }
+}
+
+export const useStartChat = ({
+  userMessage,
+  sherpaMessage,
+  ...props
+}: { userMessage: string; sherpaMessage: string } & MutationOptions<ChatOutput>) => {
+  const { session } = useAppContext()
+  return useMutation<ChatOutput>({
+    mutationKey: ['startChat'],
+    mutationFn: async () => {
+      const response = await request<ChatOutput>({
+        method: 'POST',
+        url: '/chat/start',
+        data: { user_message: userMessage, sherpa_message: sherpaMessage },
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      })
+
+      return response.data
+    },
+    ...props,
+  })
 }
 
 export const useEndChat = ({ chatId, ...props }: { chatId: string } & MutationOptions<Chat>) => {
