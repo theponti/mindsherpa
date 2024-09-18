@@ -60,7 +60,7 @@ export const NoteForm = (props: NoteFormProps) => {
         return
       }
 
-      if (searchTasks && searchTasks.length > 0 && data.output) {
+      if (searchTasks && data.output) {
         setContent('')
         queryClient.setQueryData(['focusItems'], searchTasks)
         setActiveSearch(data.output)

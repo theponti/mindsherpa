@@ -82,7 +82,8 @@ export const FocusView = () => {
     setActiveChat(null)
   }, [])
 
-  const hasFocusItems = Boolean(!isLoading && focusItems && focusItems.length > 0)
+  const isLoaded = Boolean(!isLoading && !isRefetching && !refreshing)
+  const hasFocusItems = Boolean(focusItems && focusItems.length > 0)
 
   if (activeChat) {
     return <SherpaAmbient chatId={activeChat} onEndChat={onEndChat} />
@@ -105,7 +106,7 @@ export const FocusView = () => {
 
           {isError ? <FocusLoadingError /> : null}
 
-          {hasFocusItems && focusItems ? (
+          {isLoaded && focusItems ? (
             <View style={[styles.focuses]}>
               {activeSearch ? (
                 <SearchText onCloseClick={onSearchClose} searchText={activeSearch} />
@@ -113,7 +114,7 @@ export const FocusView = () => {
               <FocusList data={focusItems} onItemDelete={deleteFocusItem} />
             </View>
           ) : null}
-          {!isLoading && !refreshing && !hasFocusItems ? (
+          {isLoaded && !hasFocusItems ? (
             <View style={[styles.empty]}>
               <Text variant="bodyLarge" color="primary">
                 You have no focus items yet.
