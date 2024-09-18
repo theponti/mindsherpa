@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query'
 import React, { useCallback, useState } from 'react'
-import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native'
+import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } from 'react-native'
 import { RefreshControl, ScrollView } from 'react-native-gesture-handler'
 import Markdown from 'react-native-markdown-display'
 
@@ -21,13 +21,14 @@ import { useFocusQuery } from '~/utils/services/notes/use-focus-query'
 export const FocusView = () => {
   const queryClient = useQueryClient()
   const [activeChat, setActiveChat] = useState<string | null>(null)
-  const [activeSearch, setActiveSearch] = useState('')
+  const [activeSearch, setActiveSearch] = useState<string>()
   const [isRecording, setIsRecording] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
   const {
     data: focusItems,
     refetch,
     isLoading,
+    isRefetching,
     isError,
   } = useFocusQuery({
     onSuccess: (data) => {
@@ -68,8 +69,14 @@ export const FocusView = () => {
   const onRefresh = useCallback(() => {
     setActiveSearch('')
     setRefreshing(true)
+    queryClient.setQueryData(['focusItems'], [])
     refetch()
-  }, [refetch])
+  }, [queryClient.setQueryData, refetch])
+
+  const onSearchClose = useCallback(() => {
+    onRefresh()
+    setActiveSearch(undefined)
+  }, [onRefresh])
 
   const onEndChat = useCallback(() => {
     setActiveChat(null)
@@ -100,7 +107,9 @@ export const FocusView = () => {
 
           {hasFocusItems && focusItems ? (
             <View style={[styles.focuses]}>
-              {activeSearch ? <SearchText searchText={activeSearch} /> : null}
+              {activeSearch ? (
+                <SearchText onCloseClick={onSearchClose} searchText={activeSearch} />
+              ) : null}
               <FocusList data={focusItems} onItemDelete={deleteFocusItem} />
             </View>
           ) : null}
@@ -183,20 +192,42 @@ const FocusLoadingError = React.memo(() => {
   )
 })
 
-const SearchText = React.memo(({ searchText }: { searchText: string }) => {
-  return (
-    <View
-      style={{
-        alignContent: 'center',
-        marginHorizontal: 12,
-        paddingVertical: 12,
-        paddingHorizontal: 16,
-        ...borderStyle.border,
-      }}
-    >
-      <Markdown style={{ body: { fontSize: 18, lineHeight: 24, color: theme.colors.black } }}>
-        {searchText}
-      </Markdown>
-    </View>
-  )
+const SearchText = React.memo(
+  ({ searchText, onCloseClick }: { searchText: string; onCloseClick: () => void }) => {
+    return (
+      <View style={[searchHeaderStyles.container]}>
+        <Markdown style={{ body: searchHeaderStyles.searchText }}>{searchText}</Markdown>
+        <View style={{ marginTop: 12 }}>
+          <Pressable onPress={onCloseClick} style={[searchHeaderStyles.clearButton]}>
+            <Text variant="body" color="darkGray">
+              Clear search
+            </Text>
+          </Pressable>
+        </View>
+      </View>
+    )
+  }
+)
+
+const searchHeaderStyles = StyleSheet.create({
+  container: {
+    alignContent: 'center',
+    marginHorizontal: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    ...borderStyle.border,
+  },
+  searchText: {
+    fontSize: 18,
+    lineHeight: 24,
+    color: theme.colors.black,
+  },
+  clearButton: {
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: theme.colors.quaternary,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    alignItems: 'center',
+  },
 })

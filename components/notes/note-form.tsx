@@ -5,7 +5,6 @@ import { Pressable, StyleSheet, View } from 'react-native'
 import { captureException } from '@sentry/react-native'
 import { Text, theme } from '~/theme'
 import queryClient from '~/utils/query-client'
-import { useStartChat } from '~/utils/services/chat/use-chat-messages'
 import type { FocusItem } from '~/utils/services/notes/types'
 import { FeedbackBlock } from '../feedback-block'
 import AudioRecorder from '../media/audio-recorder'
@@ -13,13 +12,14 @@ import { useAudioUpload } from '../media/use-audio-upload'
 import AutoGrowingInput from '../text-input-autogrow'
 import MindsherpaIcon from '../ui/icon'
 import { UploadFileButton } from '../upload-file-button'
+import { NoteFormMessage } from './note-form-message'
 import { FormSubmitButton } from './note-form-submit-button'
 import { useGetUserIntent, type GeneratedIntentsResponse } from './use-get-user-intent'
 
 type NoteFormProps = {
   isRecording: boolean
   setActiveChat: (chatId: string) => void
-  setActiveSearch: (search: string) => void
+  setActiveSearch: (search: string | undefined) => void
   setIsRecording: (isRecording: boolean) => void
 }
 export const NoteForm = (props: NoteFormProps) => {
@@ -65,8 +65,8 @@ export const NoteForm = (props: NoteFormProps) => {
         queryClient.setQueryData(['focusItems'], searchTasks)
         setActiveSearch(data.output)
         /**
-         * The product should show the user the search results, so we don't want
-         * to show any created tasks.
+         * The product should show the user the search results, so this function returns
+         * instead of displaying the newly created tasks.
          */
         return
       }
@@ -120,7 +120,7 @@ export const NoteForm = (props: NoteFormProps) => {
         </NoteFormError>
       ) : null}
       {intentOutput ? (
-        <SherpaMessage
+        <NoteFormMessage
           sherpaMessage={intentOutput}
           userMessage={content}
           onChatCreated={(chatId) => setActiveChat(chatId)}
@@ -244,81 +244,5 @@ const GenerateError = ({ onCloseClick }: { onCloseClick: () => void }) => {
         </Pressable>
       </View>
     </NoteFormError>
-  )
-}
-
-type SherpaMessageProps = {
-  sherpaMessage: string
-  userMessage: string
-  onChatCreated: (chatId: string) => void
-  onCloseClick: () => void
-}
-const SherpaMessage = ({
-  sherpaMessage,
-  userMessage,
-  onChatCreated,
-  onCloseClick,
-}: SherpaMessageProps) => {
-  const { mutate: startChat, isPending } = useStartChat({
-    userMessage,
-    sherpaMessage,
-    onSuccess: (data) => {
-      onChatCreated(data.id)
-    },
-  })
-
-  const onDiscussClick = useCallback(() => {
-    startChat()
-  }, [startChat])
-
-  return (
-    <FeedbackBlock style={{ paddingVertical: 12 }}>
-      <Text variant="body" color="fg-primary">
-        {sherpaMessage}
-      </Text>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', columnGap: 12 }}>
-        <Pressable
-          disabled={isPending}
-          onPress={onCloseClick}
-          style={[
-            {
-              flex: 1,
-              borderRadius: 12,
-              borderWidth: 1,
-              borderColor: theme.colors.quaternary,
-              marginTop: 12,
-              paddingVertical: 8,
-              paddingHorizontal: 12,
-              alignItems: 'center',
-            },
-          ]}
-        >
-          <Text variant="body" color="gray">
-            Close
-          </Text>
-        </Pressable>
-        <Pressable
-          disabled={isPending}
-          onPress={onDiscussClick}
-          style={[
-            {
-              flex: 1,
-              borderRadius: 12,
-              borderWidth: 1,
-              borderColor: theme.colors.quaternary,
-              backgroundColor: isPending ? theme.colors.grayLight : theme.colors['fg-primary'],
-              marginTop: 12,
-              paddingVertical: 8,
-              paddingHorizontal: 12,
-              alignItems: 'center',
-            },
-          ]}
-        >
-          <Text variant="body" color="white">
-            Discuss
-          </Text>
-        </Pressable>
-      </View>
-    </FeedbackBlock>
   )
 }
