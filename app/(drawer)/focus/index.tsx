@@ -98,7 +98,7 @@ export const FocusView = () => {
           style={styles.scrollContainer}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         >
-          {isLoading && !refreshing ? (
+          {(isLoading || isRefetching) && !refreshing ? (
             <LoadingContainer>
               <PulsingCircle />
             </LoadingContainer>
@@ -114,7 +114,7 @@ export const FocusView = () => {
               <FocusList data={focusItems} onItemDelete={deleteFocusItem} />
             </View>
           ) : null}
-          {isLoaded && !hasFocusItems ? (
+          {isLoaded && !hasFocusItems && !activeSearch ? (
             <View style={[styles.empty]}>
               <Text variant="bodyLarge" color="primary">
                 You have no focus items yet.
