@@ -14,7 +14,7 @@ export const useDeleteFocus = (
     mutationFn: async (id: number) => {
       await authRequest<FocusResponse>({
         method: 'DELETE',
-        url: `/notes/focus/${id}`,
+        url: `/focus/${id}`,
       })
       return id
     },

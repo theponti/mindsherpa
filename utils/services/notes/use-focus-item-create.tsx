@@ -15,7 +15,7 @@ export const useFocusItemsCreate = ({
   const mutation = useMutation<FocusItems, AxiosError, FocusItemInput[]>({
     mutationFn: async (items) => {
       const response = await authRequest<FocusItems>({
-        url: '/notes/focus',
+        url: '/focus',
         method: 'POST',
         data: { items },
       })

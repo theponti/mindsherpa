@@ -21,7 +21,7 @@ export const useFocusQuery = ({
       try {
         const { data } = await authRequest<FocusResponse>({
           method: 'GET',
-          url: '/notes/focus',
+          url: '/focus',
           ...(params ? { params } : {}),
         })
         onSuccess?.(data)

@@ -38,23 +38,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/sherpa/focus": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Sherpa Focus Item */
-        post: operations["sherpa_focus_item_sherpa_focus_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/sherpa/intent": {
         parameters: {
             query?: never;
@@ -89,7 +72,75 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/notes/focus": {
+    "/sherpa/vector_search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Sherpa Vector Search */
+        post: operations["sherpa_vector_search_sherpa_vector_search_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/sherpa/vector_search/pinecone": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Sherpa Vector Search Pinecone */
+        post: operations["sherpa_vector_search_pinecone_sherpa_vector_search_pinecone_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/sherpa/text": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Handle Text Input Route */
+        post: operations["handle_text_input_route_sherpa_text_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/sherpa/voice": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Handle Audio Upload Route */
+        post: operations["handle_audio_upload_route_sherpa_voice_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/focus": {
         parameters: {
             query?: never;
             header?: never;
@@ -100,17 +151,17 @@ export interface paths {
          * Get Focus Items
          * @description Returns notes structure content as well as total tokens and total time for generation.
          */
-        get: operations["get_focus_items_notes_focus_get"];
+        get: operations["get_focus_items_focus_get"];
         put?: never;
         /** Create Focus Item Route */
-        post: operations["create_focus_item_route_notes_focus_post"];
+        post: operations["create_focus_item_route_focus_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/notes/text": {
+    "/focus/complete/{task_id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -118,33 +169,16 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put?: never;
-        /** Handle Text Input Route */
-        post: operations["handle_text_input_route_notes_text_post"];
+        /** Complete Task */
+        put: operations["complete_task_focus_complete__task_id__put"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/notes/voice": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Handle Audio Upload Route */
-        post: operations["handle_audio_upload_route_notes_voice_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/notes/focus/{id}": {
+    "/focus/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -155,24 +189,7 @@ export interface paths {
         put?: never;
         post?: never;
         /** Delete Focus Item Route */
-        delete: operations["delete_focus_item_route_notes_focus__id__delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/tasks/complete/{task_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Complete Task */
-        put: operations["complete_task_tasks_complete__task_id__put"];
-        post?: never;
-        delete?: never;
+        delete: operations["delete_focus_item_route_focus__id__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -331,11 +348,6 @@ export interface components {
             /** Message */
             message: string;
         };
-        /** Body_sherpa_focus_item_sherpa_focus_post */
-        Body_sherpa_focus_item_sherpa_focus_post: {
-            /** Input */
-            input: string;
-        };
         /** Body_sherpa_user_intent_agent_sherpa_intent_agent_post */
         Body_sherpa_user_intent_agent_sherpa_intent_agent_post: {
             /** Input */
@@ -350,6 +362,30 @@ export interface components {
         Body_sherpa_user_intent_sherpa_intent_post: {
             /** Input */
             input: string;
+            /**
+             * Profile Id
+             * Format: uuid
+             */
+            profile_id: string;
+        };
+        /** Body_sherpa_vector_search_pinecone_sherpa_vector_search_pinecone_post */
+        Body_sherpa_vector_search_pinecone_sherpa_vector_search_pinecone_post: {
+            /** Query */
+            query: string;
+            /** Threshold */
+            threshold?: number;
+            /**
+             * Profile Id
+             * Format: uuid
+             */
+            profile_id: string;
+        };
+        /** Body_sherpa_vector_search_sherpa_vector_search_post */
+        Body_sherpa_vector_search_sherpa_vector_search_post: {
+            /** Query */
+            query: string;
+            /** Threshold */
+            threshold?: number;
             /**
              * Profile Id
              * Format: uuid
@@ -396,11 +432,6 @@ export interface components {
         CreateFocusItemBaseV2: {
             /** Items */
             items: components["schemas"]["FocusItemBaseV2"][];
-        };
-        /** CreateFocusItemsPayload */
-        CreateFocusItemsPayload: {
-            /** Content */
-            content: string;
         };
         /** CreateIntentsResponse */
         CreateIntentsResponse: {
@@ -492,6 +523,11 @@ export interface components {
          * @enum {string}
          */
         FocusState: "backlog" | "active" | "completed" | "deleted";
+        /** GenerateTextIntentInput */
+        GenerateTextIntentInput: {
+            /** Content */
+            content: string;
+        };
         /** GeneratedIntentsResponse */
         GeneratedIntentsResponse: {
             /** Input */
@@ -683,39 +719,6 @@ export interface operations {
             };
         };
     };
-    sherpa_focus_item_sherpa_focus_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/x-www-form-urlencoded": components["schemas"]["Body_sherpa_focus_item_sherpa_focus_post"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
     sherpa_user_intent_sherpa_intent_post: {
         parameters: {
             query?: never;
@@ -782,16 +785,18 @@ export interface operations {
             };
         };
     };
-    get_focus_items_notes_focus_get: {
+    sherpa_vector_search_sherpa_vector_search_post: {
         parameters: {
-            query?: {
-                category?: string | null;
-            };
+            query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/x-www-form-urlencoded": components["schemas"]["Body_sherpa_vector_search_sherpa_vector_search_post"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {
@@ -813,7 +818,7 @@ export interface operations {
             };
         };
     };
-    create_focus_item_route_notes_focus_post: {
+    sherpa_vector_search_pinecone_sherpa_vector_search_pinecone_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -822,7 +827,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateFocusItemBaseV2"];
+                "application/x-www-form-urlencoded": components["schemas"]["Body_sherpa_vector_search_pinecone_sherpa_vector_search_pinecone_post"];
             };
         };
         responses: {
@@ -832,7 +837,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["FocusItem"][];
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */
@@ -846,7 +851,7 @@ export interface operations {
             };
         };
     };
-    handle_text_input_route_notes_text_post: {
+    handle_text_input_route_sherpa_text_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -855,7 +860,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateFocusItemsPayload"];
+                "application/json": components["schemas"]["GenerateTextIntentInput"];
             };
         };
         responses: {
@@ -879,7 +884,7 @@ export interface operations {
             };
         };
     };
-    handle_audio_upload_route_notes_voice_post: {
+    handle_audio_upload_route_sherpa_voice_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -912,13 +917,13 @@ export interface operations {
             };
         };
     };
-    delete_focus_item_route_notes_focus__id__delete: {
+    get_focus_items_focus_get: {
         parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: number;
+            query?: {
+                category?: string | null;
             };
+            header?: never;
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;
@@ -929,7 +934,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": boolean;
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */
@@ -943,7 +948,40 @@ export interface operations {
             };
         };
     };
-    complete_task_tasks_complete__task_id__put: {
+    create_focus_item_route_focus_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateFocusItemBaseV2"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FocusItem"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    complete_task_focus_complete__task_id__put: {
         parameters: {
             query?: never;
             header?: never;
@@ -961,6 +999,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_focus_item_route_focus__id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": boolean;
                 };
             };
             /** @description Validation Error */

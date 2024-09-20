@@ -8,7 +8,6 @@ import queryClient from '~/utils/query-client'
 import type { FocusItem } from '~/utils/services/notes/types'
 import { FeedbackBlock } from '../feedback-block'
 import AudioRecorder from '../media/audio-recorder'
-import { useAudioUpload } from '../media/use-audio-upload'
 import AutoGrowingInput from '../text-input-autogrow'
 import MindsherpaIcon from '../ui/icon'
 import { UploadFileButton } from '../upload-file-button'
@@ -28,17 +27,8 @@ export const NoteForm = (props: NoteFormProps) => {
   const [createError, setCreateError] = useState<boolean>(false)
   const [generateError, setGenerateError] = useState<boolean>(false)
   const [intentOutput, setIntentOutput] = useState<string | null>(null)
-  const { mutate: generateFocusFromAudio, isPending: isAudioGenerating } = useAudioUpload({
-    onSuccess: (data: GeneratedIntentsResponse) => {
-      onGeneratedIntents(data)
-      setIsRecording(false)
-    },
-    onError: () => {
-      setGenerateError(true)
-    },
-  })
 
-  const { mutate: generateFocusItems, isPending: isTextGenerating } = useGetUserIntent({
+  const { audioIntentMutation, textIntentMutation } = useGetUserIntent({
     onSuccess: (data) => {
       onGeneratedIntents(data)
     },
@@ -48,6 +38,8 @@ export const NoteForm = (props: NoteFormProps) => {
       setGenerateError(true)
     },
   })
+  const { mutate: generateFocusFromAudio, isPending: isAudioIntentGenerating } = audioIntentMutation
+  const { mutate: generateFocusItems, isPending: isTextIntentGenerating } = textIntentMutation
 
   const onGeneratedIntents = useCallback(
     (data: GeneratedIntentsResponse) => {
@@ -98,7 +90,7 @@ export const NoteForm = (props: NoteFormProps) => {
     generateFocusItems(content)
   }
 
-  const isGenerating = isTextGenerating || isAudioGenerating
+  const isGenerating = isTextIntentGenerating || isAudioIntentGenerating
 
   return (
     <View

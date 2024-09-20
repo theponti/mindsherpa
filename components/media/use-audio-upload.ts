@@ -23,7 +23,7 @@ export const useAudioUpload = ({
       })
 
       const { data } = await authRequest<AudioUploadResponse>({
-        url: '/notes/voice',
+        url: '/sherpa/voice',
         method: 'POST',
         data: {
           filename: 'audio.m4a',

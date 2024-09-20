@@ -15,7 +15,7 @@ export const useFocusItemComplete = ({ onSuccess, onError }: UseFocusItemComplet
     mutationFn: async (id: number) => {
       const { data } = await authRequest<FocusItem>({
         method: 'PUT',
-        url: `/tasks/complete/${id}`,
+        url: `/focus/complete/${id}`, 
       })
       return data
     },

@@ -1,6 +1,7 @@
 import { captureException } from '@sentry/react-native'
 import { useMutation } from '@tanstack/react-query'
 import type { AxiosError } from 'axios'
+import * as FileSystem from 'expo-file-system'
 import type { components } from '~/utils/api-types'
 import { useAuthenticatedRequest } from '~/utils/use-authenticated-request'
 
@@ -17,10 +18,34 @@ export const useGetUserIntent = ({
 }) => {
   const authRequest = useAuthenticatedRequest()
 
-  const mutation = useMutation<GeneratedIntentsResponse, AxiosError, string>({
+  const audioIntentMutation = useMutation<GeneratedIntentsResponse, AxiosError, string>({
+    mutationFn: async (fileUri: string) => {
+      const audioFile = await FileSystem.readAsStringAsync(fileUri, {
+        encoding: FileSystem.EncodingType.Base64,
+      })
+
+      const { data } = await authRequest<GeneratedIntentsResponse>({
+        url: '/sherpa/voice',
+        method: 'POST',
+        data: {
+          filename: 'audio.m4a',
+          audio_data: audioFile,
+        },
+      })
+
+      return data
+    },
+    onSuccess,
+    onError: (error) => {
+      captureException(error)
+      onError?.(error)
+    },
+  })
+
+  const textIntentMutation = useMutation<GeneratedIntentsResponse, AxiosError, string>({
     mutationFn: async (content: string) => {
       const { data } = await authRequest<GeneratedIntentsResponse>({
-        url: '/notes/text',
+        url: '/sherpa/text',
         method: 'POST',
         data: { content },
       })
@@ -34,5 +59,5 @@ export const useGetUserIntent = ({
     },
   })
 
-  return mutation
+  return { audioIntentMutation, textIntentMutation }
 }
