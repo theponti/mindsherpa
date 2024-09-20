@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { TextInput, StyleSheet, TextInputProps } from 'react-native';
+import { StyleSheet, TextInput, TextInputProps } from 'react-native';
 
 import { theme } from '~/theme';
 
@@ -21,7 +21,7 @@ const AutoGrowingInput = ({
       ]}
       value={value}
       onChangeText={onChangeText}
-      placeholder={placeholder ?? 'I want to buy a Porsche and a h...'}
+      placeholder={placeholder ?? `What's up?`}
       multiline
       {...props}
     />

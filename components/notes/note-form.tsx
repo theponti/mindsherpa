@@ -124,7 +124,6 @@ export const NoteForm = (props: NoteFormProps) => {
         <View style={[styles.inputContainer]}>
           <AutoGrowingInput
             editable={!isRecording && isGenerating}
-            placeholder="Drop a note..."
             value={content}
             onChangeText={setContent}
           />

@@ -77,7 +77,6 @@ export const ChatForm = (props: ChatFormProps) => {
         <View style={[styles.inputContainer]}>
           <AutoGrowingInput
             editable={!isRecording && !isChatSending}
-            placeholder="Drop a note..."
             value={message}
             onChangeText={setMessage}
           />
