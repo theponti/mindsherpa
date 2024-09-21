@@ -1,8 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query'
 import React, { useCallback, useState } from 'react'
-import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } from 'react-native'
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native'
 import { RefreshControl, ScrollView } from 'react-native-gesture-handler'
-import Markdown from 'react-native-markdown-display'
 
 import { LoadingContainer } from '~/components/LoadingFull'
 import { PulsingCircle } from '~/components/animated/pulsing-circle'
@@ -10,10 +9,10 @@ import { SherpaAmbient } from '~/components/chat/sherpa-ambient'
 import { FeedbackBlock } from '~/components/feedback-block'
 import { FocusHeader } from '~/components/focus/focus-header'
 import { FocusList } from '~/components/focus/focus-list'
+import { ActiveSearch, ActiveSearchSummary } from '~/components/focus/focus-search'
 import { NoteForm } from '~/components/notes/note-form'
 import MindsherpaIcon from '~/components/ui/icon'
 import { Text, theme } from '~/theme'
-import { borderStyle } from '~/theme/styles'
 import type { FocusItem } from '~/utils/services/notes/types'
 import { useDeleteFocus } from '~/utils/services/notes/use-delete-focus'
 import { useFocusQuery } from '~/utils/services/notes/use-focus-query'
@@ -21,7 +20,7 @@ import { useFocusQuery } from '~/utils/services/notes/use-focus-query'
 export const FocusView = () => {
   const queryClient = useQueryClient()
   const [activeChat, setActiveChat] = useState<string | null>(null)
-  const [activeSearch, setActiveSearch] = useState<string>()
+  const [activeSearch, setActiveSearch] = useState<ActiveSearch | null>(null)
   const [isRecording, setIsRecording] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
   const {
@@ -67,7 +66,7 @@ export const FocusView = () => {
   })
 
   const onRefresh = useCallback(() => {
-    setActiveSearch('')
+    setActiveSearch(null)
     setRefreshing(true)
     queryClient.setQueryData(['focusItems'], [])
     refetch()
@@ -75,7 +74,7 @@ export const FocusView = () => {
 
   const onSearchClose = useCallback(() => {
     onRefresh()
-    setActiveSearch(undefined)
+    setActiveSearch(null)
   }, [onRefresh])
 
   const onEndChat = useCallback(() => {
@@ -109,7 +108,7 @@ export const FocusView = () => {
           {isLoaded && focusItems ? (
             <View style={[styles.focuses]}>
               {activeSearch ? (
-                <SearchText onCloseClick={onSearchClose} searchText={activeSearch} />
+                <ActiveSearchSummary onCloseClick={onSearchClose} activeSearch={activeSearch} />
               ) : null}
               <FocusList data={focusItems} onItemDelete={deleteFocusItem} />
             </View>
@@ -193,42 +192,3 @@ const FocusLoadingError = React.memo(() => {
   )
 })
 
-const SearchText = React.memo(
-  ({ searchText, onCloseClick }: { searchText: string; onCloseClick: () => void }) => {
-    return (
-      <View style={[searchHeaderStyles.container]}>
-        <Markdown style={{ body: searchHeaderStyles.searchText }}>{searchText}</Markdown>
-        <View style={{ marginTop: 12 }}>
-          <Pressable onPress={onCloseClick} style={[searchHeaderStyles.clearButton]}>
-            <Text variant="body" color="darkGray">
-              Clear search
-            </Text>
-          </Pressable>
-        </View>
-      </View>
-    )
-  }
-)
-
-const searchHeaderStyles = StyleSheet.create({
-  container: {
-    alignContent: 'center',
-    marginHorizontal: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    ...borderStyle.border,
-  },
-  searchText: {
-    fontSize: 18,
-    lineHeight: 24,
-    color: theme.colors.black,
-  },
-  clearButton: {
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: theme.colors.quaternary,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    alignItems: 'center',
-  },
-})

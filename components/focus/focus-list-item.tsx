@@ -17,7 +17,7 @@ import Reanimated, {
 } from 'react-native-reanimated'
 import * as ContextMenu from 'zeego/context-menu'
 
-import { theme } from '~/theme'
+import { Text as MSText, theme } from '~/theme'
 import { borderStyle, listStyles } from '~/theme/styles'
 import type { FocusItem } from '~/utils/services/notes/types'
 import { useFocusItemComplete } from '../../utils/services/notes/use-focus-item-complete'
@@ -77,9 +77,14 @@ export const FocusListItem = ({
       <ContextMenu.Root>
         <ContextMenu.Trigger action="longPress" style={[styles.itemContainer]}>
           <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+            <View style={{ flex: 1, flexDirection: 'column', rowGap: 6 }}>
             <Reanimated.Text style={[listStyles.text, styles.text, textStyle, { flex: 1 }]}>
               {label}
             </Reanimated.Text>
+            {item.due_date ? <MSText variant="body" color="grayDark">
+              {Intl.DateTimeFormat('en-US').format(new Date(item.due_date))}
+            </MSText> : null}
+            </View>
             <AnimatedPressable
               style={[styles.icon, iconStyle]}
               onPress={onRadioButtonPress}

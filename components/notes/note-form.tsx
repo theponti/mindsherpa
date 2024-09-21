@@ -7,6 +7,7 @@ import { Text, theme } from '~/theme'
 import queryClient from '~/utils/query-client'
 import type { FocusItem } from '~/utils/services/notes/types'
 import { FeedbackBlock } from '../feedback-block'
+import { ActiveSearch } from '../focus/focus-search'
 import AudioRecorder from '../media/audio-recorder'
 import AutoGrowingInput from '../text-input-autogrow'
 import MindsherpaIcon from '../ui/icon'
@@ -18,7 +19,7 @@ import { useGetUserIntent, type GeneratedIntentsResponse } from './use-get-user-
 type NoteFormProps = {
   isRecording: boolean
   setActiveChat: (chatId: string) => void
-  setActiveSearch: (search: string | undefined) => void
+  setActiveSearch: (search: ActiveSearch) => void
   setIsRecording: (isRecording: boolean) => void
 }
 export const NoteForm = (props: NoteFormProps) => {
@@ -52,10 +53,13 @@ export const NoteForm = (props: NoteFormProps) => {
         return
       }
 
-      if (searchTasks && data.output) {
+      if (searchTasks && data.output && data.search?.input.keyword) {
         setContent('')
         queryClient.setQueryData(['focusItems'], searchTasks)
-        setActiveSearch(data.output)
+        setActiveSearch({
+          count: searchTasks.length,
+          keyword: data.search?.input.keyword,
+        })
         /**
          * The product should show the user the search results, so this function returns
          * instead of displaying the newly created tasks.
