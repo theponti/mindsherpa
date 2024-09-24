@@ -13,19 +13,14 @@ export const FocusHeader = React.memo(() => {
   return (
     <View style={styles.header}>
       <View style={[styles.topRow]}>
-        <View style={[styles.iconWrap]}>
-          <Link href="/(account)/" style={[styles.iconLink]}>
-            <MindsherpaIcon name="user" size={15} />
-          </Link>
-        </View>
         <View style={[styles.today]}>
           <Text fontSize={30} fontWeight={600}>
             Today
           </Text>
         </View>
         <View style={[styles.iconWrap]}>
-          <Link href="/(sherpa)/" style={[styles.iconLink]}>
-            <MindsherpaIcon name="message" size={15} />
+          <Link href="/(account)/" style={[styles.iconLink]}>
+            <MindsherpaIcon name="user" size={15} />
           </Link>
         </View>
       </View>
@@ -48,12 +43,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 24,
+    paddingHorizontal: 16,
   },
-  today: { flex: 1, alignItems: 'center' },
+  today: { flex: 1, alignItems: 'flex-start' },
   bottomRow: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    paddingHorizontal: 16,
   },
   iconWrap: {
     backgroundColor: theme.colors.grayLight,

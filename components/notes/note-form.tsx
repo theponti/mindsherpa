@@ -1,13 +1,14 @@
-import type { PropsWithChildren } from 'react'
-import { useCallback, useState } from 'react'
-import { Pressable, StyleSheet, View } from 'react-native'
-
 import { captureException } from '@sentry/react-native'
+import type { PropsWithChildren } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } from 'react-native'
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
 import { Text, theme } from '~/theme'
 import queryClient from '~/utils/query-client'
 import type { FocusItem } from '~/utils/services/notes/types'
+import { useKeyboardVisible } from '~/utils/use-keyboard-listener'
 import { FeedbackBlock } from '../feedback-block'
-import { ActiveSearch } from '../focus/focus-search'
+import type { ActiveSearch } from '../focus/focus-search'
 import AudioRecorder from '../media/audio-recorder'
 import AutoGrowingInput from '../text-input-autogrow'
 import MindsherpaIcon from '../ui/icon'
@@ -28,7 +29,8 @@ export const NoteForm = (props: NoteFormProps) => {
   const [createError, setCreateError] = useState<boolean>(false)
   const [generateError, setGenerateError] = useState<boolean>(false)
   const [intentOutput, setIntentOutput] = useState<string | null>(null)
-
+  const { isKeyboardVisible } = useKeyboardVisible()
+  const buttonsPaddingBottom = useSharedValue(0)
   const { audioIntentMutation, textIntentMutation } = useGetUserIntent({
     onSuccess: (data) => {
       onGeneratedIntents(data)
@@ -41,6 +43,16 @@ export const NoteForm = (props: NoteFormProps) => {
   })
   const { mutate: generateFocusFromAudio, isPending: isAudioIntentGenerating } = audioIntentMutation
   const { mutate: generateFocusItems, isPending: isTextIntentGenerating } = textIntentMutation
+
+  const buttonsStyle = useAnimatedStyle(() => {
+    return {
+      paddingBottom: buttonsPaddingBottom.value,
+    }
+  })
+
+  useEffect(() => {
+    buttonsPaddingBottom.value = withSpring(isKeyboardVisible ? 4 : 16)
+  }, [buttonsPaddingBottom, isKeyboardVisible])
 
   const onGeneratedIntents = useCallback(
     (data: GeneratedIntentsResponse) => {
@@ -97,7 +109,9 @@ export const NoteForm = (props: NoteFormProps) => {
   const isGenerating = isTextIntentGenerating || isAudioIntentGenerating
 
   return (
-    <View
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
       style={[styles.container, { paddingTop: intentOutput && intentOutput.length > 0 ? 16 : 0 }]}
     >
       {createError ? (
@@ -133,7 +147,7 @@ export const NoteForm = (props: NoteFormProps) => {
           />
         </View>
       ) : null}
-      <View style={[styles.actionButtons]}>
+      <Animated.View style={[styles.actionButtons, buttonsStyle]}>
         <View style={[styles.mediaButtons]}>
           <UploadFileButton />
           <AudioRecorder onStartRecording={onStartRecording} onStopRecording={onStopRecording} />
@@ -143,30 +157,32 @@ export const NoteForm = (props: NoteFormProps) => {
           isLoading={isGenerating}
           onSubmitButtonClick={handleSubmit}
         />
-      </View>
-    </View>
+      </Animated.View>
+    </KeyboardAvoidingView>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
+    position: 'absolute',
+    bottom: 0,
+    minWidth: '100%',
+    maxHeight: '100%',
     flexDirection: 'column',
     justifyContent: 'space-between',
     backgroundColor: theme.colors.white,
     paddingHorizontal: 16,
-    paddingBottom: 24,
+    paddingVertical: 240,
     gap: 8,
     borderColor: theme.colors.grayMedium,
     borderWidth: 1,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderRadius: 20,
   },
   inputContainer: {},
   actionButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 4,
   },
   mediaButtons: {
     flex: 1,

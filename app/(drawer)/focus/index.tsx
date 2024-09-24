@@ -9,7 +9,7 @@ import { SherpaAmbient } from '~/components/chat/sherpa-ambient'
 import { FeedbackBlock } from '~/components/feedback-block'
 import { FocusHeader } from '~/components/focus/focus-header'
 import { FocusList } from '~/components/focus/focus-list'
-import { ActiveSearch, ActiveSearchSummary } from '~/components/focus/focus-search'
+import { ActiveSearchSummary, type ActiveSearch } from '~/components/focus/focus-search'
 import { NoteForm } from '~/components/notes/note-form'
 import MindsherpaIcon from '~/components/ui/icon'
 import { Text, theme } from '~/theme'
@@ -89,7 +89,7 @@ export const FocusView = () => {
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, position: 'relative' }}>
       <FocusHeader />
 
       <View style={[styles.focusContainer]}>
@@ -122,17 +122,13 @@ export const FocusView = () => {
           ) : null}
         </ScrollView>
       </View>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
-      >
-        <NoteForm
-          isRecording={isRecording}
-          setActiveChat={setActiveChat}
-          setActiveSearch={setActiveSearch}
-          setIsRecording={setIsRecording}
-        />
-      </KeyboardAvoidingView>
+
+      <NoteForm
+        isRecording={isRecording}
+        setActiveChat={setActiveChat}
+        setActiveSearch={setActiveSearch}
+        setIsRecording={setIsRecording}
+      />
     </View>
   )
 }
@@ -141,7 +137,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
-    backgroundColor: theme.colors.backgroundColor,
+    // backgroundColor: theme.colors.backgroundColor,
   },
   focusContainer: {
     flex: 1,
@@ -149,6 +145,8 @@ const styles = StyleSheet.create({
   },
   focuses: {
     rowGap: 24,
+    paddingTop: 12,
+    paddingHorizontal: 12,
   },
   empty: {
     marginHorizontal: 12,
@@ -191,4 +189,3 @@ const FocusLoadingError = React.memo(() => {
     </View>
   )
 })
-

@@ -72,7 +72,7 @@ export const Chat = (props: ChatProps) => {
       </View>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
       >
         {!isMessagesLoading && !hasMessages ? (
           <FeedbackBlock error={false}>
