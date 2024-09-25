@@ -1,16 +1,15 @@
 import { useQueryClient } from '@tanstack/react-query'
+import { Link } from 'expo-router'
 import React, { useCallback, useState } from 'react'
-import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { RefreshControl, ScrollView } from 'react-native-gesture-handler'
 
 import { LoadingContainer } from '~/components/LoadingFull'
 import { PulsingCircle } from '~/components/animated/pulsing-circle'
-import { SherpaAmbient } from '~/components/chat/sherpa-ambient'
 import { FeedbackBlock } from '~/components/feedback-block'
 import { FocusHeader } from '~/components/focus/focus-header'
 import { FocusList } from '~/components/focus/focus-list'
 import { ActiveSearchSummary, type ActiveSearch } from '~/components/focus/focus-search'
-import { NoteForm } from '~/components/notes/note-form'
 import MindsherpaIcon from '~/components/ui/icon'
 import { Text, theme } from '~/theme'
 import type { FocusItem } from '~/utils/services/notes/types'
@@ -19,9 +18,7 @@ import { useFocusQuery } from '~/utils/services/notes/use-focus-query'
 
 export const FocusView = () => {
   const queryClient = useQueryClient()
-  const [activeChat, setActiveChat] = useState<string | null>(null)
   const [activeSearch, setActiveSearch] = useState<ActiveSearch | null>(null)
-  const [isRecording, setIsRecording] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
   const {
     data: focusItems,
@@ -77,16 +74,8 @@ export const FocusView = () => {
     setActiveSearch(null)
   }, [onRefresh])
 
-  const onEndChat = useCallback(() => {
-    setActiveChat(null)
-  }, [])
-
   const isLoaded = Boolean(!isLoading && !isRefetching && !refreshing)
   const hasFocusItems = Boolean(focusItems && focusItems.length > 0)
-
-  if (activeChat) {
-    return <SherpaAmbient chatId={activeChat} onEndChat={onEndChat} />
-  }
 
   return (
     <View style={{ flex: 1, position: 'relative' }}>
@@ -123,12 +112,14 @@ export const FocusView = () => {
         </ScrollView>
       </View>
 
-      <NoteForm
-        isRecording={isRecording}
-        setActiveChat={setActiveChat}
-        setActiveSearch={setActiveSearch}
-        setIsRecording={setIsRecording}
-      />
+      <View style={[styles.sherpaButtonContainer]}>
+        {/* <View style={[styles.fullLinearGradient]} /> */}
+        <View style={[styles.sherpaCircleButton]}>
+          <Link href="/(sherpa)" style={{ flex: 1 }}>
+            <MindsherpaIcon name="hat-wizard" size={32} color={theme.colors.white} />
+          </Link>
+        </View>
+      </View>
     </View>
   )
 }
@@ -159,6 +150,42 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     paddingTop: 12,
+  },
+  fullLinearGradient: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: '100%',
+    backgroundColor: theme.colors.black,
+    opacity: 0,
+  },
+  sherpaButtonContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    // paddingBottom: 24,
+    // backgroundColor: theme.colors.white,
+    // shadowColor: theme.colors.black,
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 2,
+    // },
+    // shadowOpacity: 0.25,
+    // shadowRadius: 4,
+    // elevation: 4,
+  },
+  sherpaCircleButton: {
+    backgroundColor: theme.colors['fg-primary'],
+    borderRadius: 99,
+    padding: 12,
+    maxWidth: 120,
+    marginBottom: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 })
 

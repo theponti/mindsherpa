@@ -10,6 +10,7 @@ import { log } from '../../logger'
 import queryClient, { request } from '../../query-client'
 import { useAuthenticatedRequest } from '../../use-authenticated-request'
 
+export type SendChatMessageOutput = components['schemas']['SendChatMessageOutput']
 export type MessageOutput = components['schemas']['MessageOutput']
 export type ChatOutput = components['schemas']['ChatOutput']
 
@@ -41,7 +42,7 @@ export const useSendMessage = ({
   const { mutateAsync: sendChatMessage, isPending: isChatSending } = useMutation({
     mutationKey: ['sendChatMessage', chatId],
     mutationFn: async () => {
-      const { data } = await authRequest<MessageOutput>({
+      const { data } = await authRequest<SendChatMessageOutput>({
         url: `/chat/${chatId}/messages`,
         method: 'POST',
         data: { message },
@@ -52,7 +53,17 @@ export const useSendMessage = ({
     onSuccess: (response) => {
       setMessage('')
       setSendChatError(false)
-      queryClient.invalidateQueries({ queryKey: ['chatMessages', chatId] })
+
+      // If any tasks were created, invalidate the focus items query so the Focus view
+      // will have the latest data when the user navigates back to it.
+      if (response.function_calls.indexOf('create_tasks') > -1) {
+        queryClient.invalidateQueries({ queryKey: ['focusItems'] })
+      }
+
+      queryClient.setQueryData(['chatMessages', chatId], (old: MessageOutput[]) => [
+        ...old,
+        ...response.messages,
+      ])
     },
     onError: (error) => {
       log('Error sending chat message:', error)

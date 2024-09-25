@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { View } from 'react-native'
 import { LoadingFull } from '~/components/LoadingFull'
+import BlurredGradientBackground from '~/components/chat/blurred-background'
 import { Chat } from '~/components/chat/chat'
 import { ViewHeader } from '~/components/view-header'
 import { Text } from '~/theme'
@@ -23,7 +23,7 @@ export default function Sherpa() {
   }, [getActiveChat])
 
   return (
-    <View style={{ flex: 1 }}>
+    <BlurredGradientBackground>
       <ViewHeader />
       {isLoadingActiveChat ? (
         <LoadingFull>
@@ -31,6 +31,6 @@ export default function Sherpa() {
         </LoadingFull>
       ) : null}
       {activeChat ? <Chat chatId={activeChat.id} onChatEnd={getActiveChat} /> : null}
-    </View>
+    </BlurredGradientBackground>
   )
 }

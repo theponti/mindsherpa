@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native'
 import Markdown from 'react-native-markdown-display'
-import { theme } from '~/theme'
+import { Text, theme } from '~/theme'
 import { borderStyle } from '~/theme/styles'
 import type { MessageOutput } from '~/utils/services/chat/use-chat-messages'
 
@@ -10,7 +10,7 @@ const ChatMessage = ({ message }: { message: MessageOutput }) => {
   const chatBubbleStyle = formattedRole === 'user' ? styles.userMessage : styles.botMessage
 
   return (
-    <View style={[borderStyle.border, chatBubbleStyle, {}]}>
+    <View style={[chatBubbleStyle]}>
       <Markdown
         style={{
           body: formattedRole === 'user' ? styles.userMessageText : styles.botMessageText,
@@ -18,6 +18,17 @@ const ChatMessage = ({ message }: { message: MessageOutput }) => {
       >
         {content}
       </Markdown>
+      {message.focus_items && message.focus_items.length > 0 ? (
+        <View style={[styles.focusItems]}>
+          {message.focus_items.map((focusItem) => (
+            <View key={focusItem.id} style={[styles.focusItem]}>
+              <Text variant="body" color="fg-primary">
+                {focusItem.text}
+              </Text>
+            </View>
+          ))}
+        </View>
+      ) : null}
     </View>
   )
 }
@@ -26,42 +37,34 @@ export const renderMessage = ({ item }: { item: MessageOutput }) => {
   return <ChatMessage message={item} />
 }
 
-const borderRadiusSize = 8
-
-const baseMessageStyle = {
-  padding: 14,
-  borderBottomRightRadius: 0,
-  borderTopRightRadius: borderRadiusSize,
-  borderBottomLeftRadius: borderRadiusSize,
-  borderTopLeftRadius: borderRadiusSize,
-}
 const styles = StyleSheet.create({
   botMessage: {
-    ...baseMessageStyle,
     alignSelf: 'flex-start',
-    backgroundColor: theme.colors.blue,
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: borderRadiusSize,
-    borderTopLeftRadius: borderRadiusSize,
-    borderTopRightRadius: borderRadiusSize,
   },
   userMessage: {
-    ...baseMessageStyle,
-    alignSelf: 'flex-end',
-    backgroundColor: theme.colors.white,
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 0,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    alignSelf: 'flex-start',
   },
   userMessageText: {
     fontSize: 18,
     lineHeight: 24,
-    color: theme.colors.black,
+    color: theme.colors.grayDark,
   },
   botMessageText: {
-    fontSize: 18,
+    fontSize: 24,
     lineHeight: 24,
     color: theme.colors.black,
+  },
+  focusItems: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  focusItem: {
+    backgroundColor: theme.colors.grayLight,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 12,
   },
 })

@@ -12,11 +12,10 @@ import AudioTranscriber from './audio-transcriber'
 
 type ChatFormProps = {
   chatId: string
-  isEndingChat: boolean
   onEndChat: () => void
 }
 export const ChatForm = (props: ChatFormProps) => {
-  const { chatId, isEndingChat } = props
+  const { chatId } = props
   const [isRecording, setIsRecording] = useState(false)
   const [transcribeError, setTranscribeError] = useState<boolean>(false)
   const { isChatSending, message, setMessage, sendChatMessage, sendChatError, setSendChatError } =
@@ -75,49 +74,30 @@ export const ChatForm = (props: ChatFormProps) => {
       ) : null}
       {!isRecording ? (
         <View style={[styles.inputContainer]}>
+          {/* <View style={[styles.mediaButtons]}>
+            <UploadFileButton />
+          </View> */}
           <AutoGrowingInput
             editable={!isRecording && !isChatSending}
             value={message}
             onChangeText={setMessage}
+            style={{ flex: 1, fontSize: 20, paddingVertical: 4 }}
           />
+          {message && message.length > 0 ? (
+            <FormSubmitButton
+              isRecording={isRecording}
+              isLoading={isChatSending}
+              onSubmitButtonClick={handleSubmit}
+            />
+          ) : (
+            <AudioTranscriber
+              onError={handleTranscribeError}
+              onRecordingStateChange={onRecordingStateChange}
+              onAudioTranscribed={onAudioTranscribed}
+            />
+          )}
         </View>
       ) : null}
-      <View style={[styles.actionButtons]}>
-        <View style={[styles.mediaButtons]}>
-          <UploadFileButton />
-          <AudioTranscriber
-            onError={handleTranscribeError}
-            onRecordingStateChange={onRecordingStateChange}
-            onAudioTranscribed={onAudioTranscribed}
-          />
-        </View>
-        <View style={[{ flexDirection: 'row', columnGap: 12 }]}>
-          {!isRecording ? (
-            <Pressable
-              onPress={props.onEndChat}
-              style={{
-                backgroundColor: theme.colors.white,
-                borderWidth: 1,
-                borderColor: theme.colors.gray,
-                borderRadius: 90,
-                paddingHorizontal: 8,
-                paddingVertical: 8,
-              }}
-            >
-              {isEndingChat ? (
-                <MindsherpaIcon name="spinner" size={20} color={theme.colors.grayDark} />
-              ) : (
-                <MindsherpaIcon name="broom-wide" size={20} color={theme.colors.grayDark} />
-              )}
-            </Pressable>
-          ) : null}
-          <FormSubmitButton
-            isRecording={isRecording}
-            isLoading={isChatSending}
-            onSubmitButtonClick={handleSubmit}
-          />
-        </View>
-      </View>
     </View>
   )
 }
@@ -128,29 +108,24 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: theme.colors.white,
     paddingHorizontal: 16,
-    paddingBottom: 24,
+    paddingVertical: 8,
     gap: 8,
     borderColor: theme.colors.grayMedium,
     borderWidth: 1,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderRadius: 20,
   },
-  inputContainer: {},
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    columnGap: 16,
+  },
   actionButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingBottom: 4,
   },
-  mediaButtons: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    columnGap: 16,
-    alignSelf: 'flex-start',
-    marginRight: 16,
-  },
+  mediaButtons: {},
 })
 
 const NoteFormError = ({ children }: PropsWithChildren) => {

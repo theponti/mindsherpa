@@ -8,13 +8,13 @@ type ButtonProps = {
 } & TouchableOpacityProps
 
 export const Button = forwardRef<TouchableOpacity, ButtonProps>(
-  ({ title, isLoading, ...touchableProps }, ref) => {
+  ({ title, children, isLoading, ...touchableProps }, ref) => {
     const styles = useStyles()
 
     return (
       <TouchableOpacity ref={ref} {...touchableProps} style={[styles.button, touchableProps.style]}>
         <Text variant="body" textAlign="center" color="white" fontWeight="600">
-          {title}
+          {children || title}
         </Text>
         {isLoading && <ActivityIndicator color="white" size="small" />}
       </TouchableOpacity>

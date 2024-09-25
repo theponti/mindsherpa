@@ -1,7 +1,7 @@
-import React, { useRef } from 'react';
-import { StyleSheet, TextInput, TextInputProps } from 'react-native';
+import React, { useEffect, useRef } from 'react'
+import { StyleSheet, TextInput, type TextInputProps } from 'react-native'
 
-import { theme } from '~/theme';
+import { theme } from '~/theme'
 
 const AutoGrowingInput = ({
   editable,
@@ -10,7 +10,13 @@ const AutoGrowingInput = ({
   value,
   ...props
 }: TextInputProps) => {
-  const inputRef = useRef(null);
+  const inputRef = useRef<TextInput>(null)
+
+  useEffect(() => {
+    if (editable && inputRef.current) {
+      inputRef.current.focus()
+    }
+  }, [editable])
 
   return (
     <TextInput
@@ -18,6 +24,7 @@ const AutoGrowingInput = ({
       style={[
         styles.input,
         { color: value && value.length > 0 ? theme.colors.black : theme.colors.grayLight },
+        props.style,
       ]}
       value={value}
       onChangeText={onChangeText}
@@ -25,8 +32,8 @@ const AutoGrowingInput = ({
       multiline
       {...props}
     />
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   input: {
@@ -35,6 +42,6 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     flexWrap: 'wrap',
   },
-});
+})
 
-export default AutoGrowingInput;
+export default AutoGrowingInput

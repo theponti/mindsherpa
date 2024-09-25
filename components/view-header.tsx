@@ -1,9 +1,9 @@
-import { Link } from 'expo-router';
-import React, { type PropsWithChildren } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Text, theme } from '~/theme';
-import { borderStyle } from '~/theme/styles';
-import MindsherpaIcon from './ui/icon';
+import { Link } from 'expo-router'
+import React, { type PropsWithChildren } from 'react'
+import { StyleSheet, View } from 'react-native'
+import { Text, theme } from '~/theme'
+import { borderStyle } from '~/theme/styles'
+import MindsherpaIcon from './ui/icon'
 
 export const ViewHeader = ({ children }: PropsWithChildren) => {
   return (
@@ -18,8 +18,8 @@ export const ViewHeader = ({ children }: PropsWithChildren) => {
       </View>
       {children}
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -31,8 +31,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 16,
-    opacity: 0.8,
-    backgroundColor: theme.colors.grayLight,
+    // opacity: 0.8,
+    // backgroundColor: theme.colors.grayLight,
   },
   gradient: {
     height: '100%',
@@ -44,4 +44,4 @@ const styles = StyleSheet.create({
     padding: 16,
     marginTop: 24,
   },
-});
+})
