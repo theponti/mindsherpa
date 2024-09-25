@@ -59,7 +59,7 @@ export const ChatForm = (props: ChatFormProps) => {
       ) : null}
       {transcribeError ? (
         <NoteFormError>
-          <Text variant="body" color="white">
+          <Text variant="body" color="black">
             There was an issue transcribing your input.
           </Text>
           <Pressable onPress={() => setTranscribeError(false)}>
@@ -72,32 +72,32 @@ export const ChatForm = (props: ChatFormProps) => {
           </Pressable>
         </NoteFormError>
       ) : null}
-      {!isRecording ? (
-        <View style={[styles.inputContainer]}>
-          {/* <View style={[styles.mediaButtons]}>
-            <UploadFileButton />
-          </View> */}
-          <AutoGrowingInput
-            editable={!isRecording && !isChatSending}
-            value={message}
-            onChangeText={setMessage}
-            style={{ flex: 1, fontSize: 20, paddingVertical: 4 }}
+      <View style={[styles.inputContainer]}>
+        {!isRecording ? (
+          <>
+            <AutoGrowingInput
+              editable={!isRecording && !isChatSending}
+              value={message}
+              onChangeText={setMessage}
+              style={{ flex: 1, fontSize: 20, paddingVertical: 4 }}
+            />
+            {message && message.length > 0 ? (
+              <FormSubmitButton
+                isRecording={isRecording}
+                isLoading={isChatSending}
+                onSubmitButtonClick={handleSubmit}
+              />
+            ) : null}
+          </>
+        ) : null}
+        {!message || message.length === 0 ? (
+          <AudioTranscriber
+            onError={handleTranscribeError}
+            onRecordingStateChange={onRecordingStateChange}
+            onAudioTranscribed={onAudioTranscribed}
           />
-          {message && message.length > 0 ? (
-            <FormSubmitButton
-              isRecording={isRecording}
-              isLoading={isChatSending}
-              onSubmitButtonClick={handleSubmit}
-            />
-          ) : (
-            <AudioTranscriber
-              onError={handleTranscribeError}
-              onRecordingStateChange={onRecordingStateChange}
-              onAudioTranscribed={onAudioTranscribed}
-            />
-          )}
-        </View>
-      ) : null}
+        ) : null}
+      </View>
     </View>
   )
 }

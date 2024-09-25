@@ -86,7 +86,7 @@ export default function AudioTranscriber(props: AudioTranscriberProps) {
 
     /**
      * This function error is caught because the user may possibly quick-click
-     * the stop button, causing the following to occuring after the recording has already stopped.
+     * the stop button, causing the following to occurring after the recording has already stopped.
      */
     await recording.stopAndUnloadAsync().catch((reason) => {
       captureException(reason)
@@ -121,6 +121,7 @@ export default function AudioTranscriber(props: AudioTranscriberProps) {
 
   return (
     <View style={[styles.container, { flex: recordingStatus?.isRecording ? 1 : 0 }]}>
+      {recordingStatus?.isRecording ? <AudioLevelVisualizer levels={meterings} /> : null}
       <AnimatedPressable
         disabled={isPending}
         style={[pressableStyles.speakButton, speakButtonBackground]}
@@ -135,7 +136,6 @@ export default function AudioTranscriber(props: AudioTranscriberProps) {
           <MaterialIcons name="mic" size={24} color={theme.colors.primary} />
         ) : null}
       </AnimatedPressable>
-      {recordingStatus?.isRecording ? <AudioLevelVisualizer levels={meterings} /> : null}
     </View>
   )
 }
