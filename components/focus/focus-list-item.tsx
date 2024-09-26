@@ -1,54 +1,76 @@
-import React from 'react'
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-  type PressableProps,
-  type ViewStyle,
-} from 'react-native'
+import React, { useCallback } from 'react'
+import { StyleSheet, Text, View, type ViewStyle } from 'react-native'
+import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Reanimated, {
   interpolateColor,
+  runOnJS,
+  useAnimatedGestureHandler,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
   withTiming,
-  type SharedValue,
 } from 'react-native-reanimated'
 import * as ContextMenu from 'zeego/context-menu'
 
 import { Text as MSText, theme } from '~/theme'
 import { borderStyle, listStyles } from '~/theme/styles'
+import queryClient from '~/utils/query-client'
 import type { FocusItem } from '~/utils/services/notes/types'
+import { useDeleteFocus } from '~/utils/services/notes/use-delete-focus'
 import { useFocusItemComplete } from '../../utils/services/notes/use-focus-item-complete'
 import MindsherpaIcon, { type MindsherpaIconName } from '../ui/icon'
+
+const SWIPE_THRESHOLD = 80
 
 export const FocusListItem = ({
   item,
   label,
-  onComplete,
-  onDelete,
   showBorder,
   style,
   ...props
-}: PressableProps & {
+}: {
   item: FocusItem
   label: string
-  onComplete: (data: FocusItem) => void
-  onDelete: () => void
   showBorder?: boolean
   style?: ViewStyle[]
 }) => {
+  const translateX = useSharedValue(0)
+  const itemHeight = useSharedValue(70)
   const fontColor = useSharedValue(0)
   const iconBackgroundColor = useSharedValue(theme.colors.grayLight)
   const iconName = useSharedValue<MindsherpaIconName>('check')
 
+  const deleteFocusItem = useDeleteFocus({
+    onSuccess: async (deletedItemId) => {
+      // Cancel any outgoing fetches
+      await queryClient.cancelQueries({ queryKey: ['focusItems'] })
+
+      // Snapshot the previous value
+      const previousItems = queryClient.getQueryData(['focusItems'])
+
+      // Optimistically update to the new value
+      queryClient.setQueryData(['focusItems'], (old: FocusItem[]) =>
+        old.filter((item) => item.id !== deletedItemId)
+      )
+
+      // Return a context object with the snapshot value
+      return { previousItems }
+    },
+    onError: () => {
+      const previousItems = queryClient.getQueryData(['focusItems'])
+      // If the mutation fails, use the context returned from onMutate to roll back
+      queryClient.setQueryData(['focusItems'], previousItems)
+    },
+    onSettled: () => {
+      // Always refetch after error or success:
+      // queryClient.invalidateQueries({ queryKey: ['focusItems'] })
+    },
+  })
+
   const completeItem = useFocusItemComplete({
     onSuccess: (data) => {
       iconBackgroundColor.value = withTiming(theme.colors.green, { duration: 500 })
-      setTimeout(() => {
-        onComplete(data)
-      }, 600)
+      queryClient.invalidateQueries({ queryKey: ['focusItems'] })
     },
     onError: () => {
       iconName.value = 'circle-xmark'
@@ -60,39 +82,72 @@ export const FocusListItem = ({
     },
   })
 
-  const onRadioButtonPress = () => {
-    completeItem.mutate(item.id)
-  }
+  const gestureHandler = Gesture.Pan()
+    .onChange((event) => {
+      translateX.value = event.translationX
+    })
+    .onEnd(() => {
+      if (translateX.value > SWIPE_THRESHOLD) {
+        translateX.value = withTiming(0)
+        runOnJS(completeItem.mutate)(item.id)
+      } else if (translateX.value < -SWIPE_THRESHOLD) {
+        translateX.value = withTiming(-itemHeight.value, {}, () => {
+          runOnJS(deleteFocusItem.mutate)(item.id)
+        })
+      } else {
+        translateX.value = withSpring(0)
+      }
+    })
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: translateX.value }],
+  }))
 
   const textStyle = useAnimatedStyle(() => ({
     color: interpolateColor(fontColor.value, [0, 1], [theme.colors.secondary, theme.colors.red]),
   }))
 
-  const iconStyle = useAnimatedStyle(() => ({
-    backgroundColor: withSpring(iconBackgroundColor.value, { stiffness: 1000 }),
+  const leftActionStyle = useAnimatedStyle(() => ({
+    opacity: translateX.value > 0 ? translateX.value / SWIPE_THRESHOLD : 0,
   }))
 
+  const rightActionStyle = useAnimatedStyle(() => ({
+    opacity: translateX.value < 0 ? -translateX.value / SWIPE_THRESHOLD : 0,
+  }))
+
+  const onDeleteMenuItemPress = useCallback(() => {
+    deleteFocusItem.mutate(item.id)
+  }, [deleteFocusItem, item.id])
+
   return (
-    <Reanimated.View style={[styles.container]}>
+    <View style={[styles.container]}>
+      <Reanimated.View style={[styles.leftAction, leftActionStyle]}>
+        <Text style={styles.actionText}>Complete</Text>
+      </Reanimated.View>
+      <Reanimated.View style={[styles.rightAction, rightActionStyle]}>
+        <Text style={styles.actionText}>Delete</Text>
+      </Reanimated.View>
       <ContextMenu.Root>
-        <ContextMenu.Trigger action="longPress" style={[styles.itemContainer]}>
-          <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-            <View style={{ flex: 1, flexDirection: 'column', rowGap: 6 }}>
-            <Reanimated.Text style={[listStyles.text, styles.text, textStyle, { flex: 1 }]}>
-              {label}
-            </Reanimated.Text>
-            {item.due_date ? <MSText variant="body" color="grayDark">
-              {Intl.DateTimeFormat('en-US').format(new Date(item.due_date))}
-            </MSText> : null}
-            </View>
-            <AnimatedPressable
-              style={[styles.icon, iconStyle]}
-              onPress={onRadioButtonPress}
-              disabled={completeItem.isPending}
-            >
-              <MindsherpaIcon name={iconName.value} size={20} color="white" />
-            </AnimatedPressable>
-          </View>
+        <ContextMenu.Trigger action="longPress" style={{ flex: 1, width: '100%' }}>
+          <GestureDetector gesture={gestureHandler}>
+            <Reanimated.View style={[styles.itemContainer, animatedStyle]}>
+              <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{ flex: 1, flexDirection: 'column', rowGap: 6 }}>
+                  <Reanimated.Text style={[listStyles.text, styles.text, textStyle, { flex: 1 }]}>
+                    {label}
+                  </Reanimated.Text>
+                  {item.due_date ? (
+                    <MSText variant="body" color="grayDark">
+                      {Intl.DateTimeFormat('en-US').format(new Date(item.due_date))}
+                    </MSText>
+                  ) : null}
+                </View>
+                <Reanimated.View style={[styles.icon, { backgroundColor: iconBackgroundColor }]}>
+                  <MindsherpaIcon name={iconName.value} size={20} color="white" />
+                </Reanimated.View>
+              </View>
+            </Reanimated.View>
+          </GestureDetector>
         </ContextMenu.Trigger>
         <ContextMenu.Content
           alignOffset={10}
@@ -101,31 +156,30 @@ export const FocusListItem = ({
           collisionPadding={12}
         >
           <ContextMenu.Label>Actions</ContextMenu.Label>
-          <ContextMenu.Item key="delete" onSelect={onDelete}>
+          <ContextMenu.Item key="delete" onSelect={onDeleteMenuItemPress}>
             <ContextMenu.ItemIcon ios={{ name: 'trash', size: 20 }} />
             <ContextMenu.ItemTitle>Delete</ContextMenu.ItemTitle>
           </ContextMenu.Item>
         </ContextMenu.Content>
       </ContextMenu.Root>
-    </Reanimated.View>
+    </View>
   )
 }
 
-const AnimatedPressable = Reanimated.createAnimatedComponent(Pressable)
-
 const styles = StyleSheet.create({
   container: {
-    columnGap: 12,
     backgroundColor: theme.colors.white,
     ...borderStyle.borderBottom,
-    borderRadius: 24,
+    borderRadius: 12,
+    overflow: 'hidden',
   },
   itemContainer: {
-    flex: 1,
     flexDirection: 'row',
     paddingVertical: 16,
     paddingHorizontal: 24,
     paddingRight: 16,
+    borderRadius: 12,
+    backgroundColor: theme.colors.white,
   },
   text: {
     flex: 1,
@@ -140,65 +194,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  deleteButton: {
-    backgroundColor: theme.colors.red,
-    color: theme.colors.white,
-    padding: 16,
-    paddingVertical: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-})
-
-function LeftAction(prog: SharedValue<number>, drag: SharedValue<number>) {
-  const styleAnimation = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          translateX: drag.value - 100,
-          ...(drag.value > 100 ? { width: 100 + drag.value } : {}),
-        },
-      ],
-    }
-  })
-
-  return (
-    <Reanimated.View style={[leftActionStyle.container, styleAnimation]}>
-      <Text style={leftActionStyle.completeButton}>Complete</Text>
-    </Reanimated.View>
-  )
-}
-
-const leftActionStyle = StyleSheet.create({
-  container: {
-    // flex: 1,
+  leftAction: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
     justifyContent: 'center',
     alignItems: 'flex-start',
-    backgroundColor: theme.colors.red,
-  },
-  completeButton: {
     backgroundColor: theme.colors.green,
-    color: theme.colors.white,
-    padding: 16,
-    paddingVertical: 20,
+    paddingHorizontal: 20,
+  },
+  rightAction: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    bottom: 0,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'flex-end',
+    backgroundColor: theme.colors.red,
+    paddingHorizontal: 20,
+  },
+  actionText: {
+    color: theme.colors.white,
+    fontWeight: 'bold',
   },
 })
-
-function RightAction(prog: SharedValue<number>, drag: SharedValue<number>) {
-  const styleAnimation = useAnimatedStyle(() => {
-    // console.log('[R] showRightProgress:', prog.value);
-    // console.log('[R] appliedTranslation:', drag.value);
-    return {
-      transform: [{ translateX: drag.value + 80 }],
-      ...(drag.value > 100 ? { width: 100 + drag.value } : {}),
-    }
-  })
-
-  return (
-    <Reanimated.View style={styleAnimation}>
-      <Text style={styles.deleteButton}>Delete</Text>
-    </Reanimated.View>
-  )
-}

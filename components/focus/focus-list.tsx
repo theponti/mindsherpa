@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback } from 'react'
 import { FlatList, StyleSheet, View } from 'react-native'
 
 import type { FocusItem } from '~/utils/services/notes/types'
@@ -6,33 +6,20 @@ import { FocusListItem } from './focus-list-item'
 
 export const FocusList = ({
   data,
-  onItemDelete,
 }: {
   data: FocusItem[]
-  onItemDelete: (id: number) => void
 }) => {
-  const [items, setItems] = useState<FocusItem[]>(data)
-  const onItemComplete = useCallback((id: number) => {
-    setItems((current) => current.filter((item) => item.id !== id))
-  }, [])
-
-  useEffect(() => {
-    setItems(data)
-  }, [data])
-
   const renderItem = useCallback(
     ({ item, index }: { item: FocusItem; index: number }) => {
       return (
         <FocusListItem
           label={item.text}
           item={item}
-          onComplete={() => onItemComplete(item.id)}
-          onDelete={() => onItemDelete(item.id)}
           showBorder={data.length === 1 || index < data.length - 1}
         />
       )
     },
-    [onItemComplete, onItemDelete, data.length]
+    [data.length]
   )
 
   if (!data.length) {
@@ -43,7 +30,7 @@ export const FocusList = ({
     <View style={[styles.container]}>
       <View>
         <FlatList
-          data={items}
+          data={data}
           keyExtractor={(item) => `${item.id}`}
           renderItem={renderItem}
           scrollEnabled={false}

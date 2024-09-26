@@ -1,7 +1,6 @@
 import { Pressable, StyleSheet, View } from 'react-native'
 import Markdown from 'react-native-markdown-display'
 import { Text, theme } from '~/theme'
-import { borderStyle } from '~/theme/styles'
 import type { MessageOutput } from '~/utils/services/chat/use-chat-messages'
 import MindsherpaIcon from '../ui/icon'
 
