@@ -1,11 +1,9 @@
 import { useCallback, useRef, useState } from 'react'
 import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native'
 
-import { theme } from '~/theme'
 import queryClient from '~/utils/query-client'
 import { useChatMessages, useEndChat } from '~/utils/services/chat/use-chat-messages'
 import { Button } from '../Button'
-import MindsherpaIcon from '../ui/icon'
 import { ChatForm } from './chat-form'
 import ChatLoading from './chat-loading'
 import { renderMessage } from './chat-message'
@@ -16,7 +14,6 @@ export type ChatProps = {
 }
 export const Chat = (props: ChatProps) => {
   const { chatId, onChatEnd } = props
-  const [isFormVisible, setIsFormVisible] = useState(false)
   const { isPending: isMessagesLoading, data: messages } = useChatMessages({ chatId })
   const { mutate: endChat } = useEndChat({
     chatId,
@@ -32,10 +29,6 @@ export const Chat = (props: ChatProps) => {
   const onEndChatPress = useCallback(() => {
     endChat()
   }, [endChat])
-
-  const showForm = useCallback(() => {
-    setIsFormVisible(!isFormVisible)
-  }, [isFormVisible])
 
   const scrollToBottom = useCallback(() => {
     if (flatListRef.current && messages && messages.length > 0) {
@@ -66,29 +59,25 @@ export const Chat = (props: ChatProps) => {
           onScrollToIndexFailed={scrollToBottom}
         />
       )}
+
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 115 : 0}
+        style={{ marginBottom: 24, paddingHorizontal: 12 }}
+      >
+        <ChatForm chatId={chatId} onEndChat={endChat} />
+      </KeyboardAvoidingView>
       <View
         style={{
           flexDirection: 'row',
-          justifyContent: 'space-between',
+          justifyContent: 'center',
           alignItems: 'center',
           paddingHorizontal: 24,
           marginBottom: 24,
         }}
       >
-        <Button onPress={showForm}>
-          <MindsherpaIcon name="keyboard" size={24} color={theme.colors.white} />
-        </Button>
         <Button title="End Chat" onPress={onEndChatPress} />
       </View>
-      {isFormVisible ? (
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 115 : 0}
-          style={{ marginBottom: 24, paddingHorizontal: 12 }}
-        >
-          <ChatForm chatId={chatId} onEndChat={endChat} />
-        </KeyboardAvoidingView>
-      ) : null}
     </View>
   )
 }

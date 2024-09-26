@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useRouter } from 'expo-router'
+import { useCallback, useEffect, useState } from 'react'
 import { LoadingFull } from '~/components/LoadingFull'
 import BlurredGradientBackground from '~/components/chat/blurred-background'
 import { Chat } from '~/components/chat/chat'
@@ -8,6 +9,7 @@ import type { Chat as ChatType } from '~/utils/services/chat/types'
 import { useActiveChat } from '~/utils/services/chat/use-chat-messages'
 
 export default function Sherpa() {
+  const router = useRouter()
   const [activeChat, setActiveChat] = useState<ChatType | null>(null)
   const { isPending: isLoadingActiveChat, refetch: getActiveChat } = useActiveChat()
 
@@ -22,6 +24,10 @@ export default function Sherpa() {
     initialLoad()
   }, [getActiveChat])
 
+  const onChatEnd = useCallback(() => {
+    router.push('/(drawer)/focus')
+  }, [router])
+
   return (
     <BlurredGradientBackground>
       <ViewHeader />
@@ -30,7 +36,7 @@ export default function Sherpa() {
           <Text variant="title">Loading your chat...</Text>
         </LoadingFull>
       ) : null}
-      {activeChat ? <Chat chatId={activeChat.id} onChatEnd={getActiveChat} /> : null}
+      {activeChat ? <Chat chatId={activeChat.id} onChatEnd={onChatEnd} /> : null}
     </BlurredGradientBackground>
   )
 }
