@@ -14,7 +14,9 @@ export const useFocusQuery = ({
   onSuccess?: (data: FocusResponse) => void
   params?: Record<string, string | string[] | number>
 }) => {
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
   const authRequest = useAuthenticatedRequest()
+  console.log('timezone', timezone)
   return useQuery<FocusItems | null>({
     queryKey: ['focusItems'],
     queryFn: async () => {
@@ -22,6 +24,9 @@ export const useFocusQuery = ({
         const { data } = await authRequest<FocusResponse>({
           method: 'GET',
           url: '/focus',
+          params: {
+            timezone,
+          },
           ...(params ? { params } : {}),
         })
         onSuccess?.(data)

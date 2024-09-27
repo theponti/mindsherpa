@@ -12,6 +12,7 @@ import Reanimated, {
 } from 'react-native-reanimated'
 import * as ContextMenu from 'zeego/context-menu'
 
+import { useRouter } from 'expo-router'
 import { Text as MSText, theme } from '~/theme'
 import { borderStyle, listStyles } from '~/theme/styles'
 import queryClient from '~/utils/query-client'
@@ -34,6 +35,7 @@ export const FocusListItem = ({
   showBorder?: boolean
   style?: ViewStyle[]
 }) => {
+  const router = useRouter()
   const translateX = useSharedValue(0)
   const itemHeight = useSharedValue(70)
   const fontColor = useSharedValue(0)
@@ -80,6 +82,10 @@ export const FocusListItem = ({
         iconBackgroundColor.value = withTiming(theme.colors.grayLight, { duration: 500 })
       }, 1000)
     },
+  })
+
+  const tapHandler = Gesture.Tap().onStart(() => {
+    runOnJS(router.push)(`/(drawer)/focus/${item.id}`)
   })
 
   const gestureHandler = Gesture.Pan()
@@ -129,24 +135,26 @@ export const FocusListItem = ({
       </Reanimated.View>
       <ContextMenu.Root>
         <ContextMenu.Trigger action="longPress" style={{ flex: 1, width: '100%' }}>
-          <GestureDetector gesture={gestureHandler}>
-            <Reanimated.View style={[styles.itemContainer, animatedStyle]}>
-              <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-                <View style={{ flex: 1, flexDirection: 'column', rowGap: 6 }}>
-                  <Reanimated.Text style={[listStyles.text, styles.text, textStyle, { flex: 1 }]}>
-                    {label}
-                  </Reanimated.Text>
-                  {item.due_date ? (
-                    <MSText variant="body" color="grayDark">
-                      {Intl.DateTimeFormat('en-US').format(new Date(item.due_date))}
-                    </MSText>
-                  ) : null}
+          <GestureDetector gesture={tapHandler}>
+            <GestureDetector gesture={gestureHandler}>
+              <Reanimated.View style={[styles.itemContainer, animatedStyle]}>
+                <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                  <View style={{ flex: 1, flexDirection: 'column', rowGap: 6 }}>
+                    <Reanimated.Text style={[listStyles.text, styles.text, textStyle, { flex: 1 }]}>
+                      {label}
+                    </Reanimated.Text>
+                    {item.due_date ? (
+                      <MSText variant="body" color="grayDark">
+                        {Intl.DateTimeFormat('en-US').format(new Date(item.due_date))}
+                      </MSText>
+                    ) : null}
+                  </View>
+                  <Reanimated.View style={[styles.icon, { backgroundColor: iconBackgroundColor }]}>
+                    <MindsherpaIcon name={iconName.value} size={20} color="white" />
+                  </Reanimated.View>
                 </View>
-                <Reanimated.View style={[styles.icon, { backgroundColor: iconBackgroundColor }]}>
-                  <MindsherpaIcon name={iconName.value} size={20} color="white" />
-                </Reanimated.View>
-              </View>
-            </Reanimated.View>
+              </Reanimated.View>
+            </GestureDetector>
           </GestureDetector>
         </ContextMenu.Trigger>
         <ContextMenu.Content

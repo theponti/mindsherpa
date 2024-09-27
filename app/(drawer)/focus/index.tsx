@@ -35,33 +35,6 @@ export const FocusView = () => {
     },
   })
 
-  const { mutate: deleteFocusItem } = useDeleteFocus({
-    onSuccess: async (deletedItemId) => {
-      // Cancel any outgoing fetches
-      await queryClient.cancelQueries({ queryKey: ['focusItems'] })
-
-      // Snapshot the previous value
-      const previousItems = queryClient.getQueryData(['focusItems'])
-
-      // Optimistically update to the new value
-      queryClient.setQueryData(['focusItems'], (old: FocusItem[]) =>
-        old.filter((item) => item.id !== deletedItemId)
-      )
-
-      // Return a context object with the snapshot value
-      return { previousItems }
-    },
-    onError: () => {
-      const previousItems = queryClient.getQueryData(['focusItems'])
-      // If the mutation fails, use the context returned from onMutate to roll back
-      queryClient.setQueryData(['focusItems'], previousItems)
-    },
-    onSettled: () => {
-      // Always refetch after error or success:
-      queryClient.invalidateQueries({ queryKey: ['focusItems'] })
-    },
-  })
-
   const onRefresh = useCallback(() => {
     setActiveSearch(null)
     setRefreshing(true)
@@ -99,7 +72,7 @@ export const FocusView = () => {
               {activeSearch ? (
                 <ActiveSearchSummary onCloseClick={onSearchClose} activeSearch={activeSearch} />
               ) : null}
-              <FocusList data={focusItems} onItemDelete={deleteFocusItem} />
+              <FocusList data={focusItems} />
             </View>
           ) : null}
           {isLoaded && !hasFocusItems && !activeSearch ? (
