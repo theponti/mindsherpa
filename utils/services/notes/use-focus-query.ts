@@ -16,7 +16,7 @@ export const useFocusQuery = ({
 }) => {
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
   const authRequest = useAuthenticatedRequest()
-  console.log('timezone', timezone)
+
   return useQuery<FocusItems | null>({
     queryKey: ['focusItems'],
     queryFn: async () => {

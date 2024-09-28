@@ -4,7 +4,6 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Reanimated, {
   interpolateColor,
   runOnJS,
-  useAnimatedGestureHandler,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
@@ -15,6 +14,7 @@ import * as ContextMenu from 'zeego/context-menu'
 import { useRouter } from 'expo-router'
 import { Text as MSText, theme } from '~/theme'
 import { borderStyle, listStyles } from '~/theme/styles'
+import { getLocalDate } from '~/utils/dates'
 import queryClient from '~/utils/query-client'
 import type { FocusItem } from '~/utils/services/notes/types'
 import { useDeleteFocus } from '~/utils/services/notes/use-delete-focus'
@@ -41,6 +41,7 @@ export const FocusListItem = ({
   const fontColor = useSharedValue(0)
   const iconBackgroundColor = useSharedValue(theme.colors.grayLight)
   const iconName = useSharedValue<MindsherpaIconName>('check')
+  const dueDate = item.due_date ? new Date(item.due_date) : null
 
   const deleteFocusItem = useDeleteFocus({
     onSuccess: async (deletedItemId) => {
@@ -63,29 +64,34 @@ export const FocusListItem = ({
       // If the mutation fails, use the context returned from onMutate to roll back
       queryClient.setQueryData(['focusItems'], previousItems)
     },
-    onSettled: () => {
-      // Always refetch after error or success:
-      // queryClient.invalidateQueries({ queryKey: ['focusItems'] })
-    },
   })
 
   const completeItem = useFocusItemComplete({
     onSuccess: (data) => {
-      iconBackgroundColor.value = withTiming(theme.colors.green, { duration: 500 })
+      iconBackgroundColor.value = withTiming(theme.colors.green, {
+        duration: 500,
+      })
       queryClient.invalidateQueries({ queryKey: ['focusItems'] })
     },
     onError: () => {
       iconName.value = 'circle-xmark'
-      iconBackgroundColor.value = withTiming(theme.colors.red, { duration: 500 })
+      iconBackgroundColor.value = withTiming(theme.colors.red, {
+        duration: 500,
+      })
       setTimeout(() => {
         iconName.value = 'circle-check'
-        iconBackgroundColor.value = withTiming(theme.colors.grayLight, { duration: 500 })
+        iconBackgroundColor.value = withTiming(theme.colors.grayLight, {
+          duration: 500,
+        })
       }, 1000)
     },
   })
 
   const tapHandler = Gesture.Tap().onStart(() => {
-    runOnJS(router.push)(`/(drawer)/focus/${item.id}`)
+    runOnJS(router.push)({
+      pathname: '/(drawer)/focus/[id]',
+      params: { id: item.id },
+    })
   })
 
   const gestureHandler = Gesture.Pan()
@@ -138,18 +144,36 @@ export const FocusListItem = ({
           <GestureDetector gesture={tapHandler}>
             <GestureDetector gesture={gestureHandler}>
               <Reanimated.View style={[styles.itemContainer, animatedStyle]}>
-                <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}
+                >
                   <View style={{ flex: 1, flexDirection: 'column', rowGap: 6 }}>
-                    <Reanimated.Text style={[listStyles.text, styles.text, textStyle, { flex: 1 }]}>
+                    <Reanimated.Text
+                      style={[
+                        listStyles.text,
+                        styles.text,
+                        textStyle,
+                        {
+                          flex: 1,
+                        },
+                      ]}
+                    >
                       {label}
                     </Reanimated.Text>
-                    {item.due_date ? (
-                      <MSText variant="body" color="grayDark">
-                        {Intl.DateTimeFormat('en-US').format(new Date(item.due_date))}
-                      </MSText>
-                    ) : null}
+                    <FocusDueDate dueDate={dueDate} />
                   </View>
-                  <Reanimated.View style={[styles.icon, { backgroundColor: iconBackgroundColor }]}>
+                  <Reanimated.View
+                    style={[
+                      styles.icon,
+                      {
+                        backgroundColor: iconBackgroundColor,
+                      },
+                    ]}
+                  >
                     <MindsherpaIcon name={iconName.value} size={20} color="white" />
                   </Reanimated.View>
                 </View>
@@ -227,3 +251,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 })
+
+const FocusDueDate = ({ dueDate }: { dueDate: Date | null }) => {
+  if (!dueDate) return null
+  const { localDateString } = getLocalDate(dueDate)
+
+  return (
+    <MSText variant="body" color="grayDark" fontSize={13}>
+      {dueDate.toLocaleDateString()} {dueDate.toLocaleTimeString()}
+    </MSText>
+  )
+}

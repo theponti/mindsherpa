@@ -2,7 +2,6 @@ import { Link } from 'expo-router'
 import React, { type PropsWithChildren } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { Text, theme } from '~/theme'
-import { borderStyle } from '~/theme/styles'
 import MindsherpaIcon from './ui/icon'
 
 export const ViewHeader = ({ children }: PropsWithChildren) => {

@@ -47,15 +47,32 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Sherpa Vector Search */
-        post: operations["sherpa_vector_search_admin_vector_search_post"];
+        /** Vector Search By Profile Id */
+        post: operations["vector_search_by_profile_id_admin_vector_search_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/admin/vector_search/{id}": {
+    "/admin/vector_search/profile/{profile_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Vector Documents By Profile Id */
+        get: operations["get_vector_documents_by_profile_id_admin_vector_search_profile__profile_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/vector_search/document/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -63,9 +80,43 @@ export interface paths {
             cookie?: never;
         };
         /** Get Vector Document By Id */
-        get: operations["get_vector_document_by_id_admin_vector_search__id__get"];
+        get: operations["get_vector_document_by_id_admin_vector_search_document__id__get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/vector_search/collection/{collection_name}/peek": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Vector Collection */
+        get: operations["get_vector_collection_admin_vector_search_collection__collection_name__peek_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/user_intent": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Process User Intent */
+        post: operations["process_user_intent_admin_user_intent_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -83,6 +134,23 @@ export interface paths {
         put?: never;
         /** Handle Text Input Route */
         post: operations["handle_text_input_route_sherpa_text_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/sherpa/audio/transcribe": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Transcribe Audio */
+        post: operations["transcribe_audio_sherpa_audio_transcribe_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -148,7 +216,8 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put?: never;
+        /** Update Focus Item Route */
+        put: operations["update_focus_item_route_focus__id__put"];
         post?: never;
         /** Delete Focus Item Route */
         delete: operations["delete_focus_item_route_focus__id__delete"];
@@ -305,6 +374,16 @@ export interface components {
             /** Audio Data */
             audio_data: string;
         };
+        /** Body_process_user_intent_admin_user_intent_post */
+        Body_process_user_intent_admin_user_intent_post: {
+            /** User Input */
+            user_input: string;
+            /**
+             * Profile Id
+             * Format: uuid
+             */
+            profile_id: string;
+        };
         /** Body_sherpa_keyword_generator_admin_keyword_generator_post */
         Body_sherpa_keyword_generator_admin_keyword_generator_post: {
             /** Task Description */
@@ -325,8 +404,8 @@ export interface components {
              */
             profile_id: string;
         };
-        /** Body_sherpa_vector_search_admin_vector_search_post */
-        Body_sherpa_vector_search_admin_vector_search_post: {
+        /** Body_vector_search_by_profile_id_admin_vector_search_post */
+        Body_vector_search_by_profile_id_admin_vector_search_post: {
             /** Query */
             query: string;
             /** Threshold */
@@ -458,6 +537,28 @@ export interface components {
          * @enum {string}
          */
         FocusState: "backlog" | "active" | "completed" | "deleted";
+        /** FocusUpdateInput */
+        FocusUpdateInput: {
+            /** Id */
+            id: number;
+            /** Text */
+            text: string;
+            /**
+             * Due Date
+             * @description Due date for the focus item
+             */
+            due_date?: string | null;
+            /**
+             * Category
+             * @description Category for the focus item
+             */
+            category?: string | null;
+            /**
+             * Timezone
+             * @description Timezone for the focus item
+             */
+            timezone?: string | null;
+        };
         /** GenerateTextIntentInput */
         GenerateTextIntentInput: {
             /** Content */
@@ -568,8 +669,6 @@ export interface components {
             messages: components["schemas"]["MessageOutput"][];
             /** Function Calls */
             function_calls: string[];
-            /** Focus Items */
-            focus_items: components["schemas"]["FocusItem"][];
         };
         /** StartChatInput */
         StartChatInput: {
@@ -582,6 +681,11 @@ export interface components {
         UpdateProfileInput: {
             /** Full Name */
             full_name: string;
+        };
+        /** UserIntentResponse */
+        UserIntentResponse: {
+            /** Result */
+            result: Record<string, never>;
         };
         /** ValidationError */
         ValidationError: {
@@ -667,7 +771,7 @@ export interface operations {
             };
         };
     };
-    sherpa_vector_search_admin_vector_search_post: {
+    vector_search_by_profile_id_admin_vector_search_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -676,7 +780,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/x-www-form-urlencoded": components["schemas"]["Body_sherpa_vector_search_admin_vector_search_post"];
+                "application/x-www-form-urlencoded": components["schemas"]["Body_vector_search_by_profile_id_admin_vector_search_post"];
             };
         };
         responses: {
@@ -700,11 +804,13 @@ export interface operations {
             };
         };
     };
-    get_vector_document_by_id_admin_vector_search__id__get: {
+    get_vector_documents_by_profile_id_admin_vector_search_profile__profile_id__get: {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
+            path: {
+                profile_id: string;
+            };
             cookie?: never;
         };
         requestBody?: never;
@@ -716,6 +822,110 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_vector_document_by_id_admin_vector_search_document__id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_vector_collection_admin_vector_search_collection__collection_name__peek_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                collection_name: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    process_user_intent_admin_user_intent_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/x-www-form-urlencoded": components["schemas"]["Body_process_user_intent_admin_user_intent_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserIntentResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -740,6 +950,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["GeneratedIntentsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    transcribe_audio_sherpa_audio_transcribe_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AudioUpload"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string;
                 };
             };
             /** @description Validation Error */
@@ -790,6 +1033,12 @@ export interface operations {
         parameters: {
             query?: {
                 category?: string | null;
+                /** @description Timezone to use for date filtering */
+                timezone?: string;
+                /** @description Start date for date filtering */
+                start_date?: string | null;
+                /** @description End date for date filtering */
+                end_date?: string | null;
             };
             header?: never;
             path?: never;
@@ -835,6 +1084,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_focus_item_route_focus__id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FocusUpdateInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FocusItem"];
                 };
             };
             /** @description Validation Error */
@@ -1000,7 +1284,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
+            path: {
+                chat_id: string;
+            };
             cookie?: never;
         };
         requestBody: {
