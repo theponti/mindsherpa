@@ -23,6 +23,12 @@ import MindsherpaIcon, { type MindsherpaIconName } from '../ui/icon'
 
 const SWIPE_THRESHOLD = 80
 
+function removeFocusItem(item: FocusItem) {
+  queryClient.setQueryData(['focusItems'], (old: FocusItem[]) =>
+    old.filter((focusItem) => focusItem.id !== item.id)
+  )
+}
+
 export const FocusListItem = ({
   item,
   label,
@@ -48,16 +54,8 @@ export const FocusListItem = ({
       // Cancel any outgoing fetches
       await queryClient.cancelQueries({ queryKey: ['focusItems'] })
 
-      // Snapshot the previous value
-      const previousItems = queryClient.getQueryData(['focusItems'])
-
-      // Optimistically update to the new value
-      queryClient.setQueryData(['focusItems'], (old: FocusItem[]) =>
-        old.filter((item) => item.id !== deletedItemId)
-      )
-
-      // Return a context object with the snapshot value
-      return { previousItems }
+      // Remove the item from the list
+      removeFocusItem(item)
     },
     onError: () => {
       const previousItems = queryClient.getQueryData(['focusItems'])
@@ -71,7 +69,9 @@ export const FocusListItem = ({
       iconBackgroundColor.value = withTiming(theme.colors.green, {
         duration: 500,
       })
-      queryClient.invalidateQueries({ queryKey: ['focusItems'] })
+
+      // Remove the item from the list
+      removeFocusItem(item)
     },
     onError: () => {
       iconName.value = 'circle-xmark'
