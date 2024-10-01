@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { Link } from 'expo-router'
 import React, { useCallback, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { RefreshControl, ScrollView } from 'react-native-gesture-handler'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
 import { LoadingContainer } from '~/components/LoadingFull'
 import { PulsingCircle } from '~/components/animated/pulsing-circle'
@@ -12,8 +12,6 @@ import { FocusList } from '~/components/focus/focus-list'
 import { ActiveSearchSummary, type ActiveSearch } from '~/components/focus/focus-search'
 import MindsherpaIcon from '~/components/ui/icon'
 import { Text, theme } from '~/theme'
-import type { FocusItem } from '~/utils/services/notes/types'
-import { useDeleteFocus } from '~/utils/services/notes/use-delete-focus'
 import { useFocusQuery } from '~/utils/services/notes/use-focus-query'
 
 export const FocusView = () => {
@@ -51,49 +49,43 @@ export const FocusView = () => {
   const hasFocusItems = Boolean(focusItems && focusItems.length > 0)
 
   return (
-    <View style={{ flex: 1, position: 'relative' }}>
+    <GestureHandlerRootView style={[styles.container]}>
       <FocusHeader />
 
       <View style={[styles.focusContainer]}>
-        <ScrollView
-          style={styles.scrollContainer}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-        >
-          {(isLoading || isRefetching) && !refreshing ? (
-            <LoadingContainer>
-              <PulsingCircle />
-            </LoadingContainer>
-          ) : null}
+        {isLoading && !isRefetching && !refreshing ? (
+          <LoadingContainer>
+            <PulsingCircle />
+          </LoadingContainer>
+        ) : null}
 
-          {isError ? <FocusLoadingError /> : null}
+        {isError ? <FocusLoadingError /> : null}
 
-          {isLoaded && focusItems ? (
-            <View style={[styles.focuses]}>
-              {activeSearch ? (
-                <ActiveSearchSummary onCloseClick={onSearchClose} activeSearch={activeSearch} />
-              ) : null}
-              <FocusList data={focusItems} />
-            </View>
-          ) : null}
-          {isLoaded && !hasFocusItems && !activeSearch ? (
-            <View style={[styles.empty]}>
-              <Text variant="bodyLarge" color="primary">
-                You have no focus items yet.
-              </Text>
-            </View>
-          ) : null}
-        </ScrollView>
+        {(isLoaded || isRefetching) && focusItems ? (
+          <View style={[styles.focuses]}>
+            {activeSearch ? (
+              <ActiveSearchSummary onCloseClick={onSearchClose} activeSearch={activeSearch} />
+            ) : null}
+            <FocusList data={focusItems} isRefreshing={isRefetching} onRefresh={refetch} />
+          </View>
+        ) : null}
+        {isLoaded && !hasFocusItems && !activeSearch ? (
+          <View style={[styles.empty]}>
+            <Text variant="bodyLarge" color="primary">
+              You have no focus items yet.
+            </Text>
+          </View>
+        ) : null}
       </View>
 
       <View style={[styles.sherpaButtonContainer]}>
-        {/* <View style={[styles.fullLinearGradient]} /> */}
         <View style={[styles.sherpaCircleButton]}>
           <Link href="/(sherpa)" style={{ flex: 1 }}>
             <MindsherpaIcon name="hat-wizard" size={32} color={theme.colors.white} />
           </Link>
         </View>
       </View>
-    </View>
+    </GestureHandlerRootView>
   )
 }
 
@@ -101,13 +93,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
-    // backgroundColor: theme.colors.backgroundColor,
   },
   focusContainer: {
     flex: 1,
     rowGap: 12,
   },
   focuses: {
+    flex: 1,
     rowGap: 24,
     paddingTop: 12,
     paddingHorizontal: 12,
@@ -140,16 +132,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    // paddingBottom: 24,
-    // backgroundColor: theme.colors.white,
-    // shadowColor: theme.colors.black,
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 2,
-    // },
-    // shadowOpacity: 0.25,
-    // shadowRadius: 4,
-    // elevation: 4,
   },
   sherpaCircleButton: {
     backgroundColor: theme.colors['fg-primary'],

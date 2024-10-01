@@ -1,13 +1,17 @@
 import { useCallback } from 'react'
-import { FlatList, StyleSheet, View } from 'react-native'
-
+import { FlatList, StyleSheet } from 'react-native'
+import { RefreshControl } from 'react-native-gesture-handler'
 import type { FocusItem } from '~/utils/services/notes/types'
 import { FocusListItem } from './focus-list-item'
 
 export const FocusList = ({
   data,
+  isRefreshing,
+  onRefresh,
 }: {
   data: FocusItem[]
+  isRefreshing: boolean
+  onRefresh: () => void
 }) => {
   const renderItem = useCallback(
     ({ item, index }: { item: FocusItem; index: number }) => {
@@ -27,17 +31,16 @@ export const FocusList = ({
   }
 
   return (
-    <View style={[styles.container]}>
-      <View>
-        <FlatList
-          data={data}
-          keyExtractor={(item) => `${item.id}`}
-          renderItem={renderItem}
-          scrollEnabled={false}
-          contentContainerStyle={styles.listContainer}
-        />
-      </View>
-    </View>
+    <FlatList
+      refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />}
+      style={[styles.container]}
+      data={data}
+      keyExtractor={(item: FocusItem) => `${item.id}`}
+      renderItem={renderItem}
+      contentContainerStyle={styles.listContainer}
+      scrollEnabled={true}
+      showsVerticalScrollIndicator={true}
+    />
   )
 }
 

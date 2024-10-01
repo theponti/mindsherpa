@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import { useCallback } from 'react'
 import { StyleSheet, Text, View, type ViewStyle } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Reanimated, {
@@ -8,6 +8,7 @@ import Reanimated, {
   useSharedValue,
   withSpring,
   withTiming,
+  type SharedValue,
 } from 'react-native-reanimated'
 import * as ContextMenu from 'zeego/context-menu'
 
@@ -49,6 +50,9 @@ export const FocusListItem = ({
   const iconName = useSharedValue<MindsherpaIconName>('check')
   const dueDate = item.due_date ? new Date(item.due_date) : null
 
+  const iconStyle = useAnimatedStyle(() => ({
+    backgroundColor: iconBackgroundColor.value,
+  }))
   const deleteFocusItem = useDeleteFocus({
     onSuccess: async (deletedItemId) => {
       // Cancel any outgoing fetches
@@ -87,16 +91,29 @@ export const FocusListItem = ({
     },
   })
 
-  const tapHandler = Gesture.Tap().onStart(() => {
-    runOnJS(router.push)({
-      pathname: '/(drawer)/focus/[id]',
-      params: { id: item.id },
+  const tapHandler = Gesture.Tap()
+    .activeCursor('pointer')
+    .onStart(() => {
+      runOnJS(router.push)({
+        pathname: '/(drawer)/focus/[id]',
+        params: { id: item.id },
+      })
     })
-  })
 
-  const gestureHandler = Gesture.Pan()
+  const panHandler = Gesture.Pan()
+    .activeOffsetX([-10, 10])
+    .activeOffsetY([-1000, 1000])
+    .simultaneousWithExternalGesture(Gesture.Native())
     .onChange((event) => {
-      translateX.value = event.translationX
+      // Only allow one finger to pan
+      if (event.numberOfPointers > 1) return
+
+      const { translationX, translationY } = event
+      if (Math.abs(translationX) > Math.abs(translationY)) {
+        // Horizontal pan
+        // This prevents the item from panning horizontally when the vertical swipe is greater.
+        translateX.value = translationX
+      }
     })
     .onEnd(() => {
       if (translateX.value > SWIPE_THRESHOLD) {
@@ -110,6 +127,8 @@ export const FocusListItem = ({
         translateX.value = withSpring(0)
       }
     })
+
+  const combinedGesture = Gesture.Simultaneous(panHandler, tapHandler)
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: translateX.value }],
@@ -141,44 +160,35 @@ export const FocusListItem = ({
       </Reanimated.View>
       <ContextMenu.Root>
         <ContextMenu.Trigger action="longPress" style={{ flex: 1, width: '100%' }}>
-          <GestureDetector gesture={tapHandler}>
-            <GestureDetector gesture={gestureHandler}>
-              <Reanimated.View style={[styles.itemContainer, animatedStyle]}>
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                  }}
-                >
-                  <View style={{ flex: 1, flexDirection: 'column', rowGap: 6 }}>
-                    <Reanimated.Text
-                      style={[
-                        listStyles.text,
-                        styles.text,
-                        textStyle,
-                        {
-                          flex: 1,
-                        },
-                      ]}
-                    >
-                      {label}
-                    </Reanimated.Text>
-                    <FocusDueDate dueDate={dueDate} />
-                  </View>
-                  <Reanimated.View
+          <GestureDetector gesture={combinedGesture}>
+            <Reanimated.View style={[styles.itemContainer, animatedStyle]}>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}
+              >
+                <View style={{ flex: 1, flexDirection: 'column', rowGap: 6 }}>
+                  <Reanimated.Text
                     style={[
-                      styles.icon,
+                      listStyles.text,
+                      styles.focusInfoContainer,
+                      textStyle,
                       {
-                        backgroundColor: iconBackgroundColor,
+                        flex: 1,
                       },
                     ]}
                   >
-                    <MindsherpaIcon name={iconName.value} size={20} color="white" />
-                  </Reanimated.View>
+                    {label}
+                  </Reanimated.Text>
+                  <FocusDueDate dueDate={dueDate} />
                 </View>
-              </Reanimated.View>
-            </GestureDetector>
+                <Reanimated.View style={[styles.icon, iconStyle]}>
+                  <MindsherpaIcon name={iconName.value} size={20} color="white" />
+                </Reanimated.View>
+              </View>
+            </Reanimated.View>
           </GestureDetector>
         </ContextMenu.Trigger>
         <ContextMenu.Content
@@ -213,7 +223,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: theme.colors.white,
   },
-  text: {
+  focusInfoContainer: {
     flex: 1,
     fontWeight: 500,
     fontSize: 18,
