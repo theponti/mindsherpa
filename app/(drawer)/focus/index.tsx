@@ -103,7 +103,6 @@ const styles = StyleSheet.create({
     rowGap: 24,
     paddingTop: 12,
     paddingHorizontal: 12,
-    paddingBottom: 120,
   },
   empty: {
     marginHorizontal: 12,

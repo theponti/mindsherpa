@@ -51,6 +51,8 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     rowGap: 12,
+    // This enables users to scroll the the last item above the `Sherpa` button
+    paddingBottom: 120,
   },
   header: {
     flexDirection: 'row',
