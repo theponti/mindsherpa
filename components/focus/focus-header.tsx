@@ -11,7 +11,7 @@ export const FocusHeader = React.memo(() => {
   )
 
   return (
-    <View style={styles.header}>
+    <View style={[styles.header]}>
       <View style={[styles.topRow]}>
         <View style={[styles.today]}>
           <Text fontSize={30} fontWeight={600}>
@@ -20,7 +20,7 @@ export const FocusHeader = React.memo(() => {
         </View>
         <View style={[styles.iconWrap]}>
           <Link href="/(account)/" style={[styles.iconLink]}>
-            <MindsherpaIcon name="user" size={15} />
+            <MindsherpaIcon name="user" size={16} />
           </Link>
         </View>
       </View>

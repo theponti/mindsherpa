@@ -46,7 +46,7 @@ export const FocusView = () => {
   }, [onRefresh])
 
   const isLoaded = Boolean(!isLoading && !isRefetching && !refreshing)
-  const hasFocusItems = Boolean(focusItems && focusItems.length > 0)
+  const hasFocusItems = !!focusItems && focusItems.length > 0
 
   return (
     <GestureHandlerRootView style={[styles.container]}>
@@ -61,7 +61,7 @@ export const FocusView = () => {
 
         {isError ? <FocusLoadingError /> : null}
 
-        {(isLoaded || isRefetching) && focusItems ? (
+        {(isLoaded || isRefetching) && hasFocusItems ? (
           <View style={[styles.focuses]}>
             {activeSearch ? (
               <ActiveSearchSummary onCloseClick={onSearchClose} activeSearch={activeSearch} />
@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
   focusContainer: {
     flex: 1,
     rowGap: 12,
+    marginTop: 16,
   },
   focuses: {
     flex: 1,
